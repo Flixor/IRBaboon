@@ -37,6 +37,9 @@
 #endif
 
 
+using namespace juce;
+
+
 #if ! JUCE_DONT_DECLARE_PROJECTINFO
 namespace ProjectInfo
 {

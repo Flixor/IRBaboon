@@ -9,6 +9,12 @@
 #include <JuceHeader.h>
 #include "MainComponent.h"
 
+#include <FP_Tools.hpp>
+#include <FP_ExpSineSweep.hpp>
+#include <FP_Convolver.hpp>
+#include <FP_CircularBufferArray.hpp>
+#include <FP_ParallelBufferPrinter.hpp>
+
 //==============================================================================
 class IRBaboonStandaloneApplication  : public juce::JUCEApplication
 {
