@@ -235,10 +235,17 @@ void FP_ParallelBufferPrinter::printToWav(int startSample, int numSamples, int s
 				wavFile.deleteFile();
 			}
 			wavFile.create();
-			FileOutputStream* wavStream = wavFile.createOutputStream();
-			
-			auto wav = std::make_unique<WavAudioFormat>();
-			AudioFormatWriter* writer = wav->createWriterFor(wavStream, sampleRate, bufferArray[buf].buffer.getNumChannels(), 24, NULL, 0);
+
+			auto wavStream = wavFile.createOutputStream();
+
+			auto waf= std::make_unique<WavAudioFormat>();
+
+			AudioFormatWriter* writer = waf->createWriterFor(wavStream.get(),
+															 sampleRate,
+															 bufferArray[buf].buffer.getNumChannels(),
+															 24,
+															 NULL,
+															 0);
 
 			if (writer != nullptr){
 				writer->writeFromAudioSampleBuffer(bufferArray[buf].buffer,
@@ -248,7 +255,6 @@ void FP_ParallelBufferPrinter::printToWav(int startSample, int numSamples, int s
 												   (bufferArray[buf].buffer.getNumSamples() - startSample) // only print until end of buffer
 												   );
 				delete writer;
-//				printf("write ok %u\n", buf);
 			}
 			else {
 				std::string str = "FP_ParallelBufferPrinter::printToWav(): writer is nullptr for buf " + std::to_string(buf) + "\n";

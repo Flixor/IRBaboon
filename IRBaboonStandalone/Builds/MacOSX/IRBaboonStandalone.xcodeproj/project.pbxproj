@@ -9,7 +9,12 @@
 /* Begin PBXBuildFile section */
 		027B24FF897934EF032099D6 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5652BCF0351205E6C74D80CE /* IOKit.framework */; };
 		0AAA9E60611666B8D2740B60 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2433142A8E4758305E644C53 /* WebKit.framework */; };
-		0D3E4747252B66E600521076 /* libboost_filesystem.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D3E4746252B66E600521076 /* libboost_filesystem.dylib */; };
+		0DD8C043252B7F4C002C316C /* libboost_filesystem.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0DD8C042252B7F4C002C316C /* libboost_filesystem.dylib */; };
+		0DD8C049252B7F96002C316C /* FP_ExpSineSweep.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0DD8C044252B7F96002C316C /* FP_ExpSineSweep.cpp */; };
+		0DD8C04A252B7F96002C316C /* FP_Convolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0DD8C045252B7F96002C316C /* FP_Convolver.cpp */; };
+		0DD8C04B252B7F96002C316C /* FP_CircularBufferArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0DD8C046252B7F96002C316C /* FP_CircularBufferArray.cpp */; };
+		0DD8C04C252B7F96002C316C /* FP_ParallelBufferPrinter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0DD8C047252B7F96002C316C /* FP_ParallelBufferPrinter.cpp */; };
+		0DD8C04D252B7F96002C316C /* FP_Tools.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0DD8C048252B7F96002C316C /* FP_Tools.cpp */; };
 		248A80855753E79411B9D4D8 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84F598A2E16CC5564D272F4E /* QuartzCore.framework */; };
 		28E304EFE78583E9289D904A /* include_juce_events.mm in Sources */ = {isa = PBXBuildFile; fileRef = E19DD333646DA0697B6A26D8 /* include_juce_events.mm */; };
 		3A7F0597AF4236C4DA7B9793 /* include_juce_graphics.mm in Sources */ = {isa = PBXBuildFile; fileRef = E35433451B75A72A211CB86E /* include_juce_graphics.mm */; };
@@ -38,19 +43,19 @@
 
 /* Begin PBXFileReference section */
 		0C1B254608B8EC0229B14742 /* juce_audio_basics */ = {isa = PBXFileReference; lastKnownFileType = folder; name = juce_audio_basics; path = ../../../../../../../Applications/JUCE/modules/juce_audio_basics; sourceTree = SOURCE_ROOT; };
-		0D3E4745252B65D700521076 /* FP_ParallelBufferPrinter.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = FP_ParallelBufferPrinter.hpp; path = ../../../includes/FP_ParallelBufferPrinter.hpp; sourceTree = "<group>"; };
-		0D3E4746252B66E600521076 /* libboost_filesystem.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libboost_filesystem.dylib; path = ../../../../../../../../usr/local/Cellar/boost/1.69.0_2/lib/libboost_filesystem.dylib; sourceTree = "<group>"; };
-		0D3E4748252B672900521076 /* filesystem.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = filesystem.hpp; path = ../../../../../../../../usr/local/Cellar/boost/1.69.0_2/include/boost/filesystem.hpp; sourceTree = "<group>"; };
-		0D3E4749252B675E00521076 /* string.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = string.hpp; path = ../../../../../../../../usr/local/Cellar/boost/1.69.0_2/include/boost/algorithm/string.hpp; sourceTree = "<group>"; };
-		0D3E474A252B699C00521076 /* FP_ExpSineSweep.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FP_ExpSineSweep.cpp; path = ../../Source/FP_ExpSineSweep.cpp; sourceTree = "<group>"; };
-		0D3E474B252B699D00521076 /* FP_Convolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FP_Convolver.cpp; path = ../../Source/FP_Convolver.cpp; sourceTree = "<group>"; };
-		0D3E474C252B699D00521076 /* FP_CircularBufferArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FP_CircularBufferArray.cpp; path = ../../Source/FP_CircularBufferArray.cpp; sourceTree = "<group>"; };
-		0D3E474D252B699D00521076 /* FP_ParallelBufferPrinter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FP_ParallelBufferPrinter.cpp; path = ../../Source/FP_ParallelBufferPrinter.cpp; sourceTree = "<group>"; };
-		0D3E474E252B699D00521076 /* FP_Tools.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FP_Tools.cpp; path = ../../Source/FP_Tools.cpp; sourceTree = "<group>"; };
-		0D5D7B27252B62EF00DD5529 /* FP_ExpSineSweep.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = FP_ExpSineSweep.hpp; path = ../../../includes/FP_ExpSineSweep.hpp; sourceTree = "<group>"; };
-		0D5D7B28252B62F000DD5529 /* FP_CircularBufferArray.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = FP_CircularBufferArray.hpp; path = ../../../includes/FP_CircularBufferArray.hpp; sourceTree = "<group>"; };
-		0D5D7B29252B62F000DD5529 /* FP_Convolver.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = FP_Convolver.hpp; path = ../../../includes/FP_Convolver.hpp; sourceTree = "<group>"; };
-		0D5D7B2B252B62F000DD5529 /* FP_Tools.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = FP_Tools.hpp; path = ../../../includes/FP_Tools.hpp; sourceTree = "<group>"; };
+		0DD8C03B252B7EF1002C316C /* FP_ExpSineSweep.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = FP_ExpSineSweep.hpp; path = ../../../includes/FP_ExpSineSweep.hpp; sourceTree = "<group>"; };
+		0DD8C03C252B7EF1002C316C /* FP_CircularBufferArray.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = FP_CircularBufferArray.hpp; path = ../../../includes/FP_CircularBufferArray.hpp; sourceTree = "<group>"; };
+		0DD8C03D252B7EF1002C316C /* FP_Convolver.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = FP_Convolver.hpp; path = ../../../includes/FP_Convolver.hpp; sourceTree = "<group>"; };
+		0DD8C03E252B7EF1002C316C /* FP_ParallelBufferPrinter.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = FP_ParallelBufferPrinter.hpp; path = ../../../includes/FP_ParallelBufferPrinter.hpp; sourceTree = "<group>"; };
+		0DD8C03F252B7EF1002C316C /* FP_Tools.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = FP_Tools.hpp; path = ../../../includes/FP_Tools.hpp; sourceTree = "<group>"; };
+		0DD8C040252B7F30002C316C /* string.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = string.hpp; path = ../../../../../../../../usr/local/Cellar/boost/1.69.0_2/include/boost/algorithm/string.hpp; sourceTree = "<group>"; };
+		0DD8C041252B7F30002C316C /* filesystem.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = filesystem.hpp; path = ../../../../../../../../usr/local/Cellar/boost/1.69.0_2/include/boost/filesystem.hpp; sourceTree = "<group>"; };
+		0DD8C042252B7F4C002C316C /* libboost_filesystem.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libboost_filesystem.dylib; path = ../../../../../../../../usr/local/Cellar/boost/1.69.0_2/lib/libboost_filesystem.dylib; sourceTree = "<group>"; };
+		0DD8C044252B7F96002C316C /* FP_ExpSineSweep.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FP_ExpSineSweep.cpp; path = ../../Source/FP_ExpSineSweep.cpp; sourceTree = "<group>"; };
+		0DD8C045252B7F96002C316C /* FP_Convolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FP_Convolver.cpp; path = ../../Source/FP_Convolver.cpp; sourceTree = "<group>"; };
+		0DD8C046252B7F96002C316C /* FP_CircularBufferArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FP_CircularBufferArray.cpp; path = ../../Source/FP_CircularBufferArray.cpp; sourceTree = "<group>"; };
+		0DD8C047252B7F96002C316C /* FP_ParallelBufferPrinter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FP_ParallelBufferPrinter.cpp; path = ../../Source/FP_ParallelBufferPrinter.cpp; sourceTree = "<group>"; };
+		0DD8C048252B7F96002C316C /* FP_Tools.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FP_Tools.cpp; path = ../../Source/FP_Tools.cpp; sourceTree = "<group>"; };
 		1244DB40601AAA2E968F7DFB /* include_juce_dsp.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = include_juce_dsp.mm; path = ../../JuceLibraryCode/include_juce_dsp.mm; sourceTree = SOURCE_ROOT; };
 		18A5D482D00604B8C60FF220 /* juce_dsp */ = {isa = PBXFileReference; lastKnownFileType = folder; name = juce_dsp; path = ../../../../../../../Applications/JUCE/modules/juce_dsp; sourceTree = SOURCE_ROOT; };
 		2433142A8E4758305E644C53 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
@@ -108,7 +113,7 @@
 				86B1F48191673FAD757950B3 /* CoreMIDI.framework in Frameworks */,
 				B0F3DB69F6B01E431D8669D2 /* DiscRecording.framework in Frameworks */,
 				027B24FF897934EF032099D6 /* IOKit.framework in Frameworks */,
-				0D3E4747252B66E600521076 /* libboost_filesystem.dylib in Frameworks */,
+				0DD8C043252B7F4C002C316C /* libboost_filesystem.dylib in Frameworks */,
 				248A80855753E79411B9D4D8 /* QuartzCore.framework in Frameworks */,
 				0AAA9E60611666B8D2740B60 /* WebKit.framework in Frameworks */,
 			);
@@ -137,17 +142,17 @@
 			name = "JUCE Library Code";
 			sourceTree = "<group>";
 		};
-		0D5D7B26252B62C000DD5529 /* includes */ = {
+		0DD8C03A252B7EE2002C316C /* includes */ = {
 			isa = PBXGroup;
 			children = (
-				0D3E4749252B675E00521076 /* string.hpp */,
-				0D3E4748252B672900521076 /* filesystem.hpp */,
-				0D3E4746252B66E600521076 /* libboost_filesystem.dylib */,
-				0D3E4745252B65D700521076 /* FP_ParallelBufferPrinter.hpp */,
-				0D5D7B28252B62F000DD5529 /* FP_CircularBufferArray.hpp */,
-				0D5D7B29252B62F000DD5529 /* FP_Convolver.hpp */,
-				0D5D7B27252B62EF00DD5529 /* FP_ExpSineSweep.hpp */,
-				0D5D7B2B252B62F000DD5529 /* FP_Tools.hpp */,
+				0DD8C042252B7F4C002C316C /* libboost_filesystem.dylib */,
+				0DD8C041252B7F30002C316C /* filesystem.hpp */,
+				0DD8C040252B7F30002C316C /* string.hpp */,
+				0DD8C03C252B7EF1002C316C /* FP_CircularBufferArray.hpp */,
+				0DD8C03D252B7EF1002C316C /* FP_Convolver.hpp */,
+				0DD8C03B252B7EF1002C316C /* FP_ExpSineSweep.hpp */,
+				0DD8C03E252B7EF1002C316C /* FP_ParallelBufferPrinter.hpp */,
+				0DD8C03F252B7EF1002C316C /* FP_Tools.hpp */,
 			);
 			path = includes;
 			sourceTree = "<group>";
@@ -192,14 +197,14 @@
 		38D5095B21F2E72454C5D477 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				0DD8C046252B7F96002C316C /* FP_CircularBufferArray.cpp */,
+				0DD8C045252B7F96002C316C /* FP_Convolver.cpp */,
+				0DD8C044252B7F96002C316C /* FP_ExpSineSweep.cpp */,
+				0DD8C047252B7F96002C316C /* FP_ParallelBufferPrinter.cpp */,
+				0DD8C048252B7F96002C316C /* FP_Tools.cpp */,
 				E2349132A1F6E67649CCD209 /* Main.cpp */,
 				B1B073EAF383D591AFA8DEF4 /* MainComponent.h */,
 				4B04E06DF180991196C358E4 /* MainComponent.cpp */,
-				0D3E474C252B699D00521076 /* FP_CircularBufferArray.cpp */,
-				0D3E474B252B699D00521076 /* FP_Convolver.cpp */,
-				0D3E474A252B699C00521076 /* FP_ExpSineSweep.cpp */,
-				0D3E474D252B699D00521076 /* FP_ParallelBufferPrinter.cpp */,
-				0D3E474E252B699D00521076 /* FP_Tools.cpp */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -224,7 +229,7 @@
 		845AFE5C0E7833943D302DEF /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				0D5D7B26252B62C000DD5529 /* includes */,
+				0DD8C03A252B7EE2002C316C /* includes */,
 				C87A6984CB521A23086A456D /* IRBaboonStandalone */,
 				0E512D60B30870A0C1E9C1E1 /* JUCE Modules */,
 				0A40F705F6C126D62E57E690 /* JUCE Library Code */,
@@ -333,6 +338,8 @@
 				3D0EF8A759BE894EF677150E /* MainComponent.cpp in Sources */,
 				CE78E196E37F8C52E7820496 /* include_juce_audio_basics.mm in Sources */,
 				F96C5A77612A09D8FE506BE0 /* include_juce_audio_devices.mm in Sources */,
+				0DD8C04A252B7F96002C316C /* FP_Convolver.cpp in Sources */,
+				0DD8C04B252B7F96002C316C /* FP_CircularBufferArray.cpp in Sources */,
 				CF17F111AA3B064FAD2FA702 /* include_juce_audio_formats.mm in Sources */,
 				D4EB94F40636628291B5B9E2 /* include_juce_audio_processors.mm in Sources */,
 				9CD223A29AB9A6770F997306 /* include_juce_audio_utils.mm in Sources */,
@@ -340,6 +347,9 @@
 				AE5F32D29B1841FE3D124386 /* include_juce_data_structures.mm in Sources */,
 				976402EC556E69882B7DF82C /* include_juce_dsp.mm in Sources */,
 				28E304EFE78583E9289D904A /* include_juce_events.mm in Sources */,
+				0DD8C04C252B7F96002C316C /* FP_ParallelBufferPrinter.cpp in Sources */,
+				0DD8C04D252B7F96002C316C /* FP_Tools.cpp in Sources */,
+				0DD8C049252B7F96002C316C /* FP_ExpSineSweep.cpp in Sources */,
 				3A7F0597AF4236C4DA7B9793 /* include_juce_graphics.mm in Sources */,
 				D11B81FF5D093D2E9C835727 /* include_juce_gui_basics.mm in Sources */,
 				85FBCE785C3C98A62E074C7D /* include_juce_gui_extra.mm in Sources */,
@@ -456,8 +466,8 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
-					/usr/local/Cellar/boost/1.69.0_2/include,
 					/Users/flixor/Projects/IRBaboon/IRBaboonStandalone/includes,
+					/usr/local/Cellar/boost/1.69.0_2/include,
 				);
 				LIBRARY_SEARCH_PATHS = /usr/local/Cellar/boost/1.69.0_2/lib;
 				PRODUCT_NAME = IRBaboonStandalone;
@@ -509,8 +519,8 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
-					/usr/local/Cellar/boost/1.69.0_2/include,
 					/Users/flixor/Projects/IRBaboon/IRBaboonStandalone/includes,
+					/usr/local/Cellar/boost/1.69.0_2/include,
 				);
 				LIBRARY_SEARCH_PATHS = /usr/local/Cellar/boost/1.69.0_2/lib;
 				ONLY_ACTIVE_ARCH = YES;
