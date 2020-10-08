@@ -247,7 +247,9 @@ void FP_ParallelBufferPrinter::printToWav(int startSample, int numSamples, int s
 															 24,
 															 NULL,
 															 0);
-
+			
+			/* releases ownership from unique_ptr */
+			wavStream.release();
 
 			if (writer != nullptr){
 				writer->writeFromAudioSampleBuffer(bufferArray[buf].buffer,
