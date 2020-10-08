@@ -20,18 +20,12 @@
 //==============================================================================
 
 AutoKalibraDemoAudioProcessor::AutoKalibraDemoAudioProcessor()
-#ifndef JucePlugin_PreferredChannelConfigurations
      : AudioProcessor (BusesProperties()
-                     #if ! JucePlugin_IsMidiEffect
-                      #if ! JucePlugin_IsSynth
                        .withInput  ("Input",  AudioChannelSet::createLCR(), true)
-                      #endif
                        .withOutput ("Output", AudioChannelSet::stereo(), true)
-                     #endif
                        ),
 		Thread ("Print and thumbnail"),
 		window (8192, dsp::WindowingFunction<float>::blackman) // how can I do the init of window otherwise..?
-#endif
 {
 	// remove previously printed files
 	String referencePrintName (printDirectoryDebug + "/targetForThumbnail.wav");
@@ -281,13 +275,8 @@ void AutoKalibraDemoAudioProcessor::releaseResources()
 	outputBufferArray.changeArraySize(0);
 }
 
-#ifndef JucePlugin_PreferredChannelConfigurations
 bool AutoKalibraDemoAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
-  #if JucePlugin_IsMidiEffect
-    ignoreUnused (layouts);
-    return true;
-  #else
     // This is the place where you check if the layout is supported.
     // In this template code we only support mono or stereo.
     if (layouts.getMainOutputChannelSet() != AudioChannelSet::mono()
@@ -295,15 +284,11 @@ bool AutoKalibraDemoAudioProcessor::isBusesLayoutSupported (const BusesLayout& l
         return false;
 
     // This checks if the input layout matches the output layout
-   #if ! JucePlugin_IsSynth
     if (layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet())
         return false;
-   #endif
 
     return true;
-  #endif
 }
-#endif
 
 
 
