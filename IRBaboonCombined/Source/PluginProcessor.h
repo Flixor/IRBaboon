@@ -20,6 +20,10 @@
 #include <ctime>
 
 
+#define NOT not
+#define BREAK JUCE_BREAK_IN_DEBUGGER
+
+
 //==============================================================================
 
 
