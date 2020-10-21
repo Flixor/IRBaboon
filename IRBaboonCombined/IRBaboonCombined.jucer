@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="Uo0aLp" name="IRBaboonCombined" projectType="audioplug" useAppConfig="0"
-              addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1">
-  <MAINGROUP id="Jke81M" name="IRBaboonCombined">
+<JUCERPROJECT id="Uo0aLp" name="IRBaboon" projectType="audioplug" useAppConfig="0"
+              addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1"
+              companyName="Flixor">
+  <MAINGROUP id="Jke81M" name="IRBaboon">
     <GROUP id="{5CF90DE0-DC77-6250-C4AB-3A16507FD21D}" name="Source">
       <FILE id="fHDazJ" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>

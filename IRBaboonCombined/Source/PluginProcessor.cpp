@@ -21,12 +21,14 @@
 
 AutoKalibraDemoAudioProcessor::AutoKalibraDemoAudioProcessor()
      : AudioProcessor (BusesProperties()
-                       .withInput  ("Input",  AudioChannelSet::createLCR(), true)
-                       .withOutput ("Output", AudioChannelSet::stereo(), true)
+					   .withInput  ("Input",  AudioChannelSet::stereo(), true)
+					   .withOutput ("Output", AudioChannelSet::stereo(), true)
+					   .withInput  ("Mic",  AudioChannelSet::mono(), true)
                        ),
 		Thread ("Print and thumbnail"),
 		window (8192, dsp::WindowingFunction<float>::blackman) // how can I do the init of window otherwise..?
 {
+	
 	// remove previously printed files
 	String referencePrintName (printDirectoryDebug + "/targetForThumbnail.wav");
 	File referencePrintFile (referencePrintName);
@@ -318,7 +320,10 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 
 	if (captureInput){
 		
-		inputCaptureArray.getWriteBufferPtr()->copyFrom(0, 0, buffer, 2, 0, generalHostBlockSize);
+		auto micBuffer = getBusBuffer(buffer, true, 1); // second buffer block = mic input
+		
+		inputCaptureArray.getWriteBufferPtr()->copyFrom(0, 0, micBuffer, 0, 0, generalHostBlockSize);
+//		inputCaptureArray.getWriteBufferPtr()->copyFrom(0, 0, buffer, 2, 0, generalHostBlockSize);
 		inputCaptureArray.incrWriteIndex();
 		
 		if (inputCaptureArray.getWriteIndex() == 0){ // capture done
