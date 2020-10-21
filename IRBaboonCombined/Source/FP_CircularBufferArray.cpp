@@ -5,6 +5,7 @@
 //  Created by Felix Postma on 14/03/2019.
 //
 
+#include <FP_general.h>
 #include "FP_CircularBufferArray.hpp"
 
 
@@ -58,7 +59,7 @@ void FP_CircularBufferArray::changeArraySize(int amountOfBuffers){
 		if (lastWrittenIndex != -1){ // this means that there has actually been written
 			std::vector<AudioSampleBuffer> tempArray;
 		
-			// save distance from last written buffer to readindex and writeindex
+			/* save distance from last written buffer to readindex and writeindex */
 			int readIndexDiff = lastWrittenIndex - readIndex;
 			int writeIndexDiff = lastWrittenIndex - writeIndex;
 		
@@ -82,8 +83,8 @@ void FP_CircularBufferArray::changeArraySize(int amountOfBuffers){
 			else if (writeIndexDiff < 0) writeIndex = lastElement - (arraySize + writeIndexDiff);
 			else writeIndex = lastElement - writeIndexDiff;
 		}
-		
-		else { // otherwise: buffers shouldbe empty, we can use normal resize
+		/* otherwise: buffers shouldbe empty, we can use normal resize */
+		else {
 			bufferArray.resize(amountOfBuffers);
 		}
 	}

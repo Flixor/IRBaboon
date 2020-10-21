@@ -10,7 +10,9 @@
 
 #pragma once
 
+#include <FP_general.h>
 #include <JuceHeader.h>
+
 #include "FP_ParallelBufferPrinter.hpp"
 #include "FP_Convolver.hpp"
 #include "FP_Tools.hpp"
@@ -19,9 +21,6 @@
 
 #include <ctime>
 
-
-#define NOT not
-#define BREAK JUCE_BREAK_IN_DEBUGGER
 
 
 //==============================================================================

@@ -9,6 +9,8 @@
 #define AudioSampleBufferArray_hpp
 
 #include <stdio.h>
+
+#include <FP_general.h>
 #include <JuceHeader.h>
 
 
@@ -35,7 +37,7 @@ public:
 	void decrReadIndex();	// built-in foldback
 	void incrWriteIndex();	// built-in foldback
 	
-	// returns 1 buffer which is array elements 0-n appended in order
+	/* returns 1 buffer which is array elements 0-n appended in order */
 	AudioSampleBuffer consolidate(int bufOffset = 0);
 
 	int getReadIndex();

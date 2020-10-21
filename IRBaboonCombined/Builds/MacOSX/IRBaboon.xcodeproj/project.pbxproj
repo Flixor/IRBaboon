@@ -155,6 +155,9 @@
 		0D3C737E2540864D00E4BE47 /* FP_ExpSineSweep.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = FP_ExpSineSweep.hpp; path = includes/FP_ExpSineSweep.hpp; sourceTree = SOURCE_ROOT; };
 		0D3C737F2540864D00E4BE47 /* FP_Tools.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = FP_Tools.hpp; path = includes/FP_Tools.hpp; sourceTree = SOURCE_ROOT; };
 		0D3C7380254088A600E4BE47 /* libboost_filesystem.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libboost_filesystem.dylib; path = ../../../../../../../../usr/local/Cellar/boost/1.69.0_2/lib/libboost_filesystem.dylib; sourceTree = "<group>"; };
+		0D3C7384254093D000E4BE47 /* fpconvolver_graveyard.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = fpconvolver_graveyard.cpp; sourceTree = "<group>"; };
+		0D3C7385254093D000E4BE47 /* fpconvolver_graveyard.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = fpconvolver_graveyard.hpp; sourceTree = "<group>"; };
+		0D3C73862540962400E4BE47 /* FP_general.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FP_general.h; sourceTree = "<group>"; };
 		0D427DFF254085EC00D4E878 /* FP_Tools.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FP_Tools.cpp; path = ../../Source/FP_Tools.cpp; sourceTree = "<group>"; };
 		0D427E00254085EC00D4E878 /* FP_Convolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FP_Convolver.cpp; path = ../../Source/FP_Convolver.cpp; sourceTree = "<group>"; };
 		0D427E01254085EC00D4E878 /* FP_ExpSineSweep.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FP_ExpSineSweep.cpp; path = ../../Source/FP_ExpSineSweep.cpp; sourceTree = "<group>"; };
@@ -295,9 +298,18 @@
 				0D3C737E2540864D00E4BE47 /* FP_ExpSineSweep.hpp */,
 				0D3C737B2540864D00E4BE47 /* FP_ParallelBufferPrinter.hpp */,
 				0D3C737F2540864D00E4BE47 /* FP_Tools.hpp */,
+				0D3C73862540962400E4BE47 /* FP_general.h */,
 			);
-			name = includes;
-			path = "New Group";
+			path = includes;
+			sourceTree = "<group>";
+		};
+		0D3C73832540939800E4BE47 /* misc */ = {
+			isa = PBXGroup;
+			children = (
+				0D3C7384254093D000E4BE47 /* fpconvolver_graveyard.cpp */,
+				0D3C7385254093D000E4BE47 /* fpconvolver_graveyard.hpp */,
+			);
+			path = misc;
 			sourceTree = "<group>";
 		};
 		0F538789A6C8B35C216CF4A6 /* Products */ = {
@@ -419,8 +431,9 @@
 		D0E47D035FD61D663FAAA2F9 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				0D3C737A2540863100E4BE47 /* includes */,
 				74A9A17808D42051C7520CC0 /* IRBaboon */,
+				0D3C737A2540863100E4BE47 /* includes */,
+				0D3C73832540939800E4BE47 /* misc */,
 				8D5D9D56881F02E3030C1CAF /* JUCE Modules */,
 				476E56AEC36FA6809DC2DF83 /* JUCE Library Code */,
 				1262E640C28F645D0F8BC637 /* Resources */,

@@ -8,6 +8,8 @@
 #define FP_Tools_hpp
 
 #include <stdio.h>
+
+#include <FP_general.h>
 #include <JuceHeader.h>
 
 

@@ -8,7 +8,9 @@
 #ifndef ParallelPrintBuffer_h
 #define ParallelPrintBuffer_h
 
+#include <FP_general.h>
 #include <JuceHeader.h>
+
 #include "FP_Tools.hpp"
 #include "FP_CircularBufferArray.hpp"
 

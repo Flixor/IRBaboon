@@ -10,8 +10,10 @@
 
 #pragma once
 
+#include <FP_general.h>
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+
 #include "FP_ParallelBufferPrinter.hpp"
 #include "FP_Convolver.hpp"
 #include "FP_Tools.hpp"

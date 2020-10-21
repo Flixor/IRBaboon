@@ -9,6 +9,8 @@
 #define FP_ExpSineSweep_hpp
 
 #include <stdio.h>
+
+#include <FP_general.h>
 #include <JuceHeader.h>
 #include "FP_Tools.hpp"
 
