@@ -12,7 +12,8 @@
 
 #include <FP_general.h>
 #include <JuceHeader.h>
-#include "FP_Tools.hpp"
+#include "FP_Tools_nstest.hpp"
+
 
 class FP_ExpSineSweep {
 

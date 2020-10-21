@@ -15,7 +15,8 @@
 
 #include "FP_ParallelBufferPrinter.hpp"
 
-namespace boost_fs = boost::filesystem;
+
+namespace fs = boost::filesystem;
 
 
 //=============================================================
@@ -180,7 +181,7 @@ void FP_ParallelBufferPrinter::printToConsole(int startSample, int numSamples, b
 				for (int channel = 0; channel < chPrintLimit; channel++){
 					if (sample < bufferArray[buf].buffer.getNumSamples()){
 						float value = bufferArray[buf].buffer.getSample(channel, sample);
-						if(displaydB) value = FP_Tools::linTodB(abs(value));
+						if(displaydB) value = fp::tools::linTodB(abs(value));
 						printf("|%u: %*g ", sample, tabsPerValue * spacesPerTab, value);
 						for(int t = 0; t < (columnWidth - tabsPerValue - 1); t++)
 							printf("\t");
@@ -285,8 +286,8 @@ void FP_ParallelBufferPrinter::printFreqToCsv (int sampleRate, std::string direc
 		directoryNameFullPath = "/Users/flixor/Documents/Audio Ease/CSVs";
 	}
 	
-	if (!boost_fs::exists(directoryNameFullPath.c_str()))
-		boost_fs::create_directory(directoryNameFullPath.c_str());
+	if (!fs::exists(directoryNameFullPath.c_str()))
+		fs::create_directory(directoryNameFullPath.c_str());
 	
 	File pathCheck (directoryNameFullPath);
 	if(!pathCheck.exists() || !pathCheck.isDirectory())
@@ -296,7 +297,7 @@ void FP_ParallelBufferPrinter::printFreqToCsv (int sampleRate, std::string direc
 
 		int fftSize = bufferArray[buf].buffer.getNumSamples();
 		
-		if (!FP_Tools::isPowerOfTwo(fftSize)) {
+		if (!fp::tools::isPowerOfTwo(fftSize)) {
 			String errstr ("FP_ParallelBufferPrinter::printFreqToCsv error: buffer nr");
 			DBG(errstr + std::to_string(buf) + " size is not power of 2.");
 			continue;
@@ -313,8 +314,8 @@ void FP_ParallelBufferPrinter::printFreqToCsv (int sampleRate, std::string direc
 		std::string csvName = directoryNameFullPath+"/"+fileName+".tsv";
 		boost::ireplace_all(headerName, "_", " ");
 		
-		if (boost_fs::exists(csvName)){
-			boost_fs::remove(csvName);
+		if (fs::exists(csvName)){
+			fs::remove(csvName);
 		}
 		
 		std::ofstream fout;
@@ -326,16 +327,16 @@ void FP_ParallelBufferPrinter::printFreqToCsv (int sampleRate, std::string direc
 			
 			for (int bin = 0; bin <= N; bin += 2){
 				fout << freqPerBin * bin/2 << "\t";
-				fout << std::setprecision(8) << FP_Tools::binAmpl(bufPtr + bin) << "\t";
-				fout << std::setprecision(8) << FP_Tools::linTodB(abs(FP_Tools::binAmpl(bufPtr + bin))) << "\t";
+				fout << std::setprecision(8) << fp::tools::binAmpl(bufPtr + bin) << "\t";
+				fout << std::setprecision(8) << fp::tools::linTodB(abs(fp::tools::binAmpl(bufPtr + bin))) << "\t";
 				fout << bin/2 << "\t";
-				fout << std::setprecision(8) << FP_Tools::binPhase(bufPtr + bin) << "\n";
+				fout << std::setprecision(8) << fp::tools::binPhase(bufPtr + bin) << "\n";
 			}
 			
 			fout.close();
 		}
 		else {
-			DBG("printFreqToCsv() error:"+FP_Tools::DescribeIosFailure(fout));
+			DBG("printFreqToCsv() error:"+fp::tools::DescribeIosFailure(fout));
 			fout.close();
 		}
 
@@ -345,7 +346,7 @@ void FP_ParallelBufferPrinter::printFreqToCsv (int sampleRate, std::string direc
 
 
 std::string FP_ParallelBufferPrinter::getVersion (std::string csvName){
-	if (boost_fs::exists(csvName)){
+	if (fs::exists(csvName)){
 		csvName += " +"; 	// ghetto solution lol
 		return getVersion(csvName);
 	}

@@ -14,7 +14,6 @@
 
 
 
-
 //==============================================================================
 // AutoKalibraDemoAudioProcessor
 //==============================================================================
@@ -56,7 +55,7 @@ AutoKalibraDemoAudioProcessor::AutoKalibraDemoAudioProcessor()
 	sweepBufForDeconv.setSize(1, totalSweepBreakSamples);
 	sweepBufForDeconv.clear();
 	sweepBufForDeconv.copyFrom(0, 0, sweep, 0, 0, sweepLengthSamples);
-	sweepBufForDeconv.applyGain(FP_Tools::dBToLin(outputVolumedB + sweepLeveldB));
+	sweepBufForDeconv.applyGain(fp::tools::dBToLin(outputVolumedB + sweepLeveldB));
 	
 	printer.appendBuffer("sweep", sweepBuf);
 	printer.printToWav(0, printer.getMaxBufferLength(), sampleRate, printDirectoryDebug);
@@ -64,14 +63,14 @@ AutoKalibraDemoAudioProcessor::AutoKalibraDemoAudioProcessor()
 	
 	/* init THD+N signal buf */
 	thdnSigBuf.setSize(1, totalSweepBreakSamples);
-	FP_Tools::sineFill(&thdnSigBuf, thdnSigFreq, sampleRate);
+	fp::tools::sineFill(&thdnSigBuf, thdnSigFreq, sampleRate);
 	
 	
 	// init IRs
 	IRref.setSize(0, 0);
 	IRcurr.setSize(0, 0);
 	IRinvfilt.setSize(0, 0);
-	IRpulse.makeCopyOf(FP_Tools::generatePulse(makeupIRLengthSamples, 100));
+	IRpulse.makeCopyOf(fp::tools::generatePulse(makeupIRLengthSamples, 100));
 	
 	IRrefObjectPtr = new ReferenceCountedBuffer("IRref", IRref);
 	IRcurrObjectPtr = new ReferenceCountedBuffer("IRcurr", IRcurr);
@@ -394,7 +393,7 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 		}
 
 		if (needToFadeout) {
-			FP_Tools::linearFade (&buffer, false, 0, buffer.getNumSamples());
+			fp::tools::linearFade (&buffer, false, 0, buffer.getNumSamples());
 			needToFadeout = false;
 		}
 		else if (!captureThdn){
@@ -462,7 +461,7 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 		
 		// fade in buffer if necessary
 		if (needToFadein){
-			FP_Tools::linearFade (&buffer, true, 0, buffer.getNumSamples());
+			fp::tools::linearFade (&buffer, true, 0, buffer.getNumSamples());
 			needToFadein = false;
 		}
 		
@@ -541,7 +540,7 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 					
 					// complex multiply 1 audio fft block and 1 IR fft block
 					for (int i = 0; i <= N; i += 2){
-						FP_Tools::complexMul(inplaceBufferPtr + i,
+						fp::tools::complexMul(inplaceBufferPtr + i,
 											 inplaceBufferPtr + i + 1,
 											 irFftPtr[i],
 											 irFftPtr[i + 1]);
@@ -623,12 +622,12 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 		
 		
 	// standard attenuation
-	buffer.applyGain(FP_Tools::dBToLin(outputVolumedB));
+	buffer.applyGain(fp::tools::dBToLin(outputVolumedB));
 	
 	
 	// ghetto limiter
-	if (FP_Tools::linTodB(buffer.getMagnitude(0, 0, generalHostBlockSize)) > 0.0){
-		FP_Tools::normalize(&buffer, 0.0, true);
+	if (fp::tools::linTodB(buffer.getMagnitude(0, 0, generalHostBlockSize)) > 0.0){
+		fp::tools::normalize(&buffer, 0.0, true);
 	}
 	
 }
@@ -910,7 +909,7 @@ void AutoKalibraDemoAudioProcessor::printDebug() {
 		referenceForThumbnail.copyFrom(0, 0, sweeprefprint, 0, 0, sweeprefprint.getNumSamples());
 	if (IRrefprint.getNumSamples() > 0)
 		referenceForThumbnail.copyFrom(1, 0, IRrefprint, 0, 0, IRrefprint.getNumSamples());
-	referenceForThumbnail.applyGain(FP_Tools::dBToLin(referenceZoomdB));
+	referenceForThumbnail.applyGain(fp::tools::dBToLin(referenceZoomdB));
 	wavPrinter.appendBuffer("targetForThumbnail", referenceForThumbnail);
 	
 	// delete thumbnail file again if it has been swaped with empty current
@@ -927,7 +926,7 @@ void AutoKalibraDemoAudioProcessor::printDebug() {
 		currentForThumbnail.copyFrom(0, 0, sweepcurrprint, 0, 0, sweepcurrprint.getNumSamples());
 	if (IRcurrprint.getNumSamples() > 0)
 		currentForThumbnail.copyFrom(1, 0, IRcurrprint, 0, 0, IRcurrprint.getNumSamples());
-	currentForThumbnail.applyGain(FP_Tools::dBToLin(currentZoomdB));
+	currentForThumbnail.applyGain(fp::tools::dBToLin(currentZoomdB));
 	wavPrinter.appendBuffer("baseForThumbnail", currentForThumbnail);
 
 	// delete thumbnail file again if it has been swaped with empty reference
@@ -941,7 +940,7 @@ void AutoKalibraDemoAudioProcessor::printDebug() {
 	AudioSampleBuffer InvfiltForThumbnail (1, IRinvfiltprint.getNumSamples());
 	if (IRinvfiltprint.getNumSamples() > 0)
 		InvfiltForThumbnail.copyFrom(0, 0, IRinvfiltprint, 0, 0, IRinvfiltprint.getNumSamples());
-	InvfiltForThumbnail.applyGain(FP_Tools::dBToLin(invfiltZoomdB));
+	InvfiltForThumbnail.applyGain(fp::tools::dBToLin(invfiltZoomdB));
 	wavPrinter.appendBuffer("filterForThumbnail", InvfiltForThumbnail);
 	
 	// print everything
@@ -979,7 +978,7 @@ void AutoKalibraDemoAudioProcessor::setInvfiltZoomdB(float dB){
 
 void AutoKalibraDemoAudioProcessor::setOutputVolume(float dB){
 	outputVolumedB = dB;
-	FP_Tools::normalize(&sweepBufForDeconv, outputVolumedB + sweepLeveldB);
+	fp::tools::normalize(&sweepBufForDeconv, outputVolumedB + sweepLeveldB);
 }
 
 
@@ -1051,7 +1050,7 @@ void AutoKalibraDemoAudioProcessor::loadTarget(File file){
 	boost::filesystem::rename(pathCustomExtension, pathWav);
 	
 	File fileToLoad (pathWav);
-	AudioSampleBuffer sweepAndIR (FP_Tools::fileToBuffer(fileToLoad));
+	AudioSampleBuffer sweepAndIR (fp::tools::fileToBuffer(fileToLoad));
 	
 	if (IRref.getNumSamples() == 0){
 		sweeprefObjectPtr->getAudioSampleBuffer()->setSize(1, totalSweepBreakSamples);

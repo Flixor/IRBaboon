@@ -126,7 +126,7 @@ AudioBuffer<float> FP_Convolver::convolvePeriodic(AudioSampleBuffer& buffer1, Au
 															  )	;
 			}
 			if (chLayout == IRStereoAudioMono)
-				FP_Tools::sumToMono(&irFftBufferArray[processIncrementor]);
+				fp::tools::sumToMono(&irFftBufferArray[processIncrementor]);
 			for (int channel = 0; channel < irFftFwdChMax; channel++)
 				fftIR.performRealOnlyForwardTransform(irFftBufferArray[processIncrementor].getWritePointer(channel, 0), true);
 			irFftBufferArraySize++;
@@ -190,7 +190,7 @@ AudioBuffer<float> FP_Convolver::convolvePeriodic(AudioSampleBuffer& buffer1, Au
 				
 				// complex multiply 1 audio fft block and 1 IR fft block
 				for (int i = 0; i <= N; i += 2){
-					FP_Tools::complexMul(inplaceBufferPtr + i,
+					fp::tools::complexMul(inplaceBufferPtr + i,
 							   inplaceBufferPtr + i + 1,
 							   irFftPtr[i],
 							   irFftPtr[i + 1]);
@@ -308,7 +308,7 @@ AudioBuffer<float> FP_Convolver::convolveNonPeriodic(AudioSampleBuffer& buffer1,
 		case IRMonoAudioMono: 		irFftFwdChMax = 1; break;
 		case IRMonoAudioStereo:		irFftFwdChMax = 1; break;
 		case IRStereoAudioStereo:	irFftFwdChMax = 2; break;
-		case IRStereoAudioMono:		FP_Tools::sumToMono(&irBuffer);
+		case IRStereoAudioMono:		fp::tools::sumToMono(&irBuffer);
 			irFftFwdChMax = 1; break;
 		default: break;
 	}
@@ -334,7 +334,7 @@ AudioBuffer<float> FP_Convolver::convolveNonPeriodic(AudioSampleBuffer& buffer1,
 		
 		
 		for (int i = 0; i <= N; i += 2){
-			FP_Tools::complexMul(audioFftPtr + i,
+			fp::tools::complexMul(audioFftPtr + i,
 							   audioFftPtr + i + 1,
 							   irFftPtr[i],
 							   irFftPtr[i + 1]);
@@ -384,7 +384,7 @@ AudioBuffer<float> FP_Convolver::deconvolveNonPeriodic2(AudioBuffer<float>& nume
 	float* numBufFftPtr = numBufFft.getWritePointer(0, 0);
 	const float* denomBufFftPtr = denomBufFft.getReadPointer(0, 0);
 	for (int i = 0; i <= N; i += 2){
-		FP_Tools::complexDivCartesian(numBufFftPtr + i,
+		fp::tools::complexDivCartesian(numBufFftPtr + i,
 									  numBufFftPtr + i + 1,
 									  *(denomBufFftPtr + i),
 									  *(denomBufFftPtr + i + 1));
@@ -420,7 +420,7 @@ void FP_Convolver::averagingFilter (AudioSampleBuffer* buffer, double octaveFrac
 	int fftSize = buffer->getNumSamples();
 	int numChannels = buffer->getNumChannels();
 	
-	if (!FP_Tools::isPowerOfTwo(fftSize)) {
+	if (!fp::tools::isPowerOfTwo(fftSize)) {
 		DBG("FP_Convolver::applyBucket() error: input buffer size is not power of 2.\n");
 		return;
 	}
@@ -442,7 +442,7 @@ void FP_Convolver::averagingFilter (AudioSampleBuffer* buffer, double octaveFrac
 		float* oldAmplBufPtr = oldAmplBuf.getWritePointer(channel);
 		
 		for (int bin = 0; bin <= N; bin += 2){
-			*(oldAmplBufPtr + bin/2) = FP_Tools::binAmpl(bufPtr + bin);
+			*(oldAmplBufPtr + bin/2) = fp::tools::binAmpl(bufPtr + bin);
 		}
 	}
 	
@@ -472,7 +472,7 @@ void FP_Convolver::averagingFilter (AudioSampleBuffer* buffer, double octaveFrac
 			// HPF for <20Hz freq
 			// we don't want this for meetsysteem
 //			float dBPerOctHPF = 300.0;	// in actuality it turns out to be less than this... so algorithm doesn't technically work that well lol, but w/e
-//			float linPerOctHPF = FP_Tools::dBToLin(dBPerOctHPF);
+//			float linPerOctHPF = fp::tools::dBToLin(dBPerOctHPF);
 //			float lnLinPerOctHPF = log(linPerOctHPF); // necessary for runningsum log/exp method
 //			float cutoffFreqHPF = 20.0;
 //			float octavesDiff = 0.0;
@@ -496,7 +496,7 @@ void FP_Convolver::averagingFilter (AudioSampleBuffer* buffer, double octaveFrac
 				int subtractBin = prevLowerBin;
 				while(subtractBin < lowerBin){
 					float subtractAmpl = *(oldAmplBufPtr + subtractBin/2);
-					FP_Tools::roundTo1TenQuadrillionth(&subtractAmpl);
+					fp::tools::roundTo1TenQuadrillionth(&subtractAmpl);
 					subtractAmpl = log(subtractAmpl);
 					runningSum -= subtractAmpl;
 					subtractBin += 2;
@@ -507,7 +507,7 @@ void FP_Convolver::averagingFilter (AudioSampleBuffer* buffer, double octaveFrac
 				while(addBin <= upperBin){
 					if (addBin < fftSize){
 						float addAmpl = *(oldAmplBufPtr + addBin/2);
-						FP_Tools::roundTo1TenQuadrillionth(&addAmpl);
+						fp::tools::roundTo1TenQuadrillionth(&addAmpl);
 						addAmpl = log(addAmpl);
 						runningSum += addAmpl;
 					}
@@ -528,7 +528,7 @@ void FP_Convolver::averagingFilter (AudioSampleBuffer* buffer, double octaveFrac
 //			float newAmpl = (runningSum + HPFadjustment) / binRangeLength;
 			float newAmpl = runningSum / binRangeLength;
 			if (logAvg) newAmpl = exp(newAmpl);
-			FP_Tools::roundTo1TenQuadrillionth(&newAmpl);
+			fp::tools::roundTo1TenQuadrillionth(&newAmpl);
 			*(newAmplBufPtr + bin) = newAmpl;
 			
 			prevLowerBin = lowerBin;
@@ -542,9 +542,9 @@ void FP_Convolver::averagingFilter (AudioSampleBuffer* buffer, double octaveFrac
 		
 		for (int bin = 0; bin <= N; bin += 2){
 			float ampl = *(newAmplBufPtr + bin);
-			FP_Tools::roundToZero(bufPtr + bin, 1e-11);	// rounding only seems necessary for determining phase per bin
-			FP_Tools::roundToZero(bufPtr + bin + 1, 1e-11);
-			float phase = FP_Tools::binPhase(bufPtr + bin);
+			fp::tools::roundToZero(bufPtr + bin, 1e-11);	// rounding only seems necessary for determining phase per bin
+			fp::tools::roundToZero(bufPtr + bin + 1, 1e-11);
+			float phase = fp::tools::binPhase(bufPtr + bin);
 			if (nullifyAmplitude) ampl = 1.0;
 			if (nullifyPhase) phase = 0.0;
 			float re = ampl * cos(phase);
@@ -562,7 +562,7 @@ void FP_Convolver::averagingFilter (AudioSampleBuffer* buffer, double octaveFrac
 
 AudioBuffer<float> FP_Convolver::fftTransform(AudioBuffer<float> &buffer, bool formatAmplPhase) {
 	
-	int N = FP_Tools::nextPowerOfTwo(buffer.getNumSamples());
+	int N = fp::tools::nextPowerOfTwo(buffer.getNumSamples());
 	int fftBlockSize = N * 2;
 	
 	AudioSampleBuffer fftBuffer (buffer.getNumChannels(), fftBlockSize);
@@ -578,8 +578,8 @@ AudioBuffer<float> FP_Convolver::fftTransform(AudioBuffer<float> &buffer, bool f
 		
 		if(formatAmplPhase){
 			for (int bin = 0; bin <= N; bin += 2){
-				*(fftBufferPtr + bin) = FP_Tools::binAmpl(fftBufferPtr + bin);
-				*(fftBufferPtr + bin + 1) = FP_Tools::binPhase(fftBufferPtr + bin);
+				*(fftBufferPtr + bin) = fp::tools::binAmpl(fftBufferPtr + bin);
+				*(fftBufferPtr + bin + 1) = fp::tools::binPhase(fftBufferPtr + bin);
 			}
 		}
 	}
@@ -615,7 +615,7 @@ AudioBuffer<float> FP_Convolver::fftInvTransform(AudioBuffer<float> &buffer) {
 
 AudioBuffer<float> FP_Convolver::invertFilter4 (AudioBuffer<float>& buffer, int sampleRate){
 	
-	AudioSampleBuffer pulse = FP_Tools::generatePulse(buffer.getNumSamples());
+	AudioSampleBuffer pulse = fp::tools::generatePulse(buffer.getNumSamples());
 	AudioSampleBuffer result = deconvolveNonPeriodic2(pulse, buffer, sampleRate);
 	return result;
 }
@@ -635,7 +635,7 @@ AudioSampleBuffer FP_Convolver::IRchop (AudioSampleBuffer& buffer, int IRlength,
 	
 	
 	// determine chop start point
-	float maxAmpldB = FP_Tools::linTodB(abs(maxAmpl));
+	float maxAmpldB = fp::tools::linTodB(abs(maxAmpl));
 	int chopStartSample = 0;
 	int samplesBelowThreshold = 0;
 	
@@ -643,7 +643,7 @@ AudioSampleBuffer FP_Convolver::IRchop (AudioSampleBuffer& buffer, int IRlength,
 	// find starting sample with foldback
 	int samplesPerused = 0;
 	while (samplesBelowThreshold < consecutiveSamplesBelowThreshold){
-		if ( FP_Tools::linTodB(abs(buffer.getSample(0, sampleCursor))) - maxAmpldB < thresholdLeveldB )
+		if ( fp::tools::linTodB(abs(buffer.getSample(0, sampleCursor))) - maxAmpldB < thresholdLeveldB )
 			samplesBelowThreshold++;
 		else
 			samplesBelowThreshold = 0;
@@ -677,11 +677,11 @@ AudioSampleBuffer FP_Convolver::IRchop (AudioSampleBuffer& buffer, int IRlength,
 	
 	// apply lin fadeout
 	int fadeoutLength = IRlength / 4;
-	FP_Tools::linearFade(&IR, false, IRlength - 1 - fadeoutLength, fadeoutLength);
+	fp::tools::linearFade(&IR, false, IRlength - 1 - fadeoutLength, fadeoutLength);
 	
 	// apply lin fadein
 	int fadeinLength = samplesPerused / 4;
-	FP_Tools::linearFade(&IR, true, 0, fadeinLength);
+	fp::tools::linearFade(&IR, true, 0, fadeinLength);
 
 	return IR;
 }
@@ -707,6 +707,51 @@ void FP_Convolver::shifteroo(AudioSampleBuffer* buffer){
 	}
 	
 	*buffer = newBuf;
+}
+
+
+AudioSampleBuffer FP_Convolver::IRtoRealFFTRaw (AudioSampleBuffer& buffer, int irPartSize){
+	int bufcount = buffer.getNumSamples()/irPartSize + 1;
+	int N = irPartSize * 2; // actually also needs -1 but no one cares
+	
+	FP_Convolver convolver;
+	FP_CircularBufferArray array (bufcount, 1, N);
+	FP_ParallelBufferPrinter printer;
+	
+	// divide buffer into buffers with size fftBufferSize, fft separately, replace im(0) with re(N/2), place into bufferarray
+	int bufferSample = 0;
+	
+	while (bufferSample < buffer.getNumSamples()){
+		array.getWriteBufferPtr()->setSample(0, bufferSample % irPartSize, buffer.getSample(0, bufferSample));
+		bufferSample++;
+		
+		if ((bufferSample % irPartSize == 0) || (bufferSample == buffer.getNumSamples())){
+			AudioSampleBuffer fft (convolver.fftTransform(*array.getWriteBufferPtr()));
+			
+			// replace im(0) with re(N/2)
+			fft.setSample(0, 1, fft.getSample(0, fft.getNumSamples()/2));
+			
+			// replace array buffer with fft version
+			for (int j = 0; j < N; j++){
+				array.getWriteBufferPtr()->setSample(0, j, fft.getSample(0, j));
+			}
+			array.incrWriteIndex();
+		}
+	}
+	
+	AudioSampleBuffer cons (array.consolidate());
+	
+	// output floats
+	std::ofstream fout ("/Users/flixor/Desktop/IR.txt");
+	for(int i = 0; i < cons.getNumSamples(); i++){
+		if (i % 8 == 0) fout << '\n';
+		if (i % N == 0) fout << '\n';
+		fout << cons.getSample(0, i) << ", ";
+	}
+	fout.close();
+	
+	
+	return cons;
 }
 
 

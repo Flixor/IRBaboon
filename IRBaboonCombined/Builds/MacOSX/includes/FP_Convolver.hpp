@@ -12,7 +12,8 @@
 
 #include <FP_general.h>
 #include <JuceHeader.h>
-#include "FP_Tools.hpp"
+#include "FP_Tools_nstest.hpp"
+#include "FP_CircularBufferArray.hpp"
 #include "FP_ParallelBufferPrinter.hpp"
 
 
@@ -66,7 +67,11 @@ public:
 	/* puts the second half of the buffer in front of the first half
 	 * if uneven: 2nd half has 1 sample less than 1st half */
 	void shifteroo (AudioSampleBuffer* buffer);
+
 	
+	// For ARM convolution
+	// IR -> FFT -> format {0, N/2, re(1), im(1), ..., im((N/2)-1)} -> export (close to) raw bytes
+	AudioSampleBuffer IRtoRealFFTRaw (AudioSampleBuffer& buffer, int fftBufferSize);
 
 
 private:

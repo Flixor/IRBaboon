@@ -13,9 +13,9 @@
 #include <FP_general.h>
 #include <JuceHeader.h>
 
+#include "FP_Tools_nstest.hpp"
 #include "FP_ParallelBufferPrinter.hpp"
 #include "FP_Convolver.hpp"
-#include "FP_Tools.hpp"
 #include "FP_ExpSineSweep.hpp"
 #include "FP_CircularBufferArray.hpp"
 
@@ -91,7 +91,7 @@ public:
 	void setPlayUnprocessed();
 	void setPlayInvFilt();
 	
-	// Print and thumbnail thread
+	/* Print and thumbnail thread */
 	void run() override;
 	void saveIRref();
 	void saveIRcurr();
@@ -143,7 +143,7 @@ private:
 	int silenceBeginningLengthSamples = 4096;
 	int silenceEndLengthSamples = 16384;
 	/* total samples = 4 * 32786 = 131072 */
-	int totalSweepBreakSamples = 4 * FP_Tools::nextPowerOfTwo(silenceBeginningLengthSamples + silenceEndLengthSamples + 1);
+	int totalSweepBreakSamples = 4 * fp::tools::nextPowerOfTwo(silenceBeginningLengthSamples + silenceEndLengthSamples + 1);
 	int sweepLengthSamples = totalSweepBreakSamples - silenceBeginningLengthSamples - silenceEndLengthSamples;
 	
 	int samplesWaitBeforeInputCapture = 2048; // 12 * 256

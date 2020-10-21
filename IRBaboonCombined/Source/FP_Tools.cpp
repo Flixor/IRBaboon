@@ -11,8 +11,6 @@
 #include <FP_general.h>
 
 #include "FP_Tools.hpp"
-#include "FP_Convolver.hpp"
-#include "FP_CircularBufferArray.hpp"
 
 
 void FP_Tools::sumToMono(AudioSampleBuffer* buffer){

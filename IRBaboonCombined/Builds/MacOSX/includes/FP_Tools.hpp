@@ -12,6 +12,9 @@
 #include <FP_general.h>
 #include <JuceHeader.h>
 
+#include "FP_Convolver.hpp"
+#include "FP_CircularBufferArray.hpp"
+
 
 class FP_Tools {
 public:

@@ -12,6 +12,8 @@
 #include "PluginEditor.h"
 
 
+
+
 double DecibelSlider::getValueFromText (const String& text){
 	double minusInfinitydB = -100.0;
 	String decibelText = text.upToFirstOccurrenceOf ("dB", false, false).trim();
@@ -40,7 +42,7 @@ AutoKalibraDemoAudioProcessorEditor::AutoKalibraDemoAudioProcessorEditor (AutoKa
     setSize (750, 750);
 	
 	
-	// capture& play buttons
+	/* capture & play buttons */
 	addAndMakeVisible (&captureReferenceButton);
 	addAndMakeVisible (&captureCurrentButton);
 	addAndMakeVisible (&captureThdnButton);
