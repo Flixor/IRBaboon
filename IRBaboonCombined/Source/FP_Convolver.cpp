@@ -5,7 +5,7 @@
 //  Created by Felix Postma on 22/03/2019.
 //
 
-#include "../includes/FP_Convolver.hpp"
+#include "FP_Convolver.hpp"
 
 
 

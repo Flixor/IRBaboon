@@ -12,11 +12,11 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
-#include "/Users/flixor/Projects/IRBaboon/IRBaboonCombined/Builds/MacOSX/includes/FP_ParallelBufferPrinter.hpp"
-#include "/Users/flixor/Documents/Audio Ease/HelperTools/FP_Convolver.hpp"
-#include "/Users/flixor/Documents/Audio Ease/HelperTools/FP_Tools.hpp"
-#include "/Users/flixor/Documents/Audio Ease/HelperTools/FP_ExpSineSweep.hpp"
-#include "/Users/flixor/Documents/Audio Ease/HelperTools/FP_CircularBufferArray.hpp"
+#include "FP_ParallelBufferPrinter.hpp"
+#include "FP_Convolver.hpp"
+#include "FP_Tools.hpp"
+#include "FP_ExpSineSweep.hpp"
+#include "FP_CircularBufferArray.hpp"
 
 /*
  * Coped straight from Juce decibel slider tutorial
