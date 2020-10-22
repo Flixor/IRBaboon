@@ -69,17 +69,17 @@ public:
 	void divideSweepBufIntoArray();
 	void divideThdnSigBufIntoArray();
 
-	void startCaptureReference();
-	void startCaptureCurrent();
+	void startCaptureTarg();
+	void startCaptureBase();
 	void startCaptureThdn();
 
-	AudioSampleBuffer createTargetOrCurrentIR(AudioSampleBuffer& numeratorBuf, AudioSampleBuffer& denominatorBuf);
+	AudioSampleBuffer createTargetOrBaseIR(AudioSampleBuffer& numeratorBuf, AudioSampleBuffer& denominatorBuf);
 	AudioSampleBuffer createMakeupIR();
 	
 	int getTotalSweepBreakSamples();
 	int getMakeupIRLengthSamples();
 	int getSamplerate();
-	bool invFiltReady();
+	bool filtReady();
 	AudioSampleBuffer getMakeupIR();
 	
 	void setPlayUnprocessed();
@@ -87,23 +87,23 @@ public:
 	
 	/* Print and thumbnail thread */
 	void run() override;
-	void saveIRref();
-	void saveIRcurr();
+	void saveIRTarg();
+	void saveIRBase();
 	void exportThdn();
 	std::string getDateTimeString();
 	void printDebug();
 	std::string getPrintDirectoryDebug();
 	std::string getSavedIRExtension();
 	
-	void setReferenceZoomdB(float dB);
-	void setCurrentZoomdB(float dB);
-	void setInvfiltZoomdB(float dB);
+	void setZoomTarg(float dB);
+	void setZoomBase(float dB);
+	void setZoomFilt(float dB);
 	void setOutputVolume(float dB);
 	
-	void setNullifyPhaseInvfilt(bool nullifyPhase);
-	void setNullifyAmplitudeInvfilt(bool nullifyAmplitude);
+	void setNullifyPhaseFilt(bool nullifyPhase);
+	void setNullifyAmplFilt(bool nullifyAmplitude);
 	void setMakeupSize(int makeupSize);
-	void swapTargetAndCurrent();
+	void swapTargetBase();
 	void loadTarget(File file);
 
     //==============================================================================
@@ -228,6 +228,7 @@ private:
 	dsp::FFT *fftIR, *fftForward, *fftInverse;
 	AudioSampleBuffer inplaceBuffer;
 	AudioSampleBuffer overlapBuffer;
+	
 	CircularBufferArray convResultBufferArray;
 	CircularBufferArray outputBufferArray;
 	CircularBufferArray bypassOutputBufferArray;

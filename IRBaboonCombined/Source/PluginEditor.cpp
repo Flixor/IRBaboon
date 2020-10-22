@@ -118,7 +118,7 @@ AutoKalibraDemoAudioProcessorEditor::AutoKalibraDemoAudioProcessorEditor (AutoKa
 	addAndMakeVisible(&referenceZoomSlider);
 	referenceZoomSlider.setRange(-6, 60);
 	referenceZoomSlider.setValue(0.0);
-	referenceZoomSlider.onValueChange = [this] { processor.setReferenceZoomdB(referenceZoomSlider.getValue()); };
+	referenceZoomSlider.onValueChange = [this] { processor.setZoomTarg(referenceZoomSlider.getValue()); };
 
 	addAndMakeVisible(referenceZoomSliderLabel);
 	referenceZoomSliderLabel.setText("Target zoom [dB]", dontSendNotification);
@@ -127,7 +127,7 @@ AutoKalibraDemoAudioProcessorEditor::AutoKalibraDemoAudioProcessorEditor (AutoKa
 	addAndMakeVisible(&currentZoomSlider);
 	currentZoomSlider.setRange(-6, 60);
 	currentZoomSlider.setValue(0.0);
-	currentZoomSlider.onValueChange = [this] { processor.setCurrentZoomdB(currentZoomSlider.getValue()); };
+	currentZoomSlider.onValueChange = [this] { processor.setZoomBase(currentZoomSlider.getValue()); };
 	
 	addAndMakeVisible(currentZoomSliderLabel);
 	currentZoomSliderLabel.setText("Base zoom [dB]", dontSendNotification);
@@ -136,7 +136,7 @@ AutoKalibraDemoAudioProcessorEditor::AutoKalibraDemoAudioProcessorEditor (AutoKa
 	addAndMakeVisible(&InvfiltZoomSlider);
 	InvfiltZoomSlider.setRange(-60, 36);
 	InvfiltZoomSlider.setValue(0.0);
-	InvfiltZoomSlider.onValueChange = [this] { processor.setInvfiltZoomdB(InvfiltZoomSlider.getValue()); };
+	InvfiltZoomSlider.onValueChange = [this] { processor.setZoomFilt(InvfiltZoomSlider.getValue()); };
 	
 	addAndMakeVisible(InvfiltZoomSliderLabel);
 	InvfiltZoomSliderLabel.setText("Filter zoom [dB]", dontSendNotification);
@@ -159,11 +159,11 @@ AutoKalibraDemoAudioProcessorEditor::AutoKalibraDemoAudioProcessorEditor (AutoKa
 	
 	addAndMakeVisible (&nullifyPhaseButton);
 	nullifyPhaseButton.setToggleState(true, dontSendNotification);
-	nullifyPhaseButton.onClick = [this] { processor.setNullifyPhaseInvfilt(!nullifyPhaseButton.getToggleState()); }; // NEGATIVE because GUI implies activation, but functions are implemented as 'nullify'... code needs to be more clear
+	nullifyPhaseButton.onClick = [this] { processor.setNullifyPhaseFilt(!nullifyPhaseButton.getToggleState()); }; // NEGATIVE because GUI implies activation, but functions are implemented as 'nullify'... code needs to be more clear
 	
 	addAndMakeVisible(&nullifyAmplitudeButton);
 	nullifyAmplitudeButton.setToggleState(true, dontSendNotification);
-	nullifyAmplitudeButton.onClick = [this] { processor.setNullifyAmplitudeInvfilt(!nullifyAmplitudeButton.getToggleState()); }; // NEGATIVE because GUI implies activation, but functions are implemented as 'nullify'... code needs to be more clear
+	nullifyAmplitudeButton.onClick = [this] { processor.setNullifyAmplFilt(!nullifyAmplitudeButton.getToggleState()); }; // NEGATIVE because GUI implies activation, but functions are implemented as 'nullify'... code needs to be more clear
 	
 	addAndMakeVisible(&makeupSizeMenu);
 	makeupSizeMenu.addItem("128", 1);
@@ -181,7 +181,7 @@ AutoKalibraDemoAudioProcessorEditor::AutoKalibraDemoAudioProcessorEditor (AutoKa
 
 	
 	addAndMakeVisible (&swapButton);
-	swapButton.onClick = [this] { processor.swapTargetAndCurrent(); };
+	swapButton.onClick = [this] { processor.swapTargetBase(); };
 	
 	addAndMakeVisible (&loadTargetButton);
 	loadTargetButton.onClick = [this] { loadTargetClicked(); };
@@ -194,7 +194,7 @@ AutoKalibraDemoAudioProcessorEditor::~AutoKalibraDemoAudioProcessorEditor()
 
 
 void AutoKalibraDemoAudioProcessorEditor::setStartCaptureReference(){
-	processor.startCaptureReference();
+	processor.startCaptureTarg();
 	captureCurrentButton.setVisible(false);
 	captureThdnButton.setVisible(false);
 	int ms = std::ceil( 1000 * ((float) processor.getTotalSweepBreakSamples()) / ((float) processor.getSamplerate()) );
@@ -203,7 +203,7 @@ void AutoKalibraDemoAudioProcessorEditor::setStartCaptureReference(){
 }
 
 void AutoKalibraDemoAudioProcessorEditor::setStartCaptureCurrent(){
-	processor.startCaptureCurrent();
+	processor.startCaptureBase();
 	captureReferenceButton.setVisible(false);
 	captureThdnButton.setVisible(false);
 	int ms = std::ceil( 1000 * ((float) processor.getTotalSweepBreakSamples()) / ((float) processor.getSamplerate()) );
@@ -223,7 +223,7 @@ void AutoKalibraDemoAudioProcessorEditor::setStartCaptureThdn(){
 
 void AutoKalibraDemoAudioProcessorEditor::timerCallback(){
 	// invfilt button
-	if (processor.invFiltReady()){
+	if (processor.filtReady()){
 		playInvFiltAudioButton.setVisible(true);
 		makeupSizeMenu.setVisible(true);
 	}

@@ -332,7 +332,7 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 				 * a 3 buffers-to-the-right offset was used before, but actually 0 seems to work fine now too. */
 				inputConsolidated.makeCopyOf (inputCaptureArray.consolidate(0));
 				
-				IRTargRefPtr->getAudioSampleBuffer()->makeCopyOf(createTargetOrCurrentIR(inputConsolidated, sweepBufForDeconv));
+				IRTargRefPtr->getAudioSampleBuffer()->makeCopyOf(createTargetOrBaseIR(inputConsolidated, sweepBufForDeconv));
 				sweepTargRefPtr->getAudioSampleBuffer()->makeCopyOf(inputConsolidated);
 				
 				IRTarg = *(IRTargRefPtr->getAudioSampleBuffer());
@@ -343,7 +343,7 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 				
 				inputConsolidated.makeCopyOf (inputCaptureArray.consolidate(0));
 				
-				IRBaseRefPtr->getAudioSampleBuffer()->makeCopyOf(createTargetOrCurrentIR(inputConsolidated, sweepBufForDeconv));
+				IRBaseRefPtr->getAudioSampleBuffer()->makeCopyOf(createTargetOrBaseIR(inputConsolidated, sweepBufForDeconv));
 				sweepBaseRefPtr->getAudioSampleBuffer()->makeCopyOf(inputConsolidated);
 				
 				IRBase = *(IRBaseRefPtr->getAudioSampleBuffer());
@@ -680,14 +680,14 @@ void AutoKalibraDemoAudioProcessor::divideThdnSigBufIntoArray(){
 }
 
 
-void AutoKalibraDemoAudioProcessor::startCaptureReference(){
+void AutoKalibraDemoAudioProcessor::startCaptureTarg(){
 	captureTarget = true;
 	buffersWaitForInputCapture = samplesWaitBeforeInputCapture / processBlockSize;
 	needToFadeout = true;
 }
 
 
-void AutoKalibraDemoAudioProcessor::startCaptureCurrent(){
+void AutoKalibraDemoAudioProcessor::startCaptureBase(){
 	captureBase = true;
 	buffersWaitForInputCapture = samplesWaitBeforeInputCapture / processBlockSize;
 	needToFadeout = true;
@@ -701,7 +701,7 @@ void AutoKalibraDemoAudioProcessor::startCaptureThdn(){
 }
 
 
-AudioSampleBuffer AutoKalibraDemoAudioProcessor::createTargetOrCurrentIR(AudioSampleBuffer& numeratorBuf, AudioSampleBuffer& denominatorBuf){
+AudioSampleBuffer AutoKalibraDemoAudioProcessor::createTargetOrBaseIR(AudioSampleBuffer& numeratorBuf, AudioSampleBuffer& denominatorBuf){
 	return convolver::deconvolveNonPeriodic2(numeratorBuf, denominatorBuf, sampleRate, true, false);
 }
 
@@ -738,7 +738,7 @@ int AutoKalibraDemoAudioProcessor::getSamplerate(){
 }
 
 
-bool AutoKalibraDemoAudioProcessor::invFiltReady(){
+bool AutoKalibraDemoAudioProcessor::filtReady(){
 	return (IRFilt.getNumSamples() > 0);
 }
 
@@ -764,10 +764,10 @@ void AutoKalibraDemoAudioProcessor::setPlayInvFilt(){
 void AutoKalibraDemoAudioProcessor::run() {
 	while (! threadShouldExit()) {
 		if (saveIRTargFlag) {
-			saveIRref();
+			saveIRTarg();
 		}
 		if (saveIRBaseFlag) {
-			saveIRcurr();
+			saveIRBase();
 		}
 		if (exportThdnFlag) {
 			exportThdn();
@@ -787,7 +787,7 @@ void AutoKalibraDemoAudioProcessor::run() {
 
 
 
-void AutoKalibraDemoAudioProcessor::saveIRref(){
+void AutoKalibraDemoAudioProcessor::saveIRTarg(){
 
 	std::string name = "IR target ";
 	std::string date = getDateTimeString();
@@ -811,7 +811,7 @@ void AutoKalibraDemoAudioProcessor::saveIRref(){
 
 
 
-void AutoKalibraDemoAudioProcessor::saveIRcurr(){
+void AutoKalibraDemoAudioProcessor::saveIRBase(){
 	
 	std::string name = "IR current ";
 	std::string date = getDateTimeString();
@@ -956,19 +956,19 @@ std::string AutoKalibraDemoAudioProcessor::getSavedIRExtension(){
 }
 
 
-void AutoKalibraDemoAudioProcessor::setReferenceZoomdB(float dB){
+void AutoKalibraDemoAudioProcessor::setZoomTarg(float dB){
 	zoomTargdB = dB;
 	notify();
 }
 
 
-void AutoKalibraDemoAudioProcessor::setCurrentZoomdB(float dB){
+void AutoKalibraDemoAudioProcessor::setZoomBase(float dB){
 	zoomBasedB = dB;
 	notify();
 }
 
 
-void AutoKalibraDemoAudioProcessor::setInvfiltZoomdB(float dB){
+void AutoKalibraDemoAudioProcessor::setZoomFilt(float dB){
 	zoomFiltdB = dB;
 	notify();
 }
@@ -980,7 +980,7 @@ void AutoKalibraDemoAudioProcessor::setOutputVolume(float dB){
 }
 
 
-void AutoKalibraDemoAudioProcessor::setNullifyPhaseInvfilt(bool nullifyPhase){
+void AutoKalibraDemoAudioProcessor::setNullifyPhaseFilt(bool nullifyPhase){
 	nullifyPhaseFilt = nullifyPhase;
 	
 	if (IRTarg.getNumSamples() > 0 && IRBase.getNumSamples() > 0){
@@ -992,7 +992,7 @@ void AutoKalibraDemoAudioProcessor::setNullifyPhaseInvfilt(bool nullifyPhase){
 }
 
 
-void AutoKalibraDemoAudioProcessor::setNullifyAmplitudeInvfilt(bool nullifyAmplitude){
+void AutoKalibraDemoAudioProcessor::setNullifyAmplFilt(bool nullifyAmplitude){
 	nullifyAmplFilt = nullifyAmplitude;
 	
 	if (IRTarg.getNumSamples() > 0 && IRBase.getNumSamples() > 0){
@@ -1016,7 +1016,7 @@ void AutoKalibraDemoAudioProcessor::setMakeupSize(int makeupSize){
 }
 
 
-void AutoKalibraDemoAudioProcessor::swapTargetAndCurrent(){
+void AutoKalibraDemoAudioProcessor::swapTargetBase(){
 	
 	// swap around
 	AudioSampleBuffer savedSweep (*(sweepTargRefPtr->getAudioSampleBuffer()));
