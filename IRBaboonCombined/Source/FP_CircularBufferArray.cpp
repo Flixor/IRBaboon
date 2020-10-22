@@ -5,7 +5,7 @@
 //  Created by Felix Postma on 14/03/2019.
 //
 
-#include <FP_general.h>
+#include <fp_general.h>
 #include "FP_CircularBufferArray.hpp"
 
 

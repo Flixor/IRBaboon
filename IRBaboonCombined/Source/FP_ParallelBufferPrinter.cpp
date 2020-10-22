@@ -9,7 +9,7 @@
 #include <iostream>
 #include <fstream>
 
-#include <FP_general.h>
+#include <fp_general.h>
 
 #define BOOST_FILESYSTEM_NO_DEPRECATED // recommended by boost
 

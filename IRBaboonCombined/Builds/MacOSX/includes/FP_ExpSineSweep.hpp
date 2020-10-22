@@ -10,9 +10,9 @@
 
 #include <stdio.h>
 
-#include <FP_general.h>
+#include <fp_general.h>
 #include <JuceHeader.h>
-#include "FP_Tools_nstest.hpp"
+#include "FP_Tools.hpp"
 
 
 class FP_ExpSineSweep {

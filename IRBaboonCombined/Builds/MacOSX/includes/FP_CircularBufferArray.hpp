@@ -10,7 +10,7 @@
 
 #include <stdio.h>
 
-#include <FP_general.h>
+#include <fp_general.h>
 #include <JuceHeader.h>
 
 
