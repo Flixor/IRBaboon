@@ -15,6 +15,8 @@
 #include "boost/algorithm/string.hpp"
 
 
+namespace fp {
+
 
 class PrintBuffer {
     
@@ -30,11 +32,11 @@ public:
 
 
 
-class FP_ParallelBufferPrinter{
+class ParallelBufferPrinter{
     
 public:
-    FP_ParallelBufferPrinter();
-    ~FP_ParallelBufferPrinter();
+    ParallelBufferPrinter();
+    ~ParallelBufferPrinter();
     
 	void appendBuffer(std::string name, AudioSampleBuffer& buffer);
 	void appendCircularBufferArray(std::string name, fp::CircularBufferArray& circularBufferArray);
@@ -63,6 +65,8 @@ private:
     std::vector<PrintBuffer> bufferArray;
     int maxBufferLength;
 };
+	
+} // fp
 
 
 #endif /* ParallelPrintBuffer_h */

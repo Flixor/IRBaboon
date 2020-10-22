@@ -43,7 +43,7 @@ AutoKalibraDemoAudioProcessor::AutoKalibraDemoAudioProcessor()
 
 	
 	// init sweep with pre and post silences
-	FP_ExpSineSweep sweeper;
+	ExpSineSweep sweeper;
 	sweeper.generate( (((float) sweepLengthSamples) + 1)/ ((float) sampleRate), sampleRate, 20.0, sampleRate/2.0, sweepLeveldB );
 	sweeper.linFadeout((11.0/12.0)*sampleRate/2.0); // fade out just under nyq
 	AudioSampleBuffer sweep (sweeper.getSweepFloat());
@@ -715,7 +715,7 @@ AudioSampleBuffer AutoKalibraDemoAudioProcessor::createMakeupIR(){
 
 	if (nullifyPhaseInvfilt) convolver.shifteroo(&makeupIR);
 	
-	FP_ParallelBufferPrinter printer;
+	ParallelBufferPrinter printer;
 	printer.appendBuffer("IRmakeup unchopped", makeupIR);
 	printer.printToWav(0, printer.getMaxBufferLength(), sampleRate, printDirectoryDebug);
 
@@ -798,7 +798,7 @@ void AutoKalibraDemoAudioProcessor::saveIRref(){
 	savebuf.copyFrom(0, 0, *(sweeprefObjectPtr->getAudioSampleBuffer()), 0, 0, totalSweepBreakSamples);
 	savebuf.copyFrom(1, 0, IRref, 0, 0, totalSweepBreakSamples);
 	
-	FP_ParallelBufferPrinter wavPrinter;
+	ParallelBufferPrinter wavPrinter;
 	wavPrinter.appendBuffer(name, savebuf);
 	wavPrinter.printToWav(0, wavPrinter.getMaxBufferLength(), sampleRate, printDirectorySavedIRs);
 	
@@ -822,7 +822,7 @@ void AutoKalibraDemoAudioProcessor::saveIRcurr(){
 	savebuf.copyFrom(0, 0, *(sweepcurrObjectPtr->getAudioSampleBuffer()), 0, 0, totalSweepBreakSamples);
 	savebuf.copyFrom(1, 0, IRcurr, 0, 0, totalSweepBreakSamples);
 	
-	FP_ParallelBufferPrinter wavPrinter;
+	ParallelBufferPrinter wavPrinter;
 	wavPrinter.appendBuffer(name, savebuf);
 	wavPrinter.printToWav(0, wavPrinter.getMaxBufferLength(), sampleRate, printDirectorySavedIRs);
 
@@ -847,7 +847,7 @@ void AutoKalibraDemoAudioProcessor::exportThdn(){
 	float *ptr = expbuf.getWritePointer(0);
 	window.multiplyWithWindowingTable(ptr, thdnExportLength);
 	
-	FP_ParallelBufferPrinter freqPrinter;
+	ParallelBufferPrinter freqPrinter;
 	AudioSampleBuffer expbuf_fft (convolver.fftTransform(expbuf));
 	freqPrinter.appendBuffer(name, expbuf_fft);
 	freqPrinter.printFreqToCsv(sampleRate, printDirectoryDebug);
@@ -867,8 +867,8 @@ std::string AutoKalibraDemoAudioProcessor::getDateTimeString(){
 
 
 void AutoKalibraDemoAudioProcessor::printDebug() {
-	FP_ParallelBufferPrinter wavPrinter;
-	FP_ParallelBufferPrinter freqPrinter;
+	ParallelBufferPrinter wavPrinter;
+	ParallelBufferPrinter freqPrinter;
 
 	// dereference the buffers
 	AudioSampleBuffer sweeprefprint (*(sweeprefObjectPtr->getAudioSampleBuffer()));

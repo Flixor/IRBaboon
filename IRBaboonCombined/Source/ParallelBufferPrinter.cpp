@@ -14,8 +14,11 @@
 #define BOOST_FILESYSTEM_NO_DEPRECATED // recommended by boost
 
 
-namespace fs = boost::filesystem;
 
+
+namespace fp {
+
+namespace fs = boost::filesystem;
 
 //=============================================================
 /*
@@ -49,17 +52,17 @@ PrintBuffer::~PrintBuffer(){
  * ParallelBufferPrinter
  */
 
-FP_ParallelBufferPrinter::FP_ParallelBufferPrinter(){
+ParallelBufferPrinter::ParallelBufferPrinter(){
     maxBufferLength = 0;
 };
 
 
-FP_ParallelBufferPrinter::~FP_ParallelBufferPrinter(){
+ParallelBufferPrinter::~ParallelBufferPrinter(){
     bufferArray.clear ();
  };
 
 
-void FP_ParallelBufferPrinter::appendBuffer(std::string name, AudioSampleBuffer& buffer) {
+void ParallelBufferPrinter::appendBuffer(std::string name, AudioSampleBuffer& buffer) {
 
     bufferArray.push_back({name, buffer});
 
@@ -72,7 +75,7 @@ void FP_ParallelBufferPrinter::appendBuffer(std::string name, AudioSampleBuffer&
 };
 
 
-void FP_ParallelBufferPrinter::appendCircularBufferArray(std::string name, CircularBufferArray& circularBufferArray) {
+void ParallelBufferPrinter::appendCircularBufferArray(std::string name, CircularBufferArray& circularBufferArray) {
 	
 	int savedReadIndex = circularBufferArray.getReadIndex();
 	circularBufferArray.setReadIndex(0);
@@ -88,7 +91,7 @@ void FP_ParallelBufferPrinter::appendCircularBufferArray(std::string name, Circu
 }
 
 
-void FP_ParallelBufferPrinter::insertBuffer(std::string name, AudioSampleBuffer& buffer, int insertIndex){
+void ParallelBufferPrinter::insertBuffer(std::string name, AudioSampleBuffer& buffer, int insertIndex){
     auto it = bufferArray.begin() + insertIndex;
     PrintBuffer p (name, buffer);
     
@@ -106,7 +109,7 @@ void FP_ParallelBufferPrinter::insertBuffer(std::string name, AudioSampleBuffer&
 
 
 
-void FP_ParallelBufferPrinter::printToConsole(int startSample, int numSamples, bool onlyCh0, bool displaydB) {
+void ParallelBufferPrinter::printToConsole(int startSample, int numSamples, bool onlyCh0, bool displaydB) {
     
     if(startSample > maxBufferLength){
         printf("ParallelBufferPrinter::printAll(): startSample exceeds maximum buffer length.\n");
@@ -201,7 +204,7 @@ void FP_ParallelBufferPrinter::printToConsole(int startSample, int numSamples, b
 
 
 
-void FP_ParallelBufferPrinter::printToWav(int startSample, int numSamples, int sampleRate, String directoryNameFullPath) {
+void ParallelBufferPrinter::printToWav(int startSample, int numSamples, int sampleRate, String directoryNameFullPath) {
 
 	if(startSample > maxBufferLength){
 		printf("ParallelBufferPrinter::printAll(): startSample exceeds maximum buffer length.\n");
@@ -220,7 +223,7 @@ void FP_ParallelBufferPrinter::printToWav(int startSample, int numSamples, int s
 	}
 	
 	if (directoryNameFullPath == "-"){
-		directoryNameFullPath = "/Users/flixor/Documents/Audio Ease/FP_ParallelBufferPrinter";
+		directoryNameFullPath = "/Users/flixor/Documents/Audio Ease/ParallelBufferPrinter";
 	}
 
 	File wavDirectory (directoryNameFullPath);
@@ -261,7 +264,7 @@ void FP_ParallelBufferPrinter::printToWav(int startSample, int numSamples, int s
 												   );
 			}
 			else {
-				std::string str = "FP_ParallelBufferPrinter::printToWav(): writer is nullptr for buf " + std::to_string(buf) + "\n";
+				std::string str = "ParallelBufferPrinter::printToWav(): writer is nullptr for buf " + std::to_string(buf) + "\n";
 				DBG(str);
 				JUCE_BREAK_IN_DEBUGGER;
 			}
@@ -276,7 +279,7 @@ void FP_ParallelBufferPrinter::printToWav(int startSample, int numSamples, int s
 
 
 
-void FP_ParallelBufferPrinter::printFreqToCsv (int sampleRate, std::string directoryNameFullPath ){
+void ParallelBufferPrinter::printFreqToCsv (int sampleRate, std::string directoryNameFullPath ){
 	
 	double nyquist = sampleRate / 2;
 
@@ -296,7 +299,7 @@ void FP_ParallelBufferPrinter::printFreqToCsv (int sampleRate, std::string direc
 		int fftSize = bufferArray[buf].buffer.getNumSamples();
 		
 		if (!tools::isPowerOfTwo(fftSize)) {
-			String errstr ("FP_ParallelBufferPrinter::printFreqToCsv error: buffer nr");
+			String errstr ("ParallelBufferPrinter::printFreqToCsv error: buffer nr");
 			DBG(errstr + std::to_string(buf) + " size is not power of 2.");
 			continue;
 		}
@@ -343,7 +346,7 @@ void FP_ParallelBufferPrinter::printFreqToCsv (int sampleRate, std::string direc
 
 
 
-std::string FP_ParallelBufferPrinter::getVersion (std::string csvName){
+std::string ParallelBufferPrinter::getVersion (std::string csvName){
 	if (fs::exists(csvName)){
 		csvName += " +"; 	// ghetto solution lol
 		return getVersion(csvName);
@@ -352,7 +355,7 @@ std::string FP_ParallelBufferPrinter::getVersion (std::string csvName){
 }
 
 
-void FP_ParallelBufferPrinter::clearAll() {
+void ParallelBufferPrinter::clearAll() {
     while (bufferArray.size() > 0){
 		bufferArray.erase(bufferArray.begin());
     }
@@ -361,22 +364,22 @@ void FP_ParallelBufferPrinter::clearAll() {
 };
 
 
-int FP_ParallelBufferPrinter::getArraySize() {
+int ParallelBufferPrinter::getArraySize() {
     return (int) bufferArray.size();
 };
 
 
-int FP_ParallelBufferPrinter::getMaxBufferLength() {
+int ParallelBufferPrinter::getMaxBufferLength() {
     return maxBufferLength;
 };
 
 
-bool FP_ParallelBufferPrinter::getEmpty(int checkIndex) {
+bool ParallelBufferPrinter::getEmpty(int checkIndex) {
     return bufferArray[checkIndex].empty;
 };
 
 
-
+} // fp
 
 
 

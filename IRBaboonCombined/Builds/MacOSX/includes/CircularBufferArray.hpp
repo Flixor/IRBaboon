@@ -5,8 +5,8 @@
 //  Created by Felix Postma on 14/03/2019.
 //
 
-#ifndef AudioSampleBufferArray_hpp
-#define AudioSampleBufferArray_hpp
+#ifndef CircularBufferArray_hpp
+#define CircularBufferArray_hpp
 
 #include <stdio.h>
 
@@ -64,4 +64,4 @@ private:
 
 } // fp
 
-#endif /* AudioSampleBufferArray_hpp */
+#endif /* CircularBufferArray_hpp */

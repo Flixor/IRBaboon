@@ -6,8 +6,8 @@
 //  Copyright © 2020 Flixor. All rights reserved.
 //
 
-#ifndef FP_Tools_nstest_h
-#define FP_Tools_nstest_h
+#ifndef tools_h
+#define tools_h
 
 #include <stdio.h>
 
@@ -86,4 +86,4 @@ namespace tools {
 } // tools
 } // fp
 
-#endif /* FP_Tools_nstest_h */
+#endif /* tools_h */

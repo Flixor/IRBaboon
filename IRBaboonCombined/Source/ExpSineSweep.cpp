@@ -8,22 +8,24 @@
 #include <fp_general.h>
 
 
+namespace fp {
 
-FP_ExpSineSweep::FP_ExpSineSweep(){
+
+ExpSineSweep::ExpSineSweep(){
 	sweep.setSize(0, 0);
 	sweepInv.setSize(0, 0);
 }
 
 
 
-FP_ExpSineSweep::~FP_ExpSineSweep(){
+ExpSineSweep::~ExpSineSweep(){
 	// ?
 }
 
 // ===========================================================================
 
 
-void FP_ExpSineSweep::generate(double durationSecs, double sampleRate, double lowFreq, double highFreq, double dBGain){
+void ExpSineSweep::generate(double durationSecs, double sampleRate, double lowFreq, double highFreq, double dBGain){
 	
 	assignParameters(durationSecs, sampleRate, lowFreq, highFreq);
 
@@ -42,13 +44,13 @@ void FP_ExpSineSweep::generate(double durationSecs, double sampleRate, double lo
 
 
 
-AudioBuffer<double> FP_ExpSineSweep::getSweep(){
+AudioBuffer<double> ExpSineSweep::getSweep(){
 	return sweep;
 }
 
 
 
-AudioSampleBuffer FP_ExpSineSweep::getSweepFloat(){
+AudioSampleBuffer ExpSineSweep::getSweepFloat(){
 	AudioSampleBuffer floatsweep;
 	floatsweep.makeCopyOf(getSweep());
 	return floatsweep;
@@ -56,7 +58,7 @@ AudioSampleBuffer FP_ExpSineSweep::getSweepFloat(){
 
 
 
-void FP_ExpSineSweep::generateInv(){
+void ExpSineSweep::generateInv(){
 	
 	if (sweep.getNumSamples() == 0){
 		DBG("ExpSineSweep::generateInv(): seems like generate() has not been used first to create sweep attribute. \n");
@@ -80,7 +82,7 @@ void FP_ExpSineSweep::generateInv(){
 
 
 
-void FP_ExpSineSweep::generateInv(double durationSecs, double sampleRate, double lowFreq, double highFreq, double dBGain){
+void ExpSineSweep::generateInv(double durationSecs, double sampleRate, double lowFreq, double highFreq, double dBGain){
 	
 	generate(durationSecs, sampleRate, lowFreq, highFreq, dBGain);
 	generateInv();
@@ -88,13 +90,13 @@ void FP_ExpSineSweep::generateInv(double durationSecs, double sampleRate, double
 
 
 
-AudioBuffer<double> FP_ExpSineSweep::getSweepInv(){
+AudioBuffer<double> ExpSineSweep::getSweepInv(){
 	return sweepInv;
 }
 
 
 
-AudioSampleBuffer FP_ExpSineSweep::getSweepInvFloat(){
+AudioSampleBuffer ExpSineSweep::getSweepInvFloat(){
 	AudioSampleBuffer floatsweep;
 	floatsweep.makeCopyOf(getSweepInv());
 	return floatsweep;
@@ -102,7 +104,7 @@ AudioSampleBuffer FP_ExpSineSweep::getSweepInvFloat(){
 
 
 
-int FP_ExpSineSweep::getSampleIndexAtFreq (double freq){
+int ExpSineSweep::getSampleIndexAtFreq (double freq){
 	
 	if(sweep.getNumSamples() == 0){
 		DBG("sweep has not been generated yet. Try overloaded function? \n");
@@ -114,7 +116,7 @@ int FP_ExpSineSweep::getSampleIndexAtFreq (double freq){
 }
 
 
-int FP_ExpSineSweep::getSampleIndexAtFreq (double freq, double durationSecs, double sampleRate, double lowFreq, double highFreq){
+int ExpSineSweep::getSampleIndexAtFreq (double freq, double durationSecs, double sampleRate, double lowFreq, double highFreq){
 	
 	assignParameters(durationSecs, sampleRate, lowFreq, highFreq);
 	
@@ -123,7 +125,7 @@ int FP_ExpSineSweep::getSampleIndexAtFreq (double freq, double durationSecs, dou
 
 
 
-double FP_ExpSineSweep::getFreqAtSampleIndex(int index){
+double ExpSineSweep::getFreqAtSampleIndex(int index){
 	
 	if(sweep.getNumSamples() == 0){
 		DBG("sweep has not been generated yet. Try overloaded function? \n");
@@ -135,7 +137,7 @@ double FP_ExpSineSweep::getFreqAtSampleIndex(int index){
 
 
 
-double FP_ExpSineSweep::getFreqAtSampleIndex(int index, double durationSecs, double sampleRate, double lowFreq, double highFreq){
+double ExpSineSweep::getFreqAtSampleIndex(int index, double durationSecs, double sampleRate, double lowFreq, double highFreq){
 	
 	assignParameters(durationSecs, sampleRate, lowFreq, highFreq);
 
@@ -144,7 +146,7 @@ double FP_ExpSineSweep::getFreqAtSampleIndex(int index, double durationSecs, dou
 
 
 
-void FP_ExpSineSweep::linFadeout (double freq){
+void ExpSineSweep::linFadeout (double freq){
 	
 	if(sweep.getNumSamples() == 0){
 		DBG("Sweep has not been generated yet. \n");
@@ -165,7 +167,7 @@ void FP_ExpSineSweep::linFadeout (double freq){
 
 
 
-void FP_ExpSineSweep::dBFadeout (double freq){
+void ExpSineSweep::dBFadeout (double freq){
 	
 	if(sweep.getNumSamples() == 0){
 		DBG("Sweep has not been generated yet. \n");
@@ -191,7 +193,7 @@ void FP_ExpSineSweep::dBFadeout (double freq){
 
 
 
-void FP_ExpSineSweep::brickwallFadeout (double freq){
+void ExpSineSweep::brickwallFadeout (double freq){
 	
 	if(sweep.getNumSamples() == 0){
 		DBG("Sweep has not been generated yet. \n");
@@ -209,7 +211,7 @@ void FP_ExpSineSweep::brickwallFadeout (double freq){
 // Private
 // ====================================================================
 
-void FP_ExpSineSweep::assignParameters(double durationSecs, double sampleRate, double lowFreq, double highFreq){
+void ExpSineSweep::assignParameters(double durationSecs, double sampleRate, double lowFreq, double highFreq){
 	SR = sampleRate;
 	T = SR * durationSecs;
 	w1 = lowFreq / SR * 2 * M_PI;
@@ -220,7 +222,7 @@ void FP_ExpSineSweep::assignParameters(double durationSecs, double sampleRate, d
 }
 
 
-double FP_ExpSineSweep::getFreqAtSampleIndexHelper(int index){
+double ExpSineSweep::getFreqAtSampleIndexHelper(int index){
 	
 	if(index < 0 || index >= (int) T){
 		DBG("index out of bounds. \n");
@@ -236,7 +238,7 @@ double FP_ExpSineSweep::getFreqAtSampleIndexHelper(int index){
 }
 
 
-int FP_ExpSineSweep::getSampleHelper(double freq){
+int ExpSineSweep::getSampleHelper(double freq){
 	
 	double lowFreq = (w1 * SR / (2 * M_PI));
 	double oct = log(freq / lowFreq) / log(2);
@@ -252,3 +254,5 @@ int FP_ExpSineSweep::getSampleHelper(double freq){
 	
 	return t_rounded;
 }
+	
+} // fp

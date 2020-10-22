@@ -1,5 +1,5 @@
 //
-//  FP_Tools_nstest.cpp
+//  Tools_nstest.cpp
 //  IRBaboon - Shared Code
 //
 //  Created by Felix Postma on 22/10/2020.
@@ -206,7 +206,7 @@ namespace tools {
 	void roundToZero(float* x, float threshold){
 		
 		if (threshold < 0.0f){
-			DBG("FP_tools::roundToZero error: threshold should be positive\n");
+			DBG("tools::roundToZero error: threshold should be positive\n");
 			return;
 		}
 		

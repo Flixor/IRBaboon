@@ -5,8 +5,8 @@
 //  Created by Felix Postma on 21/03/2019.
 //
 
-#ifndef FP_ExpSineSweep_hpp
-#define FP_ExpSineSweep_hpp
+#ifndef ExpSineSweep_hpp
+#define ExpSineSweep_hpp
 
 #include <stdio.h>
 
@@ -14,12 +14,13 @@
 #include <JuceHeader.h>
 
 
+namespace fp {
 
-class FP_ExpSineSweep {
+class ExpSineSweep {
 
 public:
-	FP_ExpSineSweep();
-	~FP_ExpSineSweep();
+	ExpSineSweep();
+	~ExpSineSweep();
 
 	// Farina 2000 exp sweep method
 	void generate(double durationSecs, double sampleRate, double lowFreq, double highFreq, double dBGain);
@@ -60,7 +61,7 @@ private:
 	AudioBuffer<double> sweepInv;
 };
 
+} // fp
 
-
-#endif /* FP_ExpSineSweep_hpp */
+#endif /* ExpSineSweep_hpp */
 

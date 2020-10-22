@@ -179,7 +179,7 @@ private:
 	ReferenceCountedBuffer::Ptr IRinvfiltObjectPtr;
 	AudioSampleBuffer IRpulse;
 	AudioSampleBuffer* IRtoConvolve;
-	FP_Convolver convolver;
+	Convolver convolver;
 	
 	bool playUnprocessed = true;
 	bool playInvFilt = false;
@@ -243,7 +243,7 @@ private:
 	
 
 	// ====== debug ==========
-	FP_ParallelBufferPrinter printer;
+	ParallelBufferPrinter printer;
 	
 
 

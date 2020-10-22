@@ -6,15 +6,15 @@
 //  Copyright © 2020 Flixor. All rights reserved.
 //
 
-#ifndef FP_general_h
-#define FP_general_h
+#ifndef fp_general_h
+#define fp_general_h
 
 
-#include "FP_Tools.hpp"
-#include "FP_CircularBufferArray.hpp"
-#include "FP_ParallelBufferPrinter.hpp"
-#include "FP_Convolver.hpp"
-#include "FP_ExpSineSweep.hpp"
+#include "tools.hpp"
+#include "CircularBufferArray.hpp"
+#include "ParallelBufferPrinter.hpp"
+#include "Convolver.hpp"
+#include "ExpSineSweep.hpp"
 
 using namespace fp;
 
@@ -24,4 +24,4 @@ using namespace fp;
 #define BREAK JUCE_BREAK_IN_DEBUGGER
 
 
-#endif /* FP_general_h */
+#endif /* fp_general_h */

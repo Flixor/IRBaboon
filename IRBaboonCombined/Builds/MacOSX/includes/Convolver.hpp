@@ -1,12 +1,12 @@
 //
-//  FP_Convolver.hpp
+//  Convolver.hpp
 //  SineSweepGeneration - ConsoleApp
 //
 //  Created by Felix Postma on 22/03/2019.
 //
 
-#ifndef FP_Convolver_hpp
-#define FP_Convolver_hpp
+#ifndef Convolver_hpp
+#define Convolver_hpp
 
 #include <stdio.h>
 
@@ -14,12 +14,13 @@
 #include <JuceHeader.h>
 
 
+namespace fp {
 
-class FP_Convolver {
+class Convolver {
 	
 public:
-	FP_Convolver();
-	~FP_Convolver();
+	Convolver();
+	~Convolver();
 	
 	/*
 	 * In the convolve methods buffer1 is seen as "input audio" and buffer2 as the "IR" to convolve with
@@ -88,5 +89,7 @@ private:
 	float smoothPerAvg = 1.0/13.0;
 
 };
+	
+} // fp
 
-#endif /* FP_Convolver_hpp */
+#endif /* Convolver_hpp */
