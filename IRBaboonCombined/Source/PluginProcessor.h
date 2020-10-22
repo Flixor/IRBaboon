@@ -160,28 +160,28 @@ private:
 	int thdnExportLength = 8192;
 
 	int makeupIRLengthSamples = 2048;
-	bool captureReference = false;
-	bool captureCurrent = false;
+	bool captureTarget = false;
+	bool captureBase = false;
 	bool captureThdn = false;
 	bool captureInput = false;
-	bool inputIsReference = false;
-	bool inputIsCurrent = false;
+	bool inputIsTarget = false;
+	bool inputIsBase = false;
 	bool inputIsThdn = false;
 
 	AudioSampleBuffer thdnRecBuf;
-	ReferenceCountedBuffer::Ptr sweeprefObjectPtr;
-	ReferenceCountedBuffer::Ptr sweepcurrObjectPtr;
-	AudioSampleBuffer IRref;
-	ReferenceCountedBuffer::Ptr IRrefObjectPtr;
-	AudioSampleBuffer IRcurr;
-	ReferenceCountedBuffer::Ptr IRcurrObjectPtr;
-	AudioSampleBuffer IRinvfilt;
-	ReferenceCountedBuffer::Ptr IRinvfiltObjectPtr;
+	ReferenceCountedBuffer::Ptr sweepTargRefPtr;
+	ReferenceCountedBuffer::Ptr sweepBaseRefPtr;
+	AudioSampleBuffer IRTarg;
+	ReferenceCountedBuffer::Ptr IRTargRefPtr;
+	AudioSampleBuffer IRBase;
+	ReferenceCountedBuffer::Ptr IRBaseRefPtr;
+	AudioSampleBuffer IRFilt;
+	ReferenceCountedBuffer::Ptr IRFiltRefPtr;
 	AudioSampleBuffer IRpulse;
 	AudioSampleBuffer* IRtoConvolve;
 	
 	bool playUnprocessed = true;
-	bool playInvFilt = false;
+	bool playFiltered = false;
 	
 	int generalInputAudioChannels = 2;
 	int inputCaptureChannel = 2;
@@ -202,16 +202,16 @@ private:
 	std::string printDirectorySavedIRs = "~/Documents/Super MakeupFilteraarder 2027/Saved IRs";
 	std::string savedIRExtension = ".sweepandir";
 
-	bool saveIRrefFlag = false;
-	bool saveIRcurrFlag = false;
+	bool saveIRTargFlag = false;
+	bool saveIRBaseFlag = false;
 	bool exportThdnFlag = false;
 
-	float referenceZoomdB = 0.0;
-	float currentZoomdB = 0.0;
-	float invfiltZoomdB = 0.0;
+	float zoomTargdB = 0.0;
+	float zoomBasedB = 0.0;
+	float zoomFiltdB = 0.0;
 	
-	bool nullifyPhaseInvfilt = false;
-	bool nullifyAmplitudeInvfilt = false;
+	bool nullifyPhaseFilt = false;
+	bool nullifyAmplFilt = false;
 
 	
 	

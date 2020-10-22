@@ -333,8 +333,8 @@ AudioBuffer<float> convolveNonPeriodic(AudioSampleBuffer& buffer1, AudioSampleBu
 							   irFftPtr[i],
 							   irFftPtr[i + 1]);
 			
-//			*(audioFftPtr + i) /= N;
-//			*(audioFftPtr + i + 1) /= N;
+			/* unnecessary to "normalize" to JUCE FFT standard again (max ampl in freq domain = N) by dividing by N!
+			 * JUCE does this automatically */
 		}
 		
 		fftInverse.performRealOnlyInverseTransform(audioFftPtr);
@@ -383,13 +383,13 @@ AudioBuffer<float> deconvolveNonPeriodic2(AudioBuffer<float>& numeratorBuffer, A
 									  *(denomBufFftPtr + i),
 									  *(denomBufFftPtr + i + 1));
 		
-		// unnecessary to "normalize" to JUCE FFT standard again (max ampl in freq domain = N) by multiplying with N
-		// JUCE does this automatically
+		/* unnecessary to "normalize" to JUCE FFT standard again (max ampl in freq domain = N) by multiplying with N!
+		 * JUCE does this automatically */
 	}
 
 
 	
-	// in total 3*smoothPerAvg gaussian smoothing
+	// in total 3 * smoothPerAvg gaussian smoothing
 	float smoothPerAvg = 1.0/13.0;
 	
 	if (smoothing){
