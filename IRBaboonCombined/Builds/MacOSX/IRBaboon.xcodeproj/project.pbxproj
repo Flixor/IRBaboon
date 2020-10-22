@@ -314,8 +314,8 @@
 			children = (
 				0D3C73862540962400E4BE47 /* fp_general.hpp */,
 				0D3C73872540A58400E4BE47 /* tools.hpp */,
-				0D3C737C2540864D00E4BE47 /* CircularBufferArray.hpp */,
 				0D3C737D2540864D00E4BE47 /* convolver.hpp */,
+				0D3C737C2540864D00E4BE47 /* CircularBufferArray.hpp */,
 				0D3C737E2540864D00E4BE47 /* ExpSineSweep.hpp */,
 				0D3C737B2540864D00E4BE47 /* ParallelBufferPrinter.hpp */,
 			);
@@ -325,11 +325,11 @@
 		0DA011462541E3B10088D515 /* fp */ = {
 			isa = PBXGroup;
 			children = (
-				0D427E03254085EC00D4E878 /* CircularBufferArray.cpp */,
+				0DA011432541C8D90088D515 /* tools.cpp */,
 				0D427E00254085EC00D4E878 /* convolver.cpp */,
+				0D427E03254085EC00D4E878 /* CircularBufferArray.cpp */,
 				0D427E01254085EC00D4E878 /* ExpSineSweep.cpp */,
 				0D427E02254085EC00D4E878 /* ParallelBufferPrinter.cpp */,
-				0DA011432541C8D90088D515 /* tools.cpp */,
 			);
 			name = fp;
 			sourceTree = "<group>";

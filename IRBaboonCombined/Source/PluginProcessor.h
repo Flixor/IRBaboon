@@ -44,7 +44,7 @@ public:
 		~ReferenceCountedBuffer() {
 		}
 		
-		AudioSampleBuffer* getAudioSampleBuffer() {
+		AudioSampleBuffer* getBuffer() {
 			return &buffer;
 		}
 		
@@ -171,18 +171,16 @@ private:
 	bool inputIsThdn = false;
 
 	AudioSampleBuffer thdnRecBuf;
-	ReferenceCountedBuffer::Ptr sweepTargRefPtr;
-	ReferenceCountedBuffer::Ptr sweepBaseRefPtr;
-	AudioSampleBuffer IRTarggg;
-	ReferenceCountedBuffer::Ptr IRTargRefPtr;
-	AudioSampleBuffer IRBase;
-	ReferenceCountedBuffer::Ptr IRBaseRefPtr;
+	ReferenceCountedBuffer::Ptr sweepTargPtr;
+	ReferenceCountedBuffer::Ptr sweepBasePtr;
+	ReferenceCountedBuffer::Ptr IRTargPtr;
+	AudioSampleBuffer IRBaseee;
+	ReferenceCountedBuffer::Ptr IRBasePtr;
 	AudioSampleBuffer IRFilt;
-	ReferenceCountedBuffer::Ptr IRFiltRefPtr;
+	ReferenceCountedBuffer::Ptr IRFiltPtr;
 	AudioSampleBuffer IRpulse;
 	AudioSampleBuffer* IRtoConvolve;
 	
-	bool playUnprocessed = true;
 	bool playFiltered = false;
 	
 	int generalInputAudioChannels = 2;

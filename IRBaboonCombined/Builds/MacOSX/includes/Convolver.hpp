@@ -35,7 +35,7 @@ namespace convolver {
 	
 	/* deconcolve uses complex division
 	 * Assumes that denominator is mono! */
-	AudioBuffer<float> deconvolveNonPeriodic2(AudioBuffer<float>* numeratorBuffer, AudioBuffer<float>& denominatorBuffer, double sampleRate, bool smoothing = true, bool nullifyPhase = false, bool nullifyAmplitude = false);
+	AudioBuffer<float> deconvolveNonPeriodic2(AudioBuffer<float>* numeratorBuffer, AudioBuffer<float>* denominatorBuffer, double sampleRate, bool smoothing = true, bool nullifyPhase = false, bool nullifyAmplitude = false);
 
 	/* the filter has a low-pass effect in the upper freqs, if the fft method
 	 * performForwardRealFreqOnly has been used, because the upper bin range

@@ -58,17 +58,16 @@ AutoKalibraDemoAudioProcessor::AutoKalibraDemoAudioProcessor()
 	
 	
 	// init IRs
-//	IRTarggg.setSize(0, 0);
-	IRBase.setSize(0, 0);
+//	IRBaseee.setSize(0, 0);
 	IRFilt.setSize(0, 0);
 	IRpulse.makeCopyOf(tools::generatePulse(makeupIRLengthSamples, 100));
 	
-	IRTargRefPtr = new ReferenceCountedBuffer("IRref", 0, 0);
-	IRBaseRefPtr = new ReferenceCountedBuffer("IRcurr", IRBase);
-	IRFiltRefPtr = new ReferenceCountedBuffer("IRinvfilt", IRFilt);
+	IRTargPtr = new ReferenceCountedBuffer("IRref", 0, 0);
+	IRBasePtr = new ReferenceCountedBuffer("IRcurr", 0, 0);
+	IRFiltPtr = new ReferenceCountedBuffer("IRinvfilt", IRFilt);
 	
-	sweepTargRefPtr = new ReferenceCountedBuffer("sweepref", 0, 0);
-	sweepBaseRefPtr = new ReferenceCountedBuffer("sweepcurr", 0, 0);
+	sweepTargPtr = new ReferenceCountedBuffer("sweepref", 0, 0);
+	sweepBasePtr = new ReferenceCountedBuffer("sweepcurr", 0, 0);
 
 	
 	
@@ -324,10 +323,10 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 				 * a 3 buffers-to-the-right offset was used before, but actually 0 seems to work fine now too. */
 				inputConsolidated.makeCopyOf (inputCaptureArray.consolidate(0));
 				
-				IRTargRefPtr->getAudioSampleBuffer()->makeCopyOf(createTargetOrBaseIR(inputConsolidated, sweepBufForDeconv));
-				sweepTargRefPtr->getAudioSampleBuffer()->makeCopyOf(inputConsolidated);
+				IRTargPtr->getBuffer()->makeCopyOf(createTargetOrBaseIR(inputConsolidated, sweepBufForDeconv));
+				sweepTargPtr->getBuffer()->makeCopyOf(inputConsolidated);
 				
-//				IRTarggg = *(IRTargRefPtr->getAudioSampleBuffer());
+//				IRTarggg = *(IRTargRefPtr->getBuffer());
 				inputIsTarget = false;
 				saveIRTargFlag = true;
 			}
@@ -335,10 +334,10 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 				
 				inputConsolidated.makeCopyOf (inputCaptureArray.consolidate(0));
 				
-				IRBaseRefPtr->getAudioSampleBuffer()->makeCopyOf(createTargetOrBaseIR(inputConsolidated, sweepBufForDeconv));
-				sweepBaseRefPtr->getAudioSampleBuffer()->makeCopyOf(inputConsolidated);
+				IRBasePtr->getBuffer()->makeCopyOf(createTargetOrBaseIR(inputConsolidated, sweepBufForDeconv));
+				sweepBasePtr->getBuffer()->makeCopyOf(inputConsolidated);
 				
-				IRBase = *(IRBaseRefPtr->getAudioSampleBuffer());
+//				IRBaseee = *(IRBasePtr->getBuffer());
 				inputIsBase = false;
 				saveIRBaseFlag = true;
 			}
@@ -352,8 +351,7 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 				exportThdnFlag = true;
 			}
 
-//			if (IRTarggg.getNumSamples() > 0 && IRBase.getNumSamples() > 0){
-			if (IRTargRefPtr->getAudioSampleBuffer()->getNumSamples() > 0 && IRBase.getNumSamples() > 0){
+			if (IRTargPtr->getBuffer()->getNumSamples() > 0 && IRBasePtr->getBuffer()->getNumSamples() > 0){
 				createIRFilt();
 			}
 			
@@ -692,14 +690,15 @@ void AutoKalibraDemoAudioProcessor::startCaptureThdn(){
 
 
 AudioSampleBuffer AutoKalibraDemoAudioProcessor::createTargetOrBaseIR(AudioSampleBuffer& numeratorBuf, AudioSampleBuffer& denominatorBuf){
-	return convolver::deconvolveNonPeriodic2(&numeratorBuf, denominatorBuf, sampleRate, true, false);
+	return convolver::deconvolveNonPeriodic2(&numeratorBuf, &denominatorBuf, sampleRate, true, false);
 }
 
 
 
 void AutoKalibraDemoAudioProcessor::createIRFilt(){
 	AudioSampleBuffer makeupIR;
-	AudioSampleBuffer* IRTarg = IRTargRefPtr->getAudioSampleBuffer();
+	AudioSampleBuffer* IRTarg = IRTargPtr->getBuffer();
+	AudioSampleBuffer* IRBase = IRBasePtr->getBuffer();
 	
 	makeupIR.makeCopyOf(convolver::deconvolveNonPeriodic2(IRTarg, IRBase, sampleRate, true, nullifyPhaseFilt, nullifyAmplFilt));
 
@@ -712,8 +711,8 @@ void AutoKalibraDemoAudioProcessor::createIRFilt(){
 //	AudioSampleBuffer IRinvfiltchop (convolver::IRchop(IRinvfilt, makeupIRLengthSamples, -24.0, 25));
 //	return IRinvfiltchop;
 	
-	IRFiltRefPtr->getAudioSampleBuffer()->makeCopyOf(makeupIR);
-	IRFilt = *(IRFiltRefPtr->getAudioSampleBuffer());
+	IRFiltPtr->getBuffer()->makeCopyOf(makeupIR);
+	IRFilt = *(IRFiltPtr->getBuffer());
 }
 
 
@@ -779,8 +778,8 @@ void AutoKalibraDemoAudioProcessor::saveIRTarg(){
 	name += date;
 	
 	AudioSampleBuffer savebuf (2, totalSweepBreakSamples);
-	savebuf.copyFrom(0, 0, *(sweepTargRefPtr->getAudioSampleBuffer()), 0, 0, totalSweepBreakSamples);
-	savebuf.copyFrom(1, 0, *(IRTargRefPtr->getAudioSampleBuffer()), 0, 0, totalSweepBreakSamples);
+	savebuf.copyFrom(0, 0, *(sweepTargPtr->getBuffer()), 0, 0, totalSweepBreakSamples);
+	savebuf.copyFrom(1, 0, *(IRTargPtr->getBuffer()), 0, 0, totalSweepBreakSamples);
 	
 	ParallelBufferPrinter wavPrinter;
 	wavPrinter.appendBuffer(name, savebuf);
@@ -803,8 +802,8 @@ void AutoKalibraDemoAudioProcessor::saveIRBase(){
 	name += date;
 	
 	AudioSampleBuffer savebuf (2, totalSweepBreakSamples);
-	savebuf.copyFrom(0, 0, *(sweepBaseRefPtr->getAudioSampleBuffer()), 0, 0, totalSweepBreakSamples);
-	savebuf.copyFrom(1, 0, IRBase, 0, 0, totalSweepBreakSamples);
+	savebuf.copyFrom(0, 0, *(sweepBasePtr->getBuffer()), 0, 0, totalSweepBreakSamples);
+	savebuf.copyFrom(1, 0, *(IRBasePtr->getBuffer()), 0, 0, totalSweepBreakSamples);
 	
 	ParallelBufferPrinter wavPrinter;
 	wavPrinter.appendBuffer(name, savebuf);
@@ -855,11 +854,11 @@ void AutoKalibraDemoAudioProcessor::printDebug() {
 	ParallelBufferPrinter freqPrinter;
 
 	// dereference the buffers
-	AudioSampleBuffer sweeprefprint (*(sweepTargRefPtr->getAudioSampleBuffer()));
-	AudioSampleBuffer IRrefprint (*(IRTargRefPtr->getAudioSampleBuffer()));
-	AudioSampleBuffer sweepcurrprint (*(sweepBaseRefPtr->getAudioSampleBuffer()));
-	AudioSampleBuffer IRcurrprint (*(IRBaseRefPtr->getAudioSampleBuffer()));
-	AudioSampleBuffer IRinvfiltprint (*(IRFiltRefPtr->getAudioSampleBuffer()));
+	AudioSampleBuffer sweeprefprint (*(sweepTargPtr->getBuffer()));
+	AudioSampleBuffer IRrefprint (*(IRTargPtr->getBuffer()));
+	AudioSampleBuffer sweepcurrprint (*(sweepBasePtr->getBuffer()));
+	AudioSampleBuffer IRcurrprint (*(IRBasePtr->getBuffer()));
+	AudioSampleBuffer IRinvfiltprint (*(IRFiltPtr->getBuffer()));
 
 	// print freq
 	if (IRrefprint.getNumSamples() > 0) {
@@ -968,7 +967,7 @@ void AutoKalibraDemoAudioProcessor::setOutputVolume(float dB){
 void AutoKalibraDemoAudioProcessor::setNullifyPhaseFilt(bool nullifyPhase){
 	nullifyPhaseFilt = nullifyPhase;
 	
-	if (IRTargRefPtr->getAudioSampleBuffer()->getNumSamples() > 0 && IRBase.getNumSamples() > 0){
+	if (IRTargPtr->getBuffer()->getNumSamples() > 0 && IRBasePtr->getBuffer()->getNumSamples() > 0){
 		createIRFilt();
 	}
 	
@@ -979,7 +978,7 @@ void AutoKalibraDemoAudioProcessor::setNullifyPhaseFilt(bool nullifyPhase){
 void AutoKalibraDemoAudioProcessor::setNullifyAmplFilt(bool nullifyAmplitude){
 	nullifyAmplFilt = nullifyAmplitude;
 	
-	if (IRTargRefPtr->getAudioSampleBuffer()->getNumSamples() > 0 && IRBase.getNumSamples() > 0){
+	if (IRTargPtr->getBuffer()->getNumSamples() > 0 && IRBasePtr->getBuffer()->getNumSamples() > 0){
 		createIRFilt();
 	}
 	
@@ -990,7 +989,7 @@ void AutoKalibraDemoAudioProcessor::setNullifyAmplFilt(bool nullifyAmplitude){
 void AutoKalibraDemoAudioProcessor::setMakeupSize(int makeupSize){
 	makeupIRLengthSamples = makeupSize;
 	
-	if (IRTargRefPtr->getAudioSampleBuffer()->getNumSamples() > 0 && IRBase.getNumSamples() > 0){
+	if (IRTargPtr->getBuffer()->getNumSamples() > 0 && IRBasePtr->getBuffer()->getNumSamples() > 0){
 		createIRFilt();
 	}
 
@@ -1001,17 +1000,17 @@ void AutoKalibraDemoAudioProcessor::setMakeupSize(int makeupSize){
 void AutoKalibraDemoAudioProcessor::swapTargetBase(){
 	
 	// swap around
-	AudioSampleBuffer savedSweep (*(sweepTargRefPtr->getAudioSampleBuffer()));
-	AudioSampleBuffer savedIR (*(IRTargRefPtr->getAudioSampleBuffer()));
-	sweepTargRefPtr->getAudioSampleBuffer()->makeCopyOf(*(sweepBaseRefPtr->getAudioSampleBuffer()));
-	IRTargRefPtr->getAudioSampleBuffer()->makeCopyOf(*(IRBaseRefPtr->getAudioSampleBuffer()));
-	sweepBaseRefPtr->getAudioSampleBuffer()->makeCopyOf(savedSweep);
-	IRBaseRefPtr->getAudioSampleBuffer()->makeCopyOf(savedIR);
-//	IRTarggg = *(IRTargRefPtr->getAudioSampleBuffer());
-	IRBase = *(IRBaseRefPtr->getAudioSampleBuffer());
+	AudioSampleBuffer savedSweep (*(sweepTargPtr->getBuffer()));
+	AudioSampleBuffer savedIR (*(IRTargPtr->getBuffer()));
+	sweepTargPtr->getBuffer()->makeCopyOf(*(sweepBasePtr->getBuffer()));
+	IRTargPtr->getBuffer()->makeCopyOf(*(IRBasePtr->getBuffer()));
+	sweepBasePtr->getBuffer()->makeCopyOf(savedSweep);
+	IRBasePtr->getBuffer()->makeCopyOf(savedIR);
+//	IRTarggg = *(IRTargRefPtr->getBuffer());
+//	IRBaseee = *(IRBasePtr->getBuffer());
 
 	// generate new makeup
-	if (IRTargRefPtr->getAudioSampleBuffer()->getNumSamples() > 0 && IRBase.getNumSamples() > 0){
+	if (IRTargPtr->getBuffer()->getNumSamples() > 0 && IRBasePtr->getBuffer()->getNumSamples() > 0){
 		createIRFilt();
 	}
 	
@@ -1031,20 +1030,18 @@ void AutoKalibraDemoAudioProcessor::loadTarget(File file){
 	File fileToLoad (pathWav);
 	AudioSampleBuffer sweepAndIR (tools::fileToBuffer(fileToLoad));
 	
-	if (IRTargRefPtr->getAudioSampleBuffer()->getNumSamples() == 0){
-		sweepTargRefPtr->getAudioSampleBuffer()->setSize(1, totalSweepBreakSamples);
-		IRTargRefPtr->getAudioSampleBuffer()->setSize(1, totalSweepBreakSamples);
+	if (IRTargPtr->getBuffer()->getNumSamples() == 0){
+		sweepTargPtr->getBuffer()->setSize(1, totalSweepBreakSamples);
+		IRTargPtr->getBuffer()->setSize(1, totalSweepBreakSamples);
 	}
 	
-	sweepTargRefPtr->getAudioSampleBuffer()->clear();
-	sweepTargRefPtr->getAudioSampleBuffer()->copyFrom(0, 0, sweepAndIR, 0, 0, totalSweepBreakSamples);
-	IRTargRefPtr->getAudioSampleBuffer()->clear();
-	IRTargRefPtr->getAudioSampleBuffer()->copyFrom(0, 0, sweepAndIR, 1, 0, totalSweepBreakSamples);
-//	IRTarggg.clear();
-//	IRTarggg = *(IRTargRefPtr->getAudioSampleBuffer());
+	sweepTargPtr->getBuffer()->clear();
+	sweepTargPtr->getBuffer()->copyFrom(0, 0, sweepAndIR, 0, 0, totalSweepBreakSamples);
+	IRTargPtr->getBuffer()->clear();
+	IRTargPtr->getBuffer()->copyFrom(0, 0, sweepAndIR, 1, 0, totalSweepBreakSamples);
 	
 	// generate new makeup
-	if (IRTargRefPtr->getAudioSampleBuffer()->getNumSamples() > 0 && IRBase.getNumSamples() > 0){
+	if (IRTargPtr->getBuffer()->getNumSamples() > 0 && IRBasePtr->getBuffer()->getNumSamples() > 0){
 		createIRFilt();
 	}
 	
