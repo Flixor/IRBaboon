@@ -14,13 +14,15 @@
 #include <JuceHeader.h>
 
 
+namespace fp {
+	
 
-class FP_CircularBufferArray {
+class CircularBufferArray {
 	
 public:
-	FP_CircularBufferArray();
-	FP_CircularBufferArray(int amountOfBuffers, int bufferChannelSize, int bufferSampleSize);
-	~FP_CircularBufferArray();
+	CircularBufferArray();
+	CircularBufferArray(int amountOfBuffers, int bufferChannelSize, int bufferSampleSize);
+	~CircularBufferArray();
 
 	void clearAndResize(int amountOfBuffers, int bufferChannelSize, int bufferSampleSize);
 	
@@ -60,6 +62,6 @@ private:
 	int lastWrittenIndex = -1;
 };
 
-
+} // fp
 
 #endif /* AudioSampleBufferArray_hpp */

@@ -11,9 +11,6 @@
 #include <fp_general.h>
 #include <JuceHeader.h>
 
-#include "FP_Tools.hpp"
-#include "FP_CircularBufferArray.hpp"
-
 #include "boost/filesystem.hpp"
 #include "boost/algorithm/string.hpp"
 
@@ -40,7 +37,7 @@ public:
     ~FP_ParallelBufferPrinter();
     
 	void appendBuffer(std::string name, AudioSampleBuffer& buffer);
-	void appendCircularBufferArray(std::string name, FP_CircularBufferArray& circularBufferArray);
+	void appendCircularBufferArray(std::string name, fp::CircularBufferArray& circularBufferArray);
 
 	// will replace the buffer in this location if one already exists
     void insertBuffer(std::string name, AudioSampleBuffer& buffer, int insertIndex);

@@ -6,10 +6,11 @@
 //
 
 #include <fp_general.h>
-#include "FP_CircularBufferArray.hpp"
 
+namespace fp {
+	
 
-FP_CircularBufferArray::FP_CircularBufferArray(){
+CircularBufferArray::CircularBufferArray(){
 	channelsPerBuffer = 0;
 	samplesPerBuffer = 0;
 	readIndex = 0;
@@ -18,23 +19,23 @@ FP_CircularBufferArray::FP_CircularBufferArray(){
 }
 
 
-FP_CircularBufferArray::FP_CircularBufferArray(int amountOfBuffers, int bufferChannelSize, int bufferSampleSize){
+CircularBufferArray::CircularBufferArray(int amountOfBuffers, int bufferChannelSize, int bufferSampleSize){
 	initBuffers(amountOfBuffers, bufferChannelSize, bufferSampleSize);
 }
 
 
-FP_CircularBufferArray::~FP_CircularBufferArray(){
+CircularBufferArray::~CircularBufferArray(){
 	bufferArray.clear();
 }
 
 
-void FP_CircularBufferArray::clearAndResize(int amountOfBuffers, int bufferChannelSize, int bufferSampleSize){
+void CircularBufferArray::clearAndResize(int amountOfBuffers, int bufferChannelSize, int bufferSampleSize){
 	bufferArray.clear();
 	initBuffers(amountOfBuffers, bufferChannelSize, bufferSampleSize);
 }
 
 
-void FP_CircularBufferArray::changeArraySize(int amountOfBuffers){
+void CircularBufferArray::changeArraySize(int amountOfBuffers){
 	
 	if(amountOfBuffers == arraySize) return;
 	
@@ -92,37 +93,37 @@ void FP_CircularBufferArray::changeArraySize(int amountOfBuffers){
 }
 
 
-AudioSampleBuffer* FP_CircularBufferArray::getReadBufferPtr(){
+AudioSampleBuffer* CircularBufferArray::getReadBufferPtr(){
 	return &bufferArray[readIndex];
 };
 
 
-AudioSampleBuffer* FP_CircularBufferArray::getWriteBufferPtr(){
+AudioSampleBuffer* CircularBufferArray::getWriteBufferPtr(){
 	lastWrittenIndex = writeIndex;
 	return &bufferArray[writeIndex];
 };
 
 
-AudioSampleBuffer* FP_CircularBufferArray::getBufferPtrAtIndex(int index){
+AudioSampleBuffer* CircularBufferArray::getBufferPtrAtIndex(int index){
 	return &bufferArray[index];
 };
 
 
-void FP_CircularBufferArray::incrReadIndex(){
+void CircularBufferArray::incrReadIndex(){
 	readIndex++;
 	if (readIndex >= arraySize)
 		readIndex = 0;
 };
 
 
-void FP_CircularBufferArray::decrReadIndex(){
+void CircularBufferArray::decrReadIndex(){
 	readIndex--;
 	if (readIndex < 0)
 		readIndex = arraySize - 1;
 };
 
 
-void FP_CircularBufferArray::incrWriteIndex(){
+void CircularBufferArray::incrWriteIndex(){
 	writeIndex++;
 	if (writeIndex >= arraySize)
 		writeIndex = 0;
@@ -130,7 +131,7 @@ void FP_CircularBufferArray::incrWriteIndex(){
 
 
 
-AudioSampleBuffer FP_CircularBufferArray::consolidate(int bufOffset){
+AudioSampleBuffer CircularBufferArray::consolidate(int bufOffset){
 	AudioSampleBuffer consolidation (channelsPerBuffer, samplesPerBuffer * arraySize);
 	
 	int savedReadIndex = readIndex;
@@ -153,36 +154,36 @@ AudioSampleBuffer FP_CircularBufferArray::consolidate(int bufOffset){
 
 
 
-int FP_CircularBufferArray::getReadIndex(){
+int CircularBufferArray::getReadIndex(){
 	return readIndex;
 };
 
 
-void FP_CircularBufferArray::setReadIndex(int index){
+void CircularBufferArray::setReadIndex(int index){
 	readIndex = index;
 };
 
 
-int FP_CircularBufferArray::getWriteIndex(){
+int CircularBufferArray::getWriteIndex(){
 	return writeIndex;
 };
 
 
-void FP_CircularBufferArray::setWriteIndex(int index){
+void CircularBufferArray::setWriteIndex(int index){
 	writeIndex = index;
 };
 
 
-int FP_CircularBufferArray::getArraySize(){
+int CircularBufferArray::getArraySize(){
 	return arraySize;
 };
 
 
-int FP_CircularBufferArray::getChannelsPerBuffer(){
+int CircularBufferArray::getChannelsPerBuffer(){
 	return channelsPerBuffer;
 }
 
-int FP_CircularBufferArray::getSamplesPerBuffer(){
+int CircularBufferArray::getSamplesPerBuffer(){
 	return samplesPerBuffer;
 }
 
@@ -191,7 +192,7 @@ int FP_CircularBufferArray::getSamplesPerBuffer(){
 // Private
 // ==========================================
 
-void FP_CircularBufferArray::initBuffers(int amountOfBuffers, int bufferChannelSize, int bufferSampleSize){
+void CircularBufferArray::initBuffers(int amountOfBuffers, int bufferChannelSize, int bufferSampleSize){
 	channelsPerBuffer = bufferChannelSize;
 	samplesPerBuffer = bufferSampleSize;
 	
@@ -204,3 +205,5 @@ void FP_CircularBufferArray::initBuffers(int amountOfBuffers, int bufferChannelS
 	writeIndex = 0;
 	arraySize = (int) bufferArray.size();
 }
+	
+} // fp

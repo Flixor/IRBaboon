@@ -10,6 +10,14 @@
 #define FP_general_h
 
 
+#include "FP_Tools.hpp"
+#include "FP_CircularBufferArray.hpp"
+#include "FP_ParallelBufferPrinter.hpp"
+#include "FP_Convolver.hpp"
+#include "FP_ExpSineSweep.hpp"
+
+using namespace fp;
+
 
 #define NOT not
 

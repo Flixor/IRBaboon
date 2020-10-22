@@ -6,7 +6,6 @@
 //
 
 #include <fp_general.h>
-#include "FP_ExpSineSweep.hpp"
 
 
 
@@ -31,7 +30,7 @@ void FP_ExpSineSweep::generate(double durationSecs, double sampleRate, double lo
 	int sweepLength = (int) T;
 	sweep.setSize(1, sweepLength);
 	
-	double gainReal = fp::tools::dBToLin(dBGain);
+	double gainReal = tools::dBToLin(dBGain);
 	
 	double sinArg;
 	for(int i = 0; i < sweepLength; i++){
@@ -178,7 +177,7 @@ void FP_ExpSineSweep::dBFadeout (double freq){
 	
 	double goaldB = -80.0;
 	double dBGainPerSample = goaldB / fadeoutSampleLength;
-	double linGainPerSample = fp::tools::dBToLin(dBGainPerSample);
+	double linGainPerSample = tools::dBToLin(dBGainPerSample);
 	
 	double g = linGainPerSample;
 	for (int i = index; i < sweep.getNumSamples(); i++){

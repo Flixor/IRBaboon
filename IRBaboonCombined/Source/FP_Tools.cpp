@@ -11,11 +11,6 @@
 #include <fp_general.h>
 #include <JuceHeader.h>
 
-#include "FP_Tools.hpp"
-#include "FP_Convolver.hpp"
-#include "FP_CircularBufferArray.hpp"
-#include "FP_ParallelBufferPrinter.hpp"
-
 #include "boost/algorithm/string.hpp"
 
 

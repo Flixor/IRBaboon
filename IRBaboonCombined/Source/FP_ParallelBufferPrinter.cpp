@@ -13,8 +13,6 @@
 
 #define BOOST_FILESYSTEM_NO_DEPRECATED // recommended by boost
 
-#include "FP_ParallelBufferPrinter.hpp"
-
 
 namespace fs = boost::filesystem;
 
@@ -74,7 +72,7 @@ void FP_ParallelBufferPrinter::appendBuffer(std::string name, AudioSampleBuffer&
 };
 
 
-void FP_ParallelBufferPrinter::appendCircularBufferArray(std::string name, FP_CircularBufferArray& circularBufferArray) {
+void FP_ParallelBufferPrinter::appendCircularBufferArray(std::string name, CircularBufferArray& circularBufferArray) {
 	
 	int savedReadIndex = circularBufferArray.getReadIndex();
 	circularBufferArray.setReadIndex(0);
@@ -181,7 +179,7 @@ void FP_ParallelBufferPrinter::printToConsole(int startSample, int numSamples, b
 				for (int channel = 0; channel < chPrintLimit; channel++){
 					if (sample < bufferArray[buf].buffer.getNumSamples()){
 						float value = bufferArray[buf].buffer.getSample(channel, sample);
-						if(displaydB) value = fp::tools::linTodB(abs(value));
+						if(displaydB) value = tools::linTodB(abs(value));
 						printf("|%u: %*g ", sample, tabsPerValue * spacesPerTab, value);
 						for(int t = 0; t < (columnWidth - tabsPerValue - 1); t++)
 							printf("\t");
@@ -297,7 +295,7 @@ void FP_ParallelBufferPrinter::printFreqToCsv (int sampleRate, std::string direc
 
 		int fftSize = bufferArray[buf].buffer.getNumSamples();
 		
-		if (!fp::tools::isPowerOfTwo(fftSize)) {
+		if (!tools::isPowerOfTwo(fftSize)) {
 			String errstr ("FP_ParallelBufferPrinter::printFreqToCsv error: buffer nr");
 			DBG(errstr + std::to_string(buf) + " size is not power of 2.");
 			continue;
@@ -327,16 +325,16 @@ void FP_ParallelBufferPrinter::printFreqToCsv (int sampleRate, std::string direc
 			
 			for (int bin = 0; bin <= N; bin += 2){
 				fout << freqPerBin * bin/2 << "\t";
-				fout << std::setprecision(8) << fp::tools::binAmpl(bufPtr + bin) << "\t";
-				fout << std::setprecision(8) << fp::tools::linTodB(abs(fp::tools::binAmpl(bufPtr + bin))) << "\t";
+				fout << std::setprecision(8) << tools::binAmpl(bufPtr + bin) << "\t";
+				fout << std::setprecision(8) << tools::linTodB(abs(tools::binAmpl(bufPtr + bin))) << "\t";
 				fout << bin/2 << "\t";
-				fout << std::setprecision(8) << fp::tools::binPhase(bufPtr + bin) << "\n";
+				fout << std::setprecision(8) << tools::binPhase(bufPtr + bin) << "\n";
 			}
 			
 			fout.close();
 		}
 		else {
-			DBG("printFreqToCsv() error:"+fp::tools::DescribeIosFailure(fout));
+			DBG("printFreqToCsv() error:"+tools::DescribeIosFailure(fout));
 			fout.close();
 		}
 

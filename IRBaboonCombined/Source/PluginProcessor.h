@@ -13,12 +13,6 @@
 #include <fp_general.h>
 #include <JuceHeader.h>
 
-#include "FP_ParallelBufferPrinter.hpp"
-#include "FP_Convolver.hpp"
-#include "FP_ExpSineSweep.hpp"
-#include "FP_CircularBufferArray.hpp"
-#include "FP_Tools.hpp"
-
 #include <ctime>
 
 
@@ -143,7 +137,7 @@ private:
 	int silenceBeginningLengthSamples = 4096;
 	int silenceEndLengthSamples = 16384;
 	/* total samples = 4 * 32786 = 131072 */
-	int totalSweepBreakSamples = 4 * fp::tools::nextPowerOfTwo(silenceBeginningLengthSamples + silenceEndLengthSamples + 1);
+	int totalSweepBreakSamples = 4 * tools::nextPowerOfTwo(silenceBeginningLengthSamples + silenceEndLengthSamples + 1);
 	int sweepLengthSamples = totalSweepBreakSamples - silenceBeginningLengthSamples - silenceEndLengthSamples;
 	
 	int samplesWaitBeforeInputCapture = 2048; // 12 * 256
@@ -155,13 +149,13 @@ private:
 	
 	AudioSampleBuffer sweepBuf;
 	AudioSampleBuffer sweepBufForDeconv;
-	FP_CircularBufferArray sweepBufArray;
-	FP_CircularBufferArray inputCaptureArray;
+	CircularBufferArray sweepBufArray;
+	CircularBufferArray inputCaptureArray;
 	AudioSampleBuffer inputConsolidated;
 	
 	float thdnSigFreq = 1000.0;
 	AudioSampleBuffer thdnSigBuf;
-	FP_CircularBufferArray thdnSigBufArray;
+	CircularBufferArray thdnSigBufArray;
 	dsp::WindowingFunction<float> window;
 	int thdnExportLength = 8192;
 
@@ -228,16 +222,16 @@ private:
 	const int processBlockSize = 256;
 	int N, fftBlockSize;
 
-	FP_CircularBufferArray inputBufferArray;
-	FP_CircularBufferArray audioFftBufferArray;
-	FP_CircularBufferArray irFftBufferArray;
+	CircularBufferArray inputBufferArray;
+	CircularBufferArray audioFftBufferArray;
+	CircularBufferArray irFftBufferArray;
 	
 	dsp::FFT *fftIR, *fftForward, *fftInverse;
 	AudioSampleBuffer inplaceBuffer;
 	AudioSampleBuffer overlapBuffer;
-	FP_CircularBufferArray convResultBufferArray;
-	FP_CircularBufferArray outputBufferArray;
-	FP_CircularBufferArray bypassOutputBufferArray;
+	CircularBufferArray convResultBufferArray;
+	CircularBufferArray outputBufferArray;
+	CircularBufferArray bypassOutputBufferArray;
 	
 	int inputBufferSampleIndex = 0;
 	int outputBufferSampleIndex = 0;
