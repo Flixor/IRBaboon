@@ -179,7 +179,6 @@ private:
 	ReferenceCountedBuffer::Ptr IRinvfiltObjectPtr;
 	AudioSampleBuffer IRpulse;
 	AudioSampleBuffer* IRtoConvolve;
-	Convolver convolver;
 	
 	bool playUnprocessed = true;
 	bool playInvFilt = false;

@@ -16,11 +16,16 @@
 
 namespace fp {
 
-class Convolver {
+	enum ChannelLayout{
+		unknown,
+		IRMonoAudioMono,
+		IRMonoAudioStereo,
+		IRStereoAudioMono,
+		IRStereoAudioStereo
+	};
 	
-public:
-	Convolver();
-	~Convolver();
+namespace Convolver {
+	
 	
 	/*
 	 * In the convolve methods buffer1 is seen as "input audio" and buffer2 as the "IR" to convolve with
@@ -72,24 +77,8 @@ public:
 	AudioBuffer<float> IRtoRealFFTRaw (AudioBuffer<float>& buffer, int fftBufferSize);
 
 
-private:
-	
-	// for convolvePeriodic()
-//	int processBlockSize = 256;
-	
-	
-	// for averagingFilter() total (gaussian) smoothing width will be 3*this
-//	float smoothPerAvg = 1.0/13.0;
 
-};
-
-	enum ChannelLayout{
-		unknown,
-		IRMonoAudioMono,
-		IRMonoAudioStereo,
-		IRStereoAudioMono,
-		IRStereoAudioStereo
-	};
+} // Convolver
 	
 } // fp
 

@@ -703,7 +703,7 @@ void AutoKalibraDemoAudioProcessor::startCaptureThdn(){
 
 
 AudioSampleBuffer AutoKalibraDemoAudioProcessor::createTargetOrCurrentIR(AudioSampleBuffer& numeratorBuf, AudioSampleBuffer& denominatorBuf){
-	return convolver.deconvolveNonPeriodic2(numeratorBuf, denominatorBuf, sampleRate, true, false);
+	return Convolver::deconvolveNonPeriodic2(numeratorBuf, denominatorBuf, sampleRate, true, false);
 }
 
 
@@ -711,15 +711,15 @@ AudioSampleBuffer AutoKalibraDemoAudioProcessor::createTargetOrCurrentIR(AudioSa
 AudioSampleBuffer AutoKalibraDemoAudioProcessor::createMakeupIR(){
 	AudioSampleBuffer makeupIR;
 	
-	makeupIR.makeCopyOf(convolver.deconvolveNonPeriodic2(IRref, IRcurr, sampleRate, true, nullifyPhaseInvfilt, nullifyAmplitudeInvfilt));
+	makeupIR.makeCopyOf(Convolver::deconvolveNonPeriodic2(IRref, IRcurr, sampleRate, true, nullifyPhaseInvfilt, nullifyAmplitudeInvfilt));
 
-	if (nullifyPhaseInvfilt) convolver.shifteroo(&makeupIR);
+	if (nullifyPhaseInvfilt) Convolver::shifteroo(&makeupIR);
 	
 	ParallelBufferPrinter printer;
 	printer.appendBuffer("IRmakeup unchopped", makeupIR);
 	printer.printToWav(0, printer.getMaxBufferLength(), sampleRate, printDirectoryDebug);
 
-//	AudioSampleBuffer IRinvfiltchop (convolver.IRchop(IRinvfilt, makeupIRLengthSamples, -24.0, 25));
+//	AudioSampleBuffer IRinvfiltchop (Convolver::IRchop(IRinvfilt, makeupIRLengthSamples, -24.0, 25));
 //	return IRinvfiltchop;
 	
 	return makeupIR;
@@ -848,7 +848,7 @@ void AutoKalibraDemoAudioProcessor::exportThdn(){
 	window.multiplyWithWindowingTable(ptr, thdnExportLength);
 	
 	ParallelBufferPrinter freqPrinter;
-	AudioSampleBuffer expbuf_fft (convolver.fftTransform(expbuf));
+	AudioSampleBuffer expbuf_fft (Convolver::fftTransform(expbuf));
 	freqPrinter.appendBuffer(name, expbuf_fft);
 	freqPrinter.printFreqToCsv(sampleRate, printDirectoryDebug);
 }
@@ -879,15 +879,15 @@ void AutoKalibraDemoAudioProcessor::printDebug() {
 
 	// print freq
 	if (IRrefprint.getNumSamples() > 0) {
-		AudioSampleBuffer IRrefprint_fft (convolver.fftTransform(IRrefprint));
+		AudioSampleBuffer IRrefprint_fft (Convolver::fftTransform(IRrefprint));
 		freqPrinter.appendBuffer("IR target fft", IRrefprint_fft);
 	}
 	if (IRcurrprint.getNumSamples() > 0) {
-		AudioSampleBuffer IRcurrprint_fft (convolver.fftTransform(IRcurrprint));
+		AudioSampleBuffer IRcurrprint_fft (Convolver::fftTransform(IRcurrprint));
 		freqPrinter.appendBuffer("IR base fft", IRcurrprint_fft);
 	}
 	if (IRinvfiltprint.getNumSamples() > 0) {
-		AudioSampleBuffer IRinvfiltprint_fft (convolver.fftTransform(IRinvfiltprint));
+		AudioSampleBuffer IRinvfiltprint_fft (Convolver::fftTransform(IRinvfiltprint));
 		freqPrinter.appendBuffer("IR filter fft", IRinvfiltprint_fft);
 	}
 	if (freqPrinter.getMaxBufferLength() > 0){

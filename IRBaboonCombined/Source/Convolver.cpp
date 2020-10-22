@@ -10,17 +10,10 @@
 
 namespace fp {
 
-
-Convolver::Convolver(){
-	// ?
-}
-
-Convolver::~Convolver(){
-	// ?
-}
+namespace Convolver {
 
 // ================================================================
-AudioBuffer<float> Convolver::convolvePeriodic(AudioSampleBuffer& buffer1, AudioSampleBuffer& buffer2, int processBlockSize){
+AudioBuffer<float> convolvePeriodic(AudioSampleBuffer& buffer1, AudioSampleBuffer& buffer2, int processBlockSize){
 	
 	/*
 	 * In here, buffer1 is seen as "input audio" and buffer2 as the "IR" to convolve with
@@ -254,7 +247,7 @@ AudioBuffer<float> Convolver::convolvePeriodic(AudioSampleBuffer& buffer1, Audio
 
 
 
-AudioBuffer<float> Convolver::convolveNonPeriodic(AudioSampleBuffer& buffer1, AudioSampleBuffer& buffer2){
+AudioBuffer<float> convolveNonPeriodic(AudioSampleBuffer& buffer1, AudioSampleBuffer& buffer2){
 	/*
 	 * buffer1 is seen as "input audio" and buffer2 as the "IR" to convolve with
 	 */
@@ -362,7 +355,7 @@ AudioBuffer<float> Convolver::convolveNonPeriodic(AudioSampleBuffer& buffer1, Au
 
 
 
-AudioBuffer<float> Convolver::deconvolveNonPeriodic2(AudioBuffer<float>& numeratorBuffer, AudioBuffer<float>& denominatorBuffer, double sampleRate, bool smoothing, bool nullifyPhase, bool nullifyAmplitude){
+AudioBuffer<float> deconvolveNonPeriodic2(AudioBuffer<float>& numeratorBuffer, AudioBuffer<float>& denominatorBuffer, double sampleRate, bool smoothing, bool nullifyPhase, bool nullifyAmplitude){
 	
 	AudioSampleBuffer numBuf (numeratorBuffer);
 	numBuf.setSize(1, numBuf.getNumSamples(), true);
@@ -417,14 +410,14 @@ AudioBuffer<float> Convolver::deconvolveNonPeriodic2(AudioBuffer<float>& numerat
 													   
 													   
 
-void Convolver::averagingFilter (AudioSampleBuffer* buffer, double octaveFraction, double sampleRate, bool logAvg, bool nullifyPhase, bool nullifyAmplitude){
+void averagingFilter (AudioSampleBuffer* buffer, double octaveFraction, double sampleRate, bool logAvg, bool nullifyPhase, bool nullifyAmplitude){
 	
 	
 	int fftSize = buffer->getNumSamples();
 	int numChannels = buffer->getNumChannels();
 	
 	if (!tools::isPowerOfTwo(fftSize)) {
-		DBG("Convolver::applyBucket() error: input buffer size is not power of 2.\n");
+		DBG("applyBucket() error: input buffer size is not power of 2.\n");
 		return;
 	}
 	
@@ -563,7 +556,7 @@ void Convolver::averagingFilter (AudioSampleBuffer* buffer, double octaveFractio
 
 
 
-AudioBuffer<float> Convolver::fftTransform(AudioBuffer<float> &buffer, bool formatAmplPhase) {
+AudioBuffer<float> fftTransform(AudioBuffer<float> &buffer, bool formatAmplPhase) {
 	
 	int N = tools::nextPowerOfTwo(buffer.getNumSamples());
 	int fftBlockSize = N * 2;
@@ -593,7 +586,7 @@ AudioBuffer<float> Convolver::fftTransform(AudioBuffer<float> &buffer, bool form
 
 
 
-AudioBuffer<float> Convolver::fftInvTransform(AudioBuffer<float> &buffer) {
+AudioBuffer<float> fftInvTransform(AudioBuffer<float> &buffer) {
 
 	int fftSize = buffer.getNumSamples();
 	int N  = fftSize / 2;
@@ -616,7 +609,7 @@ AudioBuffer<float> Convolver::fftInvTransform(AudioBuffer<float> &buffer) {
 
 
 
-AudioBuffer<float> Convolver::invertFilter4 (AudioBuffer<float>& buffer, int sampleRate){
+AudioBuffer<float> invertFilter4 (AudioBuffer<float>& buffer, int sampleRate){
 	
 	AudioSampleBuffer pulse = tools::generatePulse(buffer.getNumSamples());
 	AudioSampleBuffer result = deconvolveNonPeriodic2(pulse, buffer, sampleRate);
@@ -626,7 +619,7 @@ AudioBuffer<float> Convolver::invertFilter4 (AudioBuffer<float>& buffer, int sam
 
 
 
-AudioSampleBuffer Convolver::IRchop (AudioSampleBuffer& buffer, int IRlength, float thresholdLeveldB, int consecutiveSamplesBelowThreshold){
+AudioSampleBuffer IRchop (AudioSampleBuffer& buffer, int IRlength, float thresholdLeveldB, int consecutiveSamplesBelowThreshold){
 	
 	// put sampleCursor on the sample that contains maxAmpl
 	// if finding that sample doesn't work for whatever reason: set sampleCursor to 0
@@ -692,7 +685,7 @@ AudioSampleBuffer Convolver::IRchop (AudioSampleBuffer& buffer, int IRlength, fl
 
 
 
-void Convolver::shifteroo(AudioSampleBuffer* buffer){
+void shifteroo(AudioSampleBuffer* buffer){
 	
 	if (buffer->getNumSamples() < 2)
 		return;
@@ -713,11 +706,10 @@ void Convolver::shifteroo(AudioSampleBuffer* buffer){
 }
 
 
-AudioSampleBuffer Convolver::IRtoRealFFTRaw (AudioSampleBuffer& buffer, int irPartSize){
+AudioSampleBuffer IRtoRealFFTRaw (AudioSampleBuffer& buffer, int irPartSize){
 	int bufcount = buffer.getNumSamples()/irPartSize + 1;
 	int N = irPartSize * 2; // actually also needs -1 but no one cares
 	
-	Convolver convolver;
 	CircularBufferArray array (bufcount, 1, N);
 	ParallelBufferPrinter printer;
 	
@@ -729,7 +721,7 @@ AudioSampleBuffer Convolver::IRtoRealFFTRaw (AudioSampleBuffer& buffer, int irPa
 		bufferSample++;
 		
 		if ((bufferSample % irPartSize == 0) || (bufferSample == buffer.getNumSamples())){
-			AudioSampleBuffer fft (convolver.fftTransform(*array.getWriteBufferPtr()));
+			AudioSampleBuffer fft (fftTransform(*array.getWriteBufferPtr()));
 			
 			// replace im(0) with re(N/2)
 			fft.setSample(0, 1, fft.getSample(0, fft.getNumSamples()/2));
@@ -756,6 +748,8 @@ AudioSampleBuffer Convolver::IRtoRealFFTRaw (AudioSampleBuffer& buffer, int irPa
 	
 	return cons;
 }
+	
+} // Convolver
 
 } // fp
 
