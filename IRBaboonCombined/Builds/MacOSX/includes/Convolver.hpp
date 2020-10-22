@@ -5,12 +5,12 @@
 //  Created by Felix Postma on 22/03/2019.
 //
 
-#ifndef Convolver_hpp
-#define Convolver_hpp
+#ifndef FP_CONVOLVER_HPP
+#define FP_CONVOLVER_HPP
 
 #include <stdio.h>
 
-#include <fp_general.h>
+#include <fp_general.hpp>
 #include <JuceHeader.h>
 
 
@@ -38,7 +38,7 @@ public:
 	 * performForwardRealFreqOnly has been used, because the upper bin range
 	 * will eventually go into negative freq bin territory, where the contents
 	 * of the bins are 0, but still count towards the average. */
-	void averagingFilter (AudioSampleBuffer* buffer, double octaveFraction, double sampleRate, bool logAvg, bool nullifyPhase = false, bool nullifyAmplitude = false);
+	void averagingFilter (AudioBuffer<float>* buffer, double octaveFraction, double sampleRate, bool logAvg, bool nullifyPhase = false, bool nullifyAmplitude = false);
 
 
 	/* these transforms use the RealOnly transforms in the Juce library.
@@ -59,17 +59,17 @@ public:
 	 	- chop start is sample before max ampl sample that is consecutiveSamplesBelowThreshold
 	 	- IRlength is length, and linear fadeout in final 1/8 or IR
 	 * if nullifiedphase: needs shifted buffer as input */
-	AudioSampleBuffer IRchop (AudioSampleBuffer& buffer, int IRlength, float thresholdLeveldB, int consecutiveSamplesBelowThreshold);
+	AudioBuffer<float> IRchop (AudioBuffer<float>& buffer, int IRlength, float thresholdLeveldB, int consecutiveSamplesBelowThreshold);
 	
 	
 	/* puts the second half of the buffer in front of the first half
 	 * if uneven: 2nd half has 1 sample less than 1st half */
-	void shifteroo (AudioSampleBuffer* buffer);
+	void shifteroo (AudioBuffer<float>* buffer);
 
 	
 	// For ARM convolution
 	// IR -> FFT -> format {0, N/2, re(1), im(1), ..., im((N/2)-1)} -> export (close to) raw bytes
-	AudioSampleBuffer IRtoRealFFTRaw (AudioSampleBuffer& buffer, int fftBufferSize);
+	AudioBuffer<float> IRtoRealFFTRaw (AudioBuffer<float>& buffer, int fftBufferSize);
 
 
 private:
@@ -92,4 +92,4 @@ private:
 	
 } // fp
 
-#endif /* Convolver_hpp */
+#endif /* FP_CONVOLVER_HPP */

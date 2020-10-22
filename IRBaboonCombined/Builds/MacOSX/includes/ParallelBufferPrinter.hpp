@@ -5,10 +5,10 @@
 //  Created by Felix Postma on 20/02/2019.
 //
 
-#ifndef ParallelPrintBuffer_h
-#define ParallelPrintBuffer_h
+#ifndef FP_PARALLELBUFFERPRINTER_HPP
+#define FP_PARALLELBUFFERPRINTER_HPP
 
-#include <fp_general.h>
+#include <fp_general.hpp>
 #include <JuceHeader.h>
 
 #include "boost/filesystem.hpp"
@@ -22,11 +22,11 @@ class PrintBuffer {
     
 public:
     PrintBuffer();
-	PrintBuffer(std::string h, AudioSampleBuffer& b);
+	PrintBuffer(std::string h, AudioBuffer<float>& b);
     ~PrintBuffer();
     
     std::string header;
-    AudioSampleBuffer buffer;
+    AudioBuffer<float> buffer;
     bool empty;
 };
 
@@ -38,11 +38,11 @@ public:
     ParallelBufferPrinter();
     ~ParallelBufferPrinter();
     
-	void appendBuffer(std::string name, AudioSampleBuffer& buffer);
+	void appendBuffer(std::string name, AudioBuffer<float>& buffer);
 	void appendCircularBufferArray(std::string name, fp::CircularBufferArray& circularBufferArray);
 
 	// will replace the buffer in this location if one already exists
-    void insertBuffer(std::string name, AudioSampleBuffer& buffer, int insertIndex);
+    void insertBuffer(std::string name, AudioBuffer<float>& buffer, int insertIndex);
 	
 	void printToConsole(int startSample, int numSamples, bool onlyCh0 = false, bool displaydB = false);
 	
@@ -69,6 +69,6 @@ private:
 } // fp
 
 
-#endif /* ParallelPrintBuffer_h */
+#endif /* FP_PARALLELBUFFERPRINTER_HPP */
 
 

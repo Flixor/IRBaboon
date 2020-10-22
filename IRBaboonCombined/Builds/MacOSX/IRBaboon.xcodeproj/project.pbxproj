@@ -156,7 +156,7 @@
 		0D3C7380254088A600E4BE47 /* libboost_filesystem.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libboost_filesystem.dylib; path = ../../../../../../../../usr/local/Cellar/boost/1.69.0_2/lib/libboost_filesystem.dylib; sourceTree = "<group>"; };
 		0D3C7384254093D000E4BE47 /* fpconvolver_graveyard.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = fpconvolver_graveyard.cpp; sourceTree = "<group>"; };
 		0D3C7385254093D000E4BE47 /* fpconvolver_graveyard.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = fpconvolver_graveyard.hpp; sourceTree = "<group>"; };
-		0D3C73862540962400E4BE47 /* fp_general.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fp_general.h; sourceTree = "<group>"; };
+		0D3C73862540962400E4BE47 /* fp_general.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = fp_general.hpp; sourceTree = "<group>"; };
 		0D3C73872540A58400E4BE47 /* tools.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = tools.hpp; sourceTree = "<group>"; };
 		0D3C73882540B02A00E4BE47 /* string.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = string.hpp; path = ../../../../../../../../usr/local/Cellar/boost/1.69.0_2/include/boost/algorithm/string.hpp; sourceTree = "<group>"; };
 		0D427E00254085EC00D4E878 /* Convolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Convolver.cpp; path = ../../Source/Convolver.cpp; sourceTree = "<group>"; };
@@ -312,12 +312,24 @@
 		0DA011452541DB9E0088D515 /* fp */ = {
 			isa = PBXGroup;
 			children = (
-				0D3C73862540962400E4BE47 /* fp_general.h */,
+				0D3C73862540962400E4BE47 /* fp_general.hpp */,
 				0D3C73872540A58400E4BE47 /* tools.hpp */,
 				0D3C737C2540864D00E4BE47 /* CircularBufferArray.hpp */,
 				0D3C737D2540864D00E4BE47 /* Convolver.hpp */,
 				0D3C737E2540864D00E4BE47 /* ExpSineSweep.hpp */,
 				0D3C737B2540864D00E4BE47 /* ParallelBufferPrinter.hpp */,
+			);
+			name = fp;
+			sourceTree = "<group>";
+		};
+		0DA011462541E3B10088D515 /* fp */ = {
+			isa = PBXGroup;
+			children = (
+				0D427E03254085EC00D4E878 /* CircularBufferArray.cpp */,
+				0D427E00254085EC00D4E878 /* Convolver.cpp */,
+				0D427E01254085EC00D4E878 /* ExpSineSweep.cpp */,
+				0D427E02254085EC00D4E878 /* ParallelBufferPrinter.cpp */,
+				0DA011432541C8D90088D515 /* tools.cpp */,
 			);
 			name = fp;
 			sourceTree = "<group>";
@@ -396,11 +408,7 @@
 		61DEA04EA520BF242C8303B8 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				0D427E03254085EC00D4E878 /* CircularBufferArray.cpp */,
-				0D427E00254085EC00D4E878 /* Convolver.cpp */,
-				0D427E01254085EC00D4E878 /* ExpSineSweep.cpp */,
-				0D427E02254085EC00D4E878 /* ParallelBufferPrinter.cpp */,
-				0DA011432541C8D90088D515 /* tools.cpp */,
+				0DA011462541E3B10088D515 /* fp */,
 				4CB2EAEE2A0F6DD89D2FEC55 /* PluginProcessor.cpp */,
 				C437784F324EE9F620C07CDD /* PluginProcessor.h */,
 				6BE1D4F8245593192CD6AD50 /* PluginEditor.cpp */,

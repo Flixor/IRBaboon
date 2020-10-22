@@ -1,16 +1,16 @@
 //
-//  SineSweepGenerator.hpp
+//  ExpSineSweep.hpp
 //  SineSweepGeneration - ConsoleApp
 //
 //  Created by Felix Postma on 21/03/2019.
 //
 
-#ifndef ExpSineSweep_hpp
-#define ExpSineSweep_hpp
+#ifndef FP_EXPSINESWEEP_HPP
+#define FP_EXPSINESWEEP_HPP
 
 #include <stdio.h>
 
-#include <fp_general.h>
+#include <fp_general.hpp>
 #include <JuceHeader.h>
 
 
@@ -25,12 +25,12 @@ public:
 	// Farina 2000 exp sweep method
 	void generate(double durationSecs, double sampleRate, double lowFreq, double highFreq, double dBGain);
 	AudioBuffer<double> getSweep();
-	AudioSampleBuffer getSweepFloat();
+	AudioBuffer<float> getSweepFloat();
 
 	void generateInv();
 	void generateInv(double durationSecs, double sampleRate, double lowFreq, double highFreq, double dBGain);
 	AudioBuffer<double> getSweepInv();
-	AudioSampleBuffer getSweepInvFloat();
+	AudioBuffer<float> getSweepInvFloat();
 
 	// returns the sample index where the instantaneous freq is closest to the specified freq
 	int getSampleIndexAtFreq (double freq);
@@ -63,5 +63,5 @@ private:
 
 } // fp
 
-#endif /* ExpSineSweep_hpp */
+#endif /* FP_EXPSINESWEEP_HPP */
 

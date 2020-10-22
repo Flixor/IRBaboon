@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <fp_general.h>
+#include <fp_general.hpp>
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 

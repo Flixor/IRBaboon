@@ -1,16 +1,16 @@
 //
-//  AudioSampleBufferArray.hpp
+//  AudioBuffer<float>Array.hpp
 //  ConvUniformPartPlugin - Shared Code
 //
 //  Created by Felix Postma on 14/03/2019.
 //
 
-#ifndef CircularBufferArray_hpp
-#define CircularBufferArray_hpp
+#ifndef FP_CIRCULARBUFFERARRAY_HPP
+#define FP_CIRCULARBUFFERARRAY_HPP
 
 #include <stdio.h>
 
-#include <fp_general.h>
+#include <fp_general.hpp>
 #include <JuceHeader.h>
 
 
@@ -32,15 +32,15 @@ public:
 	 */
 	void changeArraySize(int amountOfBuffers);
 
-	AudioSampleBuffer* getReadBufferPtr();
-	AudioSampleBuffer* getWriteBufferPtr();
-	AudioSampleBuffer* getBufferPtrAtIndex(int index);
+	AudioBuffer<float>* getReadBufferPtr();
+	AudioBuffer<float>* getWriteBufferPtr();
+	AudioBuffer<float>* getBufferPtrAtIndex(int index);
 	void incrReadIndex();	// built-in foldback
 	void decrReadIndex();	// built-in foldback
 	void incrWriteIndex();	// built-in foldback
 	
 	/* returns 1 buffer which is array elements 0-n appended in order */
-	AudioSampleBuffer consolidate(int bufOffset = 0);
+	AudioBuffer<float> consolidate(int bufOffset = 0);
 
 	int getReadIndex();
 	void setReadIndex(int index);
@@ -53,7 +53,7 @@ public:
 private:
 	void initBuffers(int amountOfBuffers, int bufferChannelSize, int bufferSampleSize);
 	
-	std::vector<AudioSampleBuffer> bufferArray;
+	std::vector<AudioBuffer<float>> bufferArray;
 	int channelsPerBuffer;
 	int samplesPerBuffer;
 	int readIndex;
@@ -64,4 +64,4 @@ private:
 
 } // fp
 
-#endif /* CircularBufferArray_hpp */
+#endif /* FP_CIRCULARBUFFERARRAY_HPP */

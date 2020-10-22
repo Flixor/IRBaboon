@@ -6,8 +6,8 @@
 //  Copyright © 2020 Flixor. All rights reserved.
 //
 
-#ifndef fp_general_h
-#define fp_general_h
+#ifndef FP_GENERAL_HPP
+#define FP_GENERAL_HPP
 
 
 #include "tools.hpp"
@@ -24,4 +24,4 @@ using namespace fp;
 #define BREAK JUCE_BREAK_IN_DEBUGGER
 
 
-#endif /* fp_general_h */
+#endif /* FP_GENERAL_HPP */

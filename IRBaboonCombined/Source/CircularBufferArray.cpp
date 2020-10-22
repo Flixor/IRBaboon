@@ -1,11 +1,11 @@
 //
-//  AudioSampleBufferArray.cpp
+//  CircularBufferArray.cpp
 //  ConvUniformPartPlugin - Shared Code
 //
 //  Created by Felix Postma on 14/03/2019.
 //
 
-#include <fp_general.h>
+#include <fp_general.hpp>
 
 
 namespace fp {

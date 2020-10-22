@@ -6,35 +6,35 @@
 //  Copyright © 2020 Flixor. All rights reserved.
 //
 
-#ifndef tools_h
-#define tools_h
+#ifndef FP_TOOLS_HPP
+#define FP_TOOLS_HPP
 
 #include <stdio.h>
 
-#include <fp_general.h>
+#include <fp_general.hpp>
 #include <JuceHeader.h>
 
 
 namespace fp {
 namespace tools {
 
-	// in-place stereo sum to mono, into ch0 of buffer
-	void sumToMono(AudioSampleBuffer* buffer);
+	/* in-place stereo sum to mono, into ch0 of buffer */
+	void sumToMono(AudioBuffer<float>* buffer);
 	
-	// makes a mono buffer stereo, and copies contents to the new 2nd channel
-	void makeStereo(AudioSampleBuffer* buffer);
+	// makes a mono buffer stereo, and copies contents to the new 2nd channel */
+	void makeStereo(AudioBuffer<float>* buffer);
 	
-	// in-place complex multiplication, i.e. (a,b) := (a,b)*(c,d)
+	// in-place complex multiplication, i.e. (a,b) := (a,b)*(c,d) */
 	void complexMul(float* a, float* b, float c, float d);
 	
-	// in-place complex division, i.e. (a,b) := (a,b) / (c,d)
+	// in-place complex division, i.e. (a,b) := (a,b) / (c,d) */
 	void complexDivCartesian(float* a, float* b, float c, float d);
 	// for polar division, cartesian is first converted to polar:
 	// Polar() is less efficient than Cartesian()
 	void complexDivPolar(float* amplA, float* phaseA, float amplB, float phaseB);
 	
 	// applies gain to all buffer samples, such that the maximum sample level is equal to dBGoalLevel
-	void normalize(AudioSampleBuffer* buffer, float dBGoalLevel = 0.0f, bool printGain = false);
+	void normalize(AudioBuffer<float>* buffer, float dBGoalLevel = 0.0f, bool printGain = false);
 	
 	// converts dB to a linear value (0.0 dB = 1.0 linear)
 	float dBToLin (float dB);
@@ -45,8 +45,8 @@ namespace tools {
 	double linTodB (double lin);
 	
 	// puts the contents of a file into a buffer
-	AudioSampleBuffer fileToBuffer (String fileName, int startSample = 0, int numSamples = 0);
-	AudioSampleBuffer fileToBuffer (File file, int startSample = 0, int numSamples = 0);
+	AudioBuffer<float> fileToBuffer (String fileName, int startSample = 0, int numSamples = 0);
+	AudioBuffer<float> fileToBuffer (File file, int startSample = 0, int numSamples = 0);
 	
 	// does what is says
 	bool isPowerOfTwo(int x);
@@ -67,14 +67,14 @@ namespace tools {
 	
 	// generate pulse buffer: {1.0, 0.0, 0.0, ...}
 	// with optional offset = delay on the pulse
-	AudioSampleBuffer generatePulse (int numSamples, int pulseOffset = 0);
+	AudioBuffer<float> generatePulse (int numSamples, int pulseOffset = 0);
 	
 	// performs linear fade, fade per sample being 1.0 / numSamples.
 	// !fadeIn means fadeout
-	void linearFade (AudioSampleBuffer* buffer, bool fadeIn, int startSample, int numSamples);
+	void linearFade (AudioBuffer<float>* buffer, bool fadeIn, int startSample, int numSamples);
 	
 	/* fills every channel of the buffer with a sine wave with the specified freq and ampl */
-	void sineFill (AudioSampleBuffer *buffer, float freq, float sampleRate, float ampl = 1.0f);
+	void sineFill (AudioBuffer<float> *buffer, float freq, float sampleRate, float ampl = 1.0f);
 	
 	
 	/*
@@ -86,4 +86,4 @@ namespace tools {
 } // tools
 } // fp
 
-#endif /* tools_h */
+#endif /* FP_TOOLS_HPP */
