@@ -74,7 +74,7 @@ public:
 	void startCaptureThdn();
 
 	AudioSampleBuffer createTargetOrBaseIR(AudioSampleBuffer& numeratorBuf, AudioSampleBuffer& denominatorBuf);
-	AudioSampleBuffer createMakeupIR();
+	void createIRFilt();
 	
 	int getTotalSweepBreakSamples();
 	int getMakeupIRLengthSamples();

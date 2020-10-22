@@ -361,10 +361,7 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 			}
 
 			if (IRTarg.getNumSamples() > 0 && IRBase.getNumSamples() > 0){
-				
-				IRFiltRefPtr->getAudioSampleBuffer()->makeCopyOf(createMakeupIR());
-				
-				IRFilt = *(IRFiltRefPtr->getAudioSampleBuffer());
+				createIRFilt();
 			}
 			
 			captureInput = false;
@@ -707,7 +704,7 @@ AudioSampleBuffer AutoKalibraDemoAudioProcessor::createTargetOrBaseIR(AudioSampl
 
 
 
-AudioSampleBuffer AutoKalibraDemoAudioProcessor::createMakeupIR(){
+void AutoKalibraDemoAudioProcessor::createIRFilt(){
 	AudioSampleBuffer makeupIR;
 	
 	makeupIR.makeCopyOf(convolver::deconvolveNonPeriodic2(IRTarg, IRBase, sampleRate, true, nullifyPhaseFilt, nullifyAmplFilt));
@@ -721,7 +718,8 @@ AudioSampleBuffer AutoKalibraDemoAudioProcessor::createMakeupIR(){
 //	AudioSampleBuffer IRinvfiltchop (convolver::IRchop(IRinvfilt, makeupIRLengthSamples, -24.0, 25));
 //	return IRinvfiltchop;
 	
-	return makeupIR;
+	IRFiltRefPtr->getAudioSampleBuffer()->makeCopyOf(makeupIR);
+	IRFilt = *(IRFiltRefPtr->getAudioSampleBuffer());
 }
 
 
@@ -977,8 +975,7 @@ void AutoKalibraDemoAudioProcessor::setNullifyPhaseFilt(bool nullifyPhase){
 	nullifyPhaseFilt = nullifyPhase;
 	
 	if (IRTarg.getNumSamples() > 0 && IRBase.getNumSamples() > 0){
-		IRFiltRefPtr->getAudioSampleBuffer()->makeCopyOf(createMakeupIR());
-		IRFilt = *(IRFiltRefPtr->getAudioSampleBuffer());
+		createIRFilt();
 	}
 	
 	notify();
@@ -989,8 +986,7 @@ void AutoKalibraDemoAudioProcessor::setNullifyAmplFilt(bool nullifyAmplitude){
 	nullifyAmplFilt = nullifyAmplitude;
 	
 	if (IRTarg.getNumSamples() > 0 && IRBase.getNumSamples() > 0){
-		IRFiltRefPtr->getAudioSampleBuffer()->makeCopyOf(createMakeupIR());
-		IRFilt = *(IRFiltRefPtr->getAudioSampleBuffer());
+		createIRFilt();
 	}
 	
 	notify();
@@ -1001,8 +997,7 @@ void AutoKalibraDemoAudioProcessor::setMakeupSize(int makeupSize){
 	makeupIRLengthSamples = makeupSize;
 	
 	if (IRTarg.getNumSamples() > 0 && IRBase.getNumSamples() > 0){
-		IRFiltRefPtr->getAudioSampleBuffer()->makeCopyOf(createMakeupIR());
-		IRFilt = *(IRFiltRefPtr->getAudioSampleBuffer());
+		createIRFilt();
 	}
 
 	notify();
@@ -1023,8 +1018,7 @@ void AutoKalibraDemoAudioProcessor::swapTargetBase(){
 
 	// generate new makeup
 	if (IRTarg.getNumSamples() > 0 && IRBase.getNumSamples() > 0){
-		IRFiltRefPtr->getAudioSampleBuffer()->makeCopyOf(createMakeupIR());
-		IRFilt = *(IRFiltRefPtr->getAudioSampleBuffer());
+		createIRFilt();
 	}
 	
 	// reprint
@@ -1057,8 +1051,7 @@ void AutoKalibraDemoAudioProcessor::loadTarget(File file){
 	
 	// generate new makeup
 	if (IRTarg.getNumSamples() > 0 && IRBase.getNumSamples() > 0){
-		IRFiltRefPtr->getAudioSampleBuffer()->makeCopyOf(createMakeupIR());
-		IRFilt = *(IRFiltRefPtr->getAudioSampleBuffer());
+		createIRFilt();
 	}
 	
 	// rerename wav
