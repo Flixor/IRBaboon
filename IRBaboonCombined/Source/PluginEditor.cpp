@@ -13,7 +13,6 @@
 
 
 
-
 double DecibelSlider::getValueFromText (const String& text){
 	double minusInfinitydB = -100.0;
 	String decibelText = text.upToFirstOccurrenceOf ("dB", false, false).trim();

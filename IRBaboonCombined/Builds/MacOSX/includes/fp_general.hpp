@@ -9,6 +9,13 @@
 #ifndef FP_GENERAL_HPP
 #define FP_GENERAL_HPP
 
+#include <stdio.h>
+#include <iostream>
+#include <fstream>
+
+#include "boost/filesystem.hpp"
+#include "boost/algorithm/string.hpp"
+#define BOOST_FILESYSTEM_NO_DEPRECATED // recommended by boost
 
 #include "tools.hpp"
 #include "CircularBufferArray.hpp"

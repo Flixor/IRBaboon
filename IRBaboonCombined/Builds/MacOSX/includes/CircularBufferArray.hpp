@@ -8,8 +8,6 @@
 #ifndef FP_CIRCULARBUFFERARRAY_HPP
 #define FP_CIRCULARBUFFERARRAY_HPP
 
-#include <stdio.h>
-
 #include <fp_general.hpp>
 #include <JuceHeader.h>
 

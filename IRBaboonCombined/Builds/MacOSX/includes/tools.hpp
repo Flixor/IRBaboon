@@ -9,8 +9,6 @@
 #ifndef FP_TOOLS_HPP
 #define FP_TOOLS_HPP
 
-#include <stdio.h>
-
 #include <fp_general.hpp>
 #include <JuceHeader.h>
 
@@ -76,12 +74,12 @@ namespace tools {
 	/* fills every channel of the buffer with a sine wave with the specified freq and ampl */
 	void sineFill (AudioBuffer<float> *buffer, float freq, float sampleRate, float ampl = 1.0f);
 	
-	
 	/*
 	 Get clear iostream errors
 	 https://stackoverflow.com/questions/1725714/why-ofstream-would-fail-to-open-the-file-in-c-reasons
 	 */
 	std::string DescribeIosFailure(const std::ios& stream);
+	
 	
 } // tools
 } // fp

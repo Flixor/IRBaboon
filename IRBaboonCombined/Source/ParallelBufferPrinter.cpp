@@ -5,14 +5,8 @@
 //  Created by Felix Postma on 20/02/2019.
 //
 
-#include <stdio.h>
-#include <iostream>
-#include <fstream>
 
 #include <fp_general.hpp>
-
-#define BOOST_FILESYSTEM_NO_DEPRECATED // recommended by boost
-
 
 
 

@@ -11,9 +11,6 @@
 #include <fp_general.hpp>
 #include <JuceHeader.h>
 
-#include "boost/filesystem.hpp"
-#include "boost/algorithm/string.hpp"
-
 
 namespace fp {
 

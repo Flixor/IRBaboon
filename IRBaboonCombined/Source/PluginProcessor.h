@@ -26,6 +26,9 @@ class AutoKalibraDemoAudioProcessor  : public AudioProcessor, public Thread
 {
 public:
 	
+	/* From Juce tutorial
+	 https://docs.juce.com/master/tutorial_looping_audio_sample_buffer_advanced.html
+	 */
 	class ReferenceCountedBuffer : public ReferenceCountedObject
 	{
 	public:

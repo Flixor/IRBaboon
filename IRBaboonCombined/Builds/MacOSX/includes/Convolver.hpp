@@ -8,8 +8,6 @@
 #ifndef FP_CONVOLVER_HPP
 #define FP_CONVOLVER_HPP
 
-#include <stdio.h>
-
 #include <fp_general.hpp>
 #include <JuceHeader.h>
 
