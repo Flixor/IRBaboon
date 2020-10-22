@@ -13,7 +13,7 @@
 #include "tools.hpp"
 #include "CircularBufferArray.hpp"
 #include "ParallelBufferPrinter.hpp"
-#include "Convolver.hpp"
+#include "convolver.hpp"
 #include "ExpSineSweep.hpp"
 
 using namespace fp;

@@ -1,5 +1,5 @@
 //
-//  Convolver.cpp
+//  convolver.cpp
 //  SineSweepGeneration - ConsoleApp
 //
 //  Created by Felix Postma on 22/03/2019.
@@ -10,7 +10,7 @@
 
 namespace fp {
 
-namespace Convolver {
+namespace convolver {
 
 // ================================================================
 AudioBuffer<float> convolvePeriodic(AudioSampleBuffer& buffer1, AudioSampleBuffer& buffer2, int processBlockSize){
@@ -749,7 +749,7 @@ AudioSampleBuffer IRtoRealFFTRaw (AudioSampleBuffer& buffer, int irPartSize){
 	return cons;
 }
 	
-} // Convolver
+} // convolver
 
 } // fp
 
