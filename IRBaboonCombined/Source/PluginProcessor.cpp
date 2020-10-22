@@ -27,18 +27,10 @@ AutoKalibraDemoAudioProcessor::AutoKalibraDemoAudioProcessor()
 		window (8192, dsp::WindowingFunction<float>::blackman) // how can I do the init of window otherwise..?
 {
 	
-	// remove previously printed files
-	String referencePrintName (printDirectoryDebug + "/targetForThumbnail.wav");
-	File referencePrintFile (referencePrintName);
-	if (referencePrintFile.existsAsFile()) referencePrintFile.deleteFile();
-	
-	String currentPrintName (printDirectoryDebug + "/baseForThumbnail.wav");
-	File currentPrintFile (currentPrintName);
-	if (currentPrintFile.existsAsFile()) currentPrintFile.deleteFile();
-	
-	String invfiltPrintName (printDirectoryDebug + "/filterForThumbnail.wav");
-	File invfiltPrintFile (invfiltPrintName);
-	if (invfiltPrintFile.existsAsFile()) invfiltPrintFile.deleteFile();
+	/* remove previously printed files */
+	boost::filesystem::remove(printDirectoryDebug + "/targetForThumbnail.wav");
+	boost::filesystem::remove(printDirectoryDebug + "/baseForThumbnail.wav");
+	boost::filesystem::remove(printDirectoryDebug + "/filterForThumbnail.wav");
 	
 
 	
@@ -391,7 +383,7 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 			tools::linearFade (&buffer, false, 0, buffer.getNumSamples());
 			needToFadeout = false;
 		}
-		else if (!captureThdn){
+		else if (NOT captureThdn){
 			
 			// output sweep
 			const float* readPtr = sweepBufArray.getReadBufferPtr()->getReadPointer(0, 0);
@@ -432,7 +424,7 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 
 	
 	
-	if ( !(captureTarget || captureBase || captureInput || captureThdn) ){
+	if ( NOT(captureTarget || captureBase || captureInput || captureThdn) ){
 		buffersWaitForResumeThroughput--;
 	}
 	
@@ -447,7 +439,7 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 	// ===============================
 	
 	
-	if ( !(captureTarget || captureBase || captureInput || captureThdn) && buffersWaitForResumeThroughput <= 0) {
+	if ( NOT(captureTarget || captureBase || captureInput || captureThdn) && buffersWaitForResumeThroughput <= 0) {
 	
 		// set IR
 		if (playFiltered) IRtoConvolve = &IRFilt;
@@ -753,7 +745,7 @@ void AutoKalibraDemoAudioProcessor::setPlayFiltered (bool filtered){
 
 
 void AutoKalibraDemoAudioProcessor::run() {
-	while (! threadShouldExit()) {
+	while (NOT threadShouldExit()) {
 		if (saveIRTargFlag) {
 			saveIRTarg();
 		}
