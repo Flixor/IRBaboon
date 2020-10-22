@@ -27,7 +27,7 @@ public:
 	 */
 	
 	/* convolve() uses complex multiplication */
-	AudioBuffer<float> convolvePeriodic(AudioBuffer<float>& buffer1, AudioBuffer<float>& buffer2);
+	AudioBuffer<float> convolvePeriodic(AudioBuffer<float>& buffer1, AudioBuffer<float>& buffer2, int processBlockSize = 256);
 	AudioBuffer<float> convolveNonPeriodic(AudioBuffer<float>& buffer1, AudioBuffer<float>& buffer2);
 	
 	/* deconcolve uses complex division
@@ -75,8 +75,14 @@ public:
 private:
 	
 	// for convolvePeriodic()
-	int processBlockSize = 256;
+//	int processBlockSize = 256;
 	
+	
+	// for averagingFilter() total (gaussian) smoothing width will be 3*this
+//	float smoothPerAvg = 1.0/13.0;
+
+};
+
 	enum ChannelLayout{
 		unknown,
 		IRMonoAudioMono,
@@ -84,11 +90,6 @@ private:
 		IRStereoAudioMono,
 		IRStereoAudioStereo
 	};
-	
-	// for averagingFilter() total (gaussian) smoothing width will be 3*this
-	float smoothPerAvg = 1.0/13.0;
-
-};
 	
 } // fp
 

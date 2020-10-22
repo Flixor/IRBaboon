@@ -20,7 +20,7 @@ Convolver::~Convolver(){
 }
 
 // ================================================================
-AudioBuffer<float> Convolver::convolvePeriodic(AudioSampleBuffer& buffer1, AudioSampleBuffer& buffer2){
+AudioBuffer<float> Convolver::convolvePeriodic(AudioSampleBuffer& buffer1, AudioSampleBuffer& buffer2, int processBlockSize){
 	
 	/*
 	 * In here, buffer1 is seen as "input audio" and buffer2 as the "IR" to convolve with
@@ -397,6 +397,8 @@ AudioBuffer<float> Convolver::deconvolveNonPeriodic2(AudioBuffer<float>& numerat
 
 	
 	// in total 3*smoothPerAvg gaussian smoothing
+	float smoothPerAvg = 1.0/13.0;
+	
 	if (smoothing){
 		averagingFilter(&numBufFft, smoothPerAvg, sampleRate, true, nullifyPhase, nullifyAmplitude);
 		averagingFilter(&numBufFft, smoothPerAvg, sampleRate, true, nullifyPhase, nullifyAmplitude);

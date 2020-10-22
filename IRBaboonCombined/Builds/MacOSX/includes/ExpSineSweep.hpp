@@ -22,11 +22,12 @@ public:
 	ExpSineSweep();
 	~ExpSineSweep();
 
-	// Farina 2000 exp sweep method
+	/* Farina 2000 exp sweep method */
 	void generate(double durationSecs, double sampleRate, double lowFreq, double highFreq, double dBGain);
 	AudioBuffer<double> getSweep();
 	AudioBuffer<float> getSweepFloat();
 
+	/* generates the same sweep but reversed */
 	void generateInv();
 	void generateInv(double durationSecs, double sampleRate, double lowFreq, double highFreq, double dBGain);
 	AudioBuffer<double> getSweepInv();
