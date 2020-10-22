@@ -173,7 +173,7 @@ private:
 	AudioSampleBuffer thdnRecBuf;
 	ReferenceCountedBuffer::Ptr sweepTargRefPtr;
 	ReferenceCountedBuffer::Ptr sweepBaseRefPtr;
-	AudioSampleBuffer IRTarg;
+	AudioSampleBuffer IRTarggg;
 	ReferenceCountedBuffer::Ptr IRTargRefPtr;
 	AudioSampleBuffer IRBase;
 	ReferenceCountedBuffer::Ptr IRBaseRefPtr;

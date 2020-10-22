@@ -355,9 +355,9 @@ AudioBuffer<float> convolveNonPeriodic(AudioSampleBuffer& buffer1, AudioSampleBu
 
 
 
-AudioBuffer<float> deconvolveNonPeriodic2(AudioBuffer<float>& numeratorBuffer, AudioBuffer<float>& denominatorBuffer, double sampleRate, bool smoothing, bool nullifyPhase, bool nullifyAmplitude){
+AudioBuffer<float> deconvolveNonPeriodic2(AudioBuffer<float>* numeratorBuffer, AudioBuffer<float>& denominatorBuffer, double sampleRate, bool smoothing, bool nullifyPhase, bool nullifyAmplitude){
 	
-	AudioSampleBuffer numBuf (numeratorBuffer);
+	AudioSampleBuffer numBuf (*numeratorBuffer);
 	numBuf.setSize(1, numBuf.getNumSamples(), true);
 	AudioSampleBuffer denomBuf (denominatorBuffer);
 	denomBuf.setSize(1, denomBuf.getNumSamples(), true);
@@ -612,7 +612,7 @@ AudioBuffer<float> fftInvTransform(AudioBuffer<float> &buffer) {
 AudioBuffer<float> invertFilter4 (AudioBuffer<float>& buffer, int sampleRate){
 	
 	AudioSampleBuffer pulse = tools::generatePulse(buffer.getNumSamples());
-	AudioSampleBuffer result = deconvolveNonPeriodic2(pulse, buffer, sampleRate);
+	AudioSampleBuffer result = deconvolveNonPeriodic2(&pulse, buffer, sampleRate);
 	return result;
 }
 
