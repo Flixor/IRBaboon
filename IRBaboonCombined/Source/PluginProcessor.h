@@ -82,8 +82,7 @@ public:
 	bool filtReady();
 	AudioSampleBuffer getMakeupIR();
 	
-	void setPlayUnprocessed();
-	void setPlayInvFilt();
+	void setPlayFiltered(bool filtered);
 	
 	/* Print and thumbnail thread */
 	void run() override;

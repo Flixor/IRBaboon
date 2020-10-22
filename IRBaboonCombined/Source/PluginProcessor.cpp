@@ -453,8 +453,8 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 	if ( !(captureTarget || captureBase || captureInput || captureThdn) && buffersWaitForResumeThroughput <= 0) {
 	
 		// set IR
-		if (playUnprocessed) IRtoConvolve = &IRpulse;
-		else if (playFiltered) IRtoConvolve = &IRFilt;
+		if (playFiltered) IRtoConvolve = &IRFilt;
+		else IRtoConvolve = &IRpulse;
 
 		
 		// fade in buffer if necessary
@@ -748,15 +748,8 @@ AudioSampleBuffer AutoKalibraDemoAudioProcessor::getMakeupIR(){
 }
 
 
-
-void AutoKalibraDemoAudioProcessor::setPlayUnprocessed(){
-	playFiltered = false;
-	playUnprocessed = true;
-}
-
-void AutoKalibraDemoAudioProcessor::setPlayInvFilt(){
-	playUnprocessed = false;
-	playFiltered = true;
+void AutoKalibraDemoAudioProcessor::setPlayFiltered (bool filtered){
+	playFiltered = filtered;
 }
 
 

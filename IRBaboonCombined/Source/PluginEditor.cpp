@@ -258,7 +258,7 @@ void AutoKalibraDemoAudioProcessorEditor::timerCallback(){
 
 
 void AutoKalibraDemoAudioProcessorEditor::playUnprocessedAudioClick (bool toggleState){
-	processor.setPlayUnprocessed();
+	processor.setPlayFiltered(false);
 	
 	if (toggleState) playUnprocessedAudioButton.setButtonText("PLAYING unprocessed audio");
 	if (!toggleState) playUnprocessedAudioButton.setButtonText("Play unprocessed audio");
@@ -267,7 +267,7 @@ void AutoKalibraDemoAudioProcessorEditor::playUnprocessedAudioClick (bool toggle
 
 
 void AutoKalibraDemoAudioProcessorEditor::playInvfiltAudioClick (bool toggleState){
-	processor.setPlayInvFilt();
+	processor.setPlayFiltered(true);
 
 	if (toggleState) {
 		playInvFiltAudioButton.setButtonText("PLAYING filtered audio");
