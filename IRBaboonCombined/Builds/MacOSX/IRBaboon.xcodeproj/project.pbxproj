@@ -60,6 +60,7 @@
 		0D427E05254085F200D4E878 /* FP_Convolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0D427E00254085EC00D4E878 /* FP_Convolver.cpp */; };
 		0D427E06254085F500D4E878 /* FP_ExpSineSweep.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0D427E01254085EC00D4E878 /* FP_ExpSineSweep.cpp */; };
 		0D427E07254085F700D4E878 /* FP_ParallelBufferPrinter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0D427E02254085EC00D4E878 /* FP_ParallelBufferPrinter.cpp */; };
+		0DA011442541C8D90088D515 /* FP_Tools_nstest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0DA011432541C8D90088D515 /* FP_Tools_nstest.cpp */; };
 		0E3313D09952CBCFAEB14491 /* include_juce_audio_plugin_client_AU_1.mm in Sources */ = {isa = PBXBuildFile; fileRef = F126DF1BA4664045B3553963 /* include_juce_audio_plugin_client_AU_1.mm */; };
 		197BDC60554050B207212B80 /* include_juce_graphics.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8D606B6D507BFB736364E208 /* include_juce_graphics.mm */; };
 		1E0972C291BB4FB60985BC3F /* include_juce_audio_processors.mm in Sources */ = {isa = PBXBuildFile; fileRef = FF874E44CC229E117BBD3136 /* include_juce_audio_processors.mm */; };
@@ -162,6 +163,7 @@
 		0D427E01254085EC00D4E878 /* FP_ExpSineSweep.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FP_ExpSineSweep.cpp; path = ../../Source/FP_ExpSineSweep.cpp; sourceTree = "<group>"; };
 		0D427E02254085EC00D4E878 /* FP_ParallelBufferPrinter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FP_ParallelBufferPrinter.cpp; path = ../../Source/FP_ParallelBufferPrinter.cpp; sourceTree = "<group>"; };
 		0D427E03254085EC00D4E878 /* FP_CircularBufferArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FP_CircularBufferArray.cpp; path = ../../Source/FP_CircularBufferArray.cpp; sourceTree = "<group>"; };
+		0DA011432541C8D90088D515 /* FP_Tools_nstest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = FP_Tools_nstest.cpp; path = ../../Source/FP_Tools_nstest.cpp; sourceTree = "<group>"; };
 		11DCB288699186219329099A /* DiscRecording.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiscRecording.framework; path = System/Library/Frameworks/DiscRecording.framework; sourceTree = SDKROOT; };
 		11F19FDCD8B77A64DEC64BA3 /* include_juce_gui_extra.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = include_juce_gui_extra.mm; path = ../../JuceLibraryCode/include_juce_gui_extra.mm; sourceTree = SOURCE_ROOT; };
 		17E554315E077F9DA862E8D0 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
@@ -390,6 +392,7 @@
 				0D427E00254085EC00D4E878 /* FP_Convolver.cpp */,
 				0D427E01254085EC00D4E878 /* FP_ExpSineSweep.cpp */,
 				0D427E02254085EC00D4E878 /* FP_ParallelBufferPrinter.cpp */,
+				0DA011432541C8D90088D515 /* FP_Tools_nstest.cpp */,
 				4CB2EAEE2A0F6DD89D2FEC55 /* PluginProcessor.cpp */,
 				C437784F324EE9F620C07CDD /* PluginProcessor.h */,
 				6BE1D4F8245593192CD6AD50 /* PluginEditor.cpp */,
@@ -718,6 +721,7 @@
 				A7E1E74D774B95DA7E74FDFE /* include_juce_audio_plugin_client_utils.cpp in Sources */,
 				32173CD195D507224D109A80 /* include_juce_audio_plugin_client_VST_utils.mm in Sources */,
 				1E0972C291BB4FB60985BC3F /* include_juce_audio_processors.mm in Sources */,
+				0DA011442541C8D90088D515 /* FP_Tools_nstest.cpp in Sources */,
 				5D73A1A4C7509D58B626DDD6 /* include_juce_audio_utils.mm in Sources */,
 				05BB93AC7FA9A5C68C6C58B5 /* include_juce_core.mm in Sources */,
 				3496ADCFA49C9146B1328644 /* include_juce_data_structures.mm in Sources */,

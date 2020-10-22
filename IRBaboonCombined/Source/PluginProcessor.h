@@ -13,11 +13,11 @@
 #include <FP_general.h>
 #include <JuceHeader.h>
 
-#include "FP_Tools_nstest.hpp"
 #include "FP_ParallelBufferPrinter.hpp"
 #include "FP_Convolver.hpp"
 #include "FP_ExpSineSweep.hpp"
 #include "FP_CircularBufferArray.hpp"
+#include "FP_Tools_nstest.hpp"
 
 #include <ctime>
 
