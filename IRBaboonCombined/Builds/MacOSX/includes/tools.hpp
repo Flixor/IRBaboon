@@ -9,7 +9,7 @@
 #ifndef FP_TOOLS_HPP
 #define FP_TOOLS_HPP
 
-#include <fp_general.hpp>
+#include <fp_include_all.hpp>
 #include <JuceHeader.h>
 
 

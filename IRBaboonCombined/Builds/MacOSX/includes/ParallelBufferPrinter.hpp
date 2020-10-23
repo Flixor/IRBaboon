@@ -8,7 +8,7 @@
 #ifndef FP_PARALLELBUFFERPRINTER_HPP
 #define FP_PARALLELBUFFERPRINTER_HPP
 
-#include <fp_general.hpp>
+#include <fp_include_all.hpp>
 #include <JuceHeader.h>
 
 

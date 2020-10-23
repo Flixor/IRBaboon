@@ -305,7 +305,8 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 		inputCaptureArray.getWriteBufferPtr()->copyFrom(0, 0, micBuffer, 0, 0, generalHostBlockSize);
 		inputCaptureArray.incrWriteIndex();
 		
-		if (inputCaptureArray.getWriteIndex() == 0){ // capture done
+		/* when capture is done */
+		if (inputCaptureArray.getWriteIndex() == 0){
 			
 			if (inputIsTarget) {
 				
@@ -364,7 +365,7 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 		}
 		else {
 			
-			// output sweep
+			/* output sweep */
 			const float* readPtr = sweepBufArray.getReadBufferPtr()->getReadPointer(0, 0);
 			for (int channel = 0; channel < totalNumOutputChannels; channel++){
 				for (int sample = 0; sample < generalHostBlockSize; sample++){
@@ -373,7 +374,7 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 			}
 			sweepBufArray.incrReadIndex();
 			
-			// sweep is done
+			/* when sweep is done */
 			if (sweepBufArray.getReadIndex() == 0){
 				captureTarget = false;
 				captureBase = false;

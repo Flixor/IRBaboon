@@ -8,7 +8,7 @@
 
 #include <stdio.h>
 
-#include <fp_general.hpp>
+#include <fp_include_all.hpp>
 #include <JuceHeader.h>
 
 

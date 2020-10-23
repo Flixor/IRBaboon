@@ -5,7 +5,7 @@
 //  Created by Felix Postma on 22/03/2019.
 //
 
-#include <fp_general.hpp>
+#include <fp_include_all.hpp>
 
 
 namespace fp {

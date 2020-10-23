@@ -1,13 +1,14 @@
-//
-//  FP_general.h
-//  IRBaboon
-//
-//  Created by Felix Postma on 21/10/2020.
-//  Copyright © 2020 Flixor. All rights reserved.
-//
+/* Created by Felix Postma on 21/10/
+ * Copyright © 2020 Flixor. All rights reserved.
+ *
+ * The fp namespace is to encompass all custom functions and classes,
+ * as a sort of library-in-development.
+ * This header is to include everything in the namespace easily,
+ * and also houses several useful general definitions.
+ */
 
-#ifndef FP_GENERAL_HPP
-#define FP_GENERAL_HPP
+#ifndef FP_INCLUDE_ALL_HPP
+#define FP_INCLUDE_ALL_HPP
 
 #include <stdio.h>
 #include <iostream>
@@ -31,4 +32,4 @@ using namespace fp;
 #define BREAK JUCE_BREAK_IN_DEBUGGER
 
 
-#endif /* FP_GENERAL_HPP */
+#endif /* FP_INCLUDE_ALL_HPP */

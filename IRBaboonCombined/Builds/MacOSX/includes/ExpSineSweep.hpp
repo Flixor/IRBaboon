@@ -8,7 +8,7 @@
 #ifndef FP_EXPSINESWEEP_HPP
 #define FP_EXPSINESWEEP_HPP
 
-#include <fp_general.hpp>
+#include <fp_include_all.hpp>
 #include <JuceHeader.h>
 
 
