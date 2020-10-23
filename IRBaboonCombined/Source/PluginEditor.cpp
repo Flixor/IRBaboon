@@ -29,12 +29,12 @@ String DecibelSlider::getTextFromValue (double value){
 //==============================================================================
 AutoKalibraDemoAudioProcessorEditor::AutoKalibraDemoAudioProcessorEditor (AutoKalibraDemoAudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p),
-		thumbnailReferenceCache (1),
-		thumbnailCurrentCache (1),
-		thumbnailInvfiltCache (1),
-		thumbnailReference (processor.getTotalSweepBreakSamples(), formatManagerReference, thumbnailReferenceCache),
-		thumbnailCurrent (processor.getTotalSweepBreakSamples(), formatManagerCurrent, thumbnailCurrentCache),
-		thumbnailInvfilt (32768, formatManagerInvfilt, thumbnailInvfiltCache)
+		thumbnailCacheTarg (1),
+		thumbnailCacheBase (1),
+		thumbnailCacheFilt (1),
+		thumbnailTarg (processor.getTotalSweepBreakSamples(), formatManagerTarg, thumbnailCacheTarg),
+		thumbnailBase (processor.getTotalSweepBreakSamples(), formatManagerBase, thumbnailCacheBase),
+		thumbnailFilt (32768, formatManagerFilt, thumbnailCacheFilt)
 {
 	
 
@@ -45,11 +45,11 @@ AutoKalibraDemoAudioProcessorEditor::AutoKalibraDemoAudioProcessorEditor (AutoKa
 	addAndMakeVisible (&captureReferenceButton);
 	addAndMakeVisible (&captureCurrentButton);
 	addAndMakeVisible (&playUnprocessedAudioButton);
-	addAndMakeVisible (&playInvFiltAudioButton);
+	addAndMakeVisible (&playFiltAudioButton);
 	
-	playInvFiltAudioButton.setColour(TextButton::buttonColourId, Colour (0xff805705));
-	playInvFiltAudioButton.setColour(TextButton::buttonOnColourId, Colour (0xff805705));
-	playInvFiltAudioButton.setVisible(false);
+	playFiltAudioButton.setColour(TextButton::buttonColourId, Colour (0xff805705));
+	playFiltAudioButton.setColour(TextButton::buttonOnColourId, Colour (0xff805705));
+	playFiltAudioButton.setVisible(false);
 
 	captureReferenceButton.setColour(TextButton::buttonColourId, Colour (0xff365936));
 	captureReferenceButton.onClick = [this] { setStartCaptureReference(); };
@@ -57,13 +57,13 @@ AutoKalibraDemoAudioProcessorEditor::AutoKalibraDemoAudioProcessorEditor (AutoKa
 	captureCurrentButton.onClick = [this] { setStartCaptureCurrent(); };
 
 	playUnprocessedAudioButton.setClickingTogglesState(true);
-	playInvFiltAudioButton.setClickingTogglesState(true);
+	playFiltAudioButton.setClickingTogglesState(true);
 	
 	playUnprocessedAudioButton.onClick = [this] { playUnprocessedAudioClick(playUnprocessedAudioButton.getToggleState()); };
-	playInvFiltAudioButton.onClick = [this] { playInvfiltAudioClick(playInvFiltAudioButton.getToggleState()); };
+	playFiltAudioButton.onClick = [this] { playFiltAudioClick(playFiltAudioButton.getToggleState()); };
 	
 	playUnprocessedAudioButton.setRadioGroupId(playButtons);
-	playInvFiltAudioButton.setRadioGroupId(playButtons);
+	playFiltAudioButton.setRadioGroupId(playButtons);
 	
 	
 	/* ghetto polling solution for checking whether IRFilt is ready in Processor */
@@ -72,30 +72,30 @@ AutoKalibraDemoAudioProcessorEditor::AutoKalibraDemoAudioProcessorEditor (AutoKa
 	
 	
 	/* thumbnails */
-	formatManagerReference.registerBasicFormats();
-	formatManagerCurrent.registerBasicFormats();
-	formatManagerInvfilt.registerBasicFormats();
-	thumbnailReference.addChangeListener (this);
-	thumbnailCurrent.addChangeListener (this);
-	thumbnailInvfilt.addChangeListener (this);
+	formatManagerTarg.registerBasicFormats();
+	formatManagerBase.registerBasicFormats();
+	formatManagerFilt.registerBasicFormats();
+	thumbnailTarg.addChangeListener (this);
+	thumbnailBase.addChangeListener (this);
+	thumbnailFilt.addChangeListener (this);
 	
 	Font labelFont (12);
 	Justification justification (Justification::Flags::centred);
 	
-	addAndMakeVisible (&sweepRefLabel);
-	sweepRefLabel.setText("Target\nsweep & IR", dontSendNotification);
-	sweepRefLabel.setFont(labelFont);
-	sweepRefLabel.setJustificationType(justification);
+	addAndMakeVisible (&sweepTargLabel);
+	sweepTargLabel.setText("Target\nsweep & IR", dontSendNotification);
+	sweepTargLabel.setFont(labelFont);
+	sweepTargLabel.setJustificationType(justification);
 
-	addAndMakeVisible (&sweepCurrLabel);
-	sweepCurrLabel.setText("Base\nsweep & IR", dontSendNotification);
-	sweepCurrLabel.setFont(labelFont);
-	sweepCurrLabel.setJustificationType(justification);
+	addAndMakeVisible (&sweepBaseLabel);
+	sweepBaseLabel.setText("Base\nsweep & IR", dontSendNotification);
+	sweepBaseLabel.setFont(labelFont);
+	sweepBaseLabel.setJustificationType(justification);
 
-	addAndMakeVisible (&IRinvfiltLabel);
-	IRinvfiltLabel.setText("Filter\nIR", dontSendNotification);
-	IRinvfiltLabel.setFont(labelFont);
-	IRinvfiltLabel.setJustificationType(justification);
+	addAndMakeVisible (&IRFiltLabel);
+	IRFiltLabel.setText("Filter\nIR", dontSendNotification);
+	IRFiltLabel.setFont(labelFont);
+	IRFiltLabel.setJustificationType(justification);
 
 	
 	addAndMakeVisible (&titleLabel);
@@ -111,32 +111,32 @@ AutoKalibraDemoAudioProcessorEditor::AutoKalibraDemoAudioProcessorEditor (AutoKa
 	
 	
 	/* sliders */
-	addAndMakeVisible(&referenceZoomSlider);
-	referenceZoomSlider.setRange(-6, 60);
-	referenceZoomSlider.setValue(0.0);
-	referenceZoomSlider.onValueChange = [this] { processor.setZoomTarg(referenceZoomSlider.getValue()); };
+	addAndMakeVisible(&sliderZoomTarg);
+	sliderZoomTarg.setRange(-6, 60);
+	sliderZoomTarg.setValue(0.0);
+	sliderZoomTarg.onValueChange = [this] { processor.setZoomTarg(sliderZoomTarg.getValue()); };
 
-	addAndMakeVisible(referenceZoomSliderLabel);
-	referenceZoomSliderLabel.setText("Target zoom [dB]", dontSendNotification);
-	referenceZoomSliderLabel.attachToComponent(&referenceZoomSlider, true);
+	addAndMakeVisible(sliderZoomTargLabel);
+	sliderZoomTargLabel.setText("Target zoom [dB]", dontSendNotification);
+	sliderZoomTargLabel.attachToComponent(&sliderZoomTarg, true);
 	
-	addAndMakeVisible(&currentZoomSlider);
-	currentZoomSlider.setRange(-6, 60);
-	currentZoomSlider.setValue(0.0);
-	currentZoomSlider.onValueChange = [this] { processor.setZoomBase(currentZoomSlider.getValue()); };
+	addAndMakeVisible(&sliderZoomBase);
+	sliderZoomBase.setRange(-6, 60);
+	sliderZoomBase.setValue(0.0);
+	sliderZoomBase.onValueChange = [this] { processor.setZoomBase(sliderZoomBase.getValue()); };
 	
-	addAndMakeVisible(currentZoomSliderLabel);
-	currentZoomSliderLabel.setText("Base zoom [dB]", dontSendNotification);
-	currentZoomSliderLabel.attachToComponent(&currentZoomSlider, true);
+	addAndMakeVisible(sliderZoomBaseLabel);
+	sliderZoomBaseLabel.setText("Base zoom [dB]", dontSendNotification);
+	sliderZoomBaseLabel.attachToComponent(&sliderZoomBase, true);
 	
-	addAndMakeVisible(&InvfiltZoomSlider);
-	InvfiltZoomSlider.setRange(-60, 36);
-	InvfiltZoomSlider.setValue(0.0);
-	InvfiltZoomSlider.onValueChange = [this] { processor.setZoomFilt(InvfiltZoomSlider.getValue()); };
+	addAndMakeVisible(&sliderZoomFilt);
+	sliderZoomFilt.setRange(-60, 36);
+	sliderZoomFilt.setValue(0.0);
+	sliderZoomFilt.onValueChange = [this] { processor.setZoomFilt(sliderZoomFilt.getValue()); };
 	
-	addAndMakeVisible(InvfiltZoomSliderLabel);
-	InvfiltZoomSliderLabel.setText("Filter zoom [dB]", dontSendNotification);
-	InvfiltZoomSliderLabel.attachToComponent(&InvfiltZoomSlider, true);
+	addAndMakeVisible(sliderZoomFiltLabel);
+	sliderZoomFiltLabel.setText("Filter zoom [dB]", dontSendNotification);
+	sliderZoomFiltLabel.attachToComponent(&sliderZoomFilt, true);
 
 	addAndMakeVisible(&outputVolumeSlider);
 	outputVolumeSlider.setRange(-60, -20);
@@ -208,7 +208,7 @@ void AutoKalibraDemoAudioProcessorEditor::setStartCaptureCurrent(){
 void AutoKalibraDemoAudioProcessorEditor::timerCallback(){
 	// invfilt button
 	if (processor.filtReady()){
-		playInvFiltAudioButton.setVisible(true);
+		playFiltAudioButton.setVisible(true);
 		makeupSizeMenu.setVisible(true);
 	}
 
@@ -217,25 +217,25 @@ void AutoKalibraDemoAudioProcessorEditor::timerCallback(){
 	String nameReference (processor.getPrintDirectoryDebug() + "/targetForThumbnail.wav");
 	File fileReference (nameReference);
 	if (fileReference.existsAsFile()){
-		thumbnailReference.setSource(new FileInputSource(fileReference));
+		thumbnailTarg.setSource(new FileInputSource(fileReference));
 	}
 	else {
-		thumbnailReference.setSource(nullptr);
+		thumbnailTarg.setSource(nullptr);
 	}
 	
 	String nameCurrent (processor.getPrintDirectoryDebug() + "/baseForThumbnail.wav");
 	File fileCurrent (nameCurrent);
 	if (fileCurrent.existsAsFile()){
-		thumbnailCurrent.setSource(new FileInputSource(fileCurrent));
+		thumbnailBase.setSource(new FileInputSource(fileCurrent));
 	}
 	else {
-		thumbnailCurrent.setSource(nullptr);
+		thumbnailBase.setSource(nullptr);
 	}
 	
 	String nameInvfilt (processor.getPrintDirectoryDebug() + "/filterForThumbnail.wav");
 	File fileInvfilt (nameInvfilt);
 	if (fileInvfilt.existsAsFile()){
-		thumbnailInvfilt.setSource(new FileInputSource(fileInvfilt));
+		thumbnailFilt.setSource(new FileInputSource(fileInvfilt));
 	}
 	
 }
@@ -250,14 +250,14 @@ void AutoKalibraDemoAudioProcessorEditor::playUnprocessedAudioClick (bool toggle
 
 
 
-void AutoKalibraDemoAudioProcessorEditor::playInvfiltAudioClick (bool toggleState){
+void AutoKalibraDemoAudioProcessorEditor::playFiltAudioClick (bool toggleState){
 	processor.setPlayFiltered(true);
 
 	if (toggleState) {
-		playInvFiltAudioButton.setButtonText("PLAYING filtered audio");
+		playFiltAudioButton.setButtonText("PLAYING filtered audio");
 		playUnprocessedAudioButton.setButtonText("Play unprocessed audio");
 	}
-	if (!toggleState) playInvFiltAudioButton.setButtonText("Play filtered audio");
+	if (!toggleState) playFiltAudioButton.setButtonText("Play filtered audio");
 }
 
 
@@ -288,7 +288,7 @@ void AutoKalibraDemoAudioProcessorEditor::makeupSizeMenuChanged(){
 	
 	processor.setMakeupSize(makeupSize);
 	
-	thumbnailInvfilt.reset(1, processor.getSamplerate(), makeupSize);
+	thumbnailFilt.reset(1, processor.getSamplerate(), makeupSize);
 	
 }
 
@@ -312,7 +312,7 @@ void AutoKalibraDemoAudioProcessorEditor::paint (Graphics& g)
 										  getWidth() - thumbnailSideMargin*4,
 										  thumbnailHeight*2);
 	
-	if (thumbnailReference.getNumChannels() == 0){
+	if (thumbnailTarg.getNumChannels() == 0){
 		g.setColour (Colours::black);
 		g.fillRect (thumbnailReferenceBounds);
 		g.setColour (Colours::white);
@@ -322,11 +322,11 @@ void AutoKalibraDemoAudioProcessorEditor::paint (Graphics& g)
 		g.setColour (Colours::black);
 		g.fillRect (thumbnailReferenceBounds);
 		g.setColour (Colour (0xff90ee90));
-		auto audioLength = (float) thumbnailReference.getTotalLength();
-		thumbnailReference.drawChannels (g, thumbnailReferenceBounds, 0.0, audioLength, 1.0f);
+		auto audioLength = (float) thumbnailTarg.getTotalLength();
+		thumbnailTarg.drawChannels (g, thumbnailReferenceBounds, 0.0, audioLength, 1.0f);
 	}
 	
-	sweepRefLabel.setBounds(0,
+	sweepTargLabel.setBounds(0,
 							buttonHeight*2 + thumbnailHeightMargin + sliderHeight + sliderHeightMargin + thumbnailHeight*0.5,
 							thumbnailSideMargin*3 - 5,
 							thumbnailHeight);
@@ -340,7 +340,7 @@ void AutoKalibraDemoAudioProcessorEditor::paint (Graphics& g)
 											 getWidth() - thumbnailSideMargin*4,
 											 thumbnailHeight*2);
 	
-	if (thumbnailCurrent.getNumChannels() == 0){
+	if (thumbnailBase.getNumChannels() == 0){
 		g.setColour (Colours::black);
 		g.fillRect (thumbnailCurrentBounds);
 		g.setColour (Colours::white);
@@ -350,11 +350,11 @@ void AutoKalibraDemoAudioProcessorEditor::paint (Graphics& g)
 		g.setColour (Colours::black);
 		g.fillRect (thumbnailCurrentBounds);
 		g.setColour (Colour (0xffff69b4));
-		auto audioLength = (float) thumbnailCurrent.getTotalLength();
-		thumbnailCurrent.drawChannels (g, thumbnailCurrentBounds, 0.0, audioLength, 1.0f);
+		auto audioLength = (float) thumbnailBase.getTotalLength();
+		thumbnailBase.drawChannels (g, thumbnailCurrentBounds, 0.0, audioLength, 1.0f);
 	}
 
-	sweepCurrLabel.setBounds(0,
+	sweepBaseLabel.setBounds(0,
 							 buttonHeight*2 + thumbnailHeightMargin + sliderHeight + sliderHeightMargin + thumbnailHeight*2.5,
 							 thumbnailSideMargin*3 - 5,
 							 thumbnailHeight);
@@ -368,7 +368,7 @@ void AutoKalibraDemoAudioProcessorEditor::paint (Graphics& g)
 									   getWidth() - thumbnailSideMargin*4,
 									   thumbnailHeight);
 
-	if (thumbnailInvfilt.getNumChannels() == 0){
+	if (thumbnailFilt.getNumChannels() == 0){
 		g.setColour (Colours::black);
 		g.fillRect (thumbnailInvfiltBounds);
 		g.setColour (Colours::white);
@@ -378,10 +378,10 @@ void AutoKalibraDemoAudioProcessorEditor::paint (Graphics& g)
 		g.setColour (Colours::black);
 		g.fillRect (thumbnailInvfiltBounds);
 		g.setColour (Colour (0xffffae0b));
-		thumbnailInvfilt.drawChannels (g, thumbnailInvfiltBounds, 0.0, (double) makeupSize / (double) processor.getSamplerate(), 1.0f);
+		thumbnailFilt.drawChannels (g, thumbnailInvfiltBounds, 0.0, (double) makeupSize / (double) processor.getSamplerate(), 1.0f);
 	}
 
-	IRinvfiltLabel.setBounds(0,
+	IRFiltLabel.setBounds(0,
 						  buttonHeight*2 + thumbnailHeightMargin + sliderHeight + sliderHeightMargin + thumbnailHeight*4,
 						  thumbnailSideMargin*3 - 5,
 						  thumbnailHeight);
@@ -411,7 +411,7 @@ void AutoKalibraDemoAudioProcessorEditor::resized()
 										  buttonHeight,
 										  getLocalBounds().getWidth()/2,
 										  buttonHeight);
-	playInvFiltAudioButton.setBounds (getLocalBounds().getWidth()/2,
+	playFiltAudioButton.setBounds (getLocalBounds().getWidth()/2,
 									  buttonHeight,
 									  getLocalBounds().getWidth()/2,
 									  buttonHeight);
@@ -430,15 +430,15 @@ void AutoKalibraDemoAudioProcessorEditor::resized()
 	
 	
 	// zoom sliders
-	referenceZoomSlider.setBounds	(labelOffset,
+	sliderZoomTarg.setBounds	(labelOffset,
 								 2*buttonHeight + 5*thumbnailHeight + thumbnailHeightMargin + 2*sliderHeightMargin + sliderHeight,
 								 getWidth() - labelOffset,
 								 sliderHeight);
-	currentZoomSlider.setBounds	(labelOffset,
+	sliderZoomBase.setBounds	(labelOffset,
 								 2*buttonHeight + 5*thumbnailHeight + thumbnailHeightMargin + 3*sliderHeightMargin + 2*sliderHeight,
 								 getWidth() - labelOffset,
 								 sliderHeight);
-	InvfiltZoomSlider.setBounds(labelOffset,
+	sliderZoomFilt.setBounds(labelOffset,
 								 2*buttonHeight + 5*thumbnailHeight + thumbnailHeightMargin + 4*sliderHeightMargin + 3*sliderHeight,
 								 getWidth() - labelOffset,
 								 sliderHeight);

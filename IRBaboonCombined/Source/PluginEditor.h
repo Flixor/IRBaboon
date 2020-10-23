@@ -49,7 +49,7 @@ public:
 	void timerCallback() override;
 	
 	void playUnprocessedAudioClick (bool toggleState);
-	void playInvfiltAudioClick (bool toggleState);
+	void playFiltAudioClick (bool toggleState);
 	void loadTargetClicked();
 	void makeupSizeMenuChanged();
 
@@ -70,41 +70,41 @@ private:
 	TextButton captureReferenceButton  { "Capture target IR" };
 	TextButton captureCurrentButton  { "Capture base IR" };
 	TextButton playUnprocessedAudioButton  { "PLAYING unprocessed audio" };
-	TextButton playInvFiltAudioButton  { "Play filtered audio" };
+	TextButton playFiltAudioButton  { "Play filtered audio" };
 	
 	enum RadioButtonIds {
 		playButtons = 1
 	};
 	
-	AudioFormatManager formatManagerReference;
-	AudioFormatManager formatManagerCurrent;
-	AudioFormatManager formatManagerInvfilt;
-	AudioThumbnailCache thumbnailReferenceCache;
-	AudioThumbnailCache thumbnailCurrentCache;
-	AudioThumbnailCache thumbnailInvfiltCache;
-	AudioThumbnail thumbnailReference;
-	AudioThumbnail thumbnailCurrent;
-	AudioThumbnail thumbnailInvfilt;
+	AudioFormatManager formatManagerTarg;
+	AudioFormatManager formatManagerBase;
+	AudioFormatManager formatManagerFilt;
+	AudioThumbnailCache thumbnailCacheTarg;
+	AudioThumbnailCache thumbnailCacheBase;
+	AudioThumbnailCache thumbnailCacheFilt;
+	AudioThumbnail thumbnailTarg;
+	AudioThumbnail thumbnailBase;
+	AudioThumbnail thumbnailFilt;
 
 	int thumbnailHeight = 95;
 	int thumbnailHeightMargin = 30;
 	int thumbnailSideMargin  = 25;
 	int buttonHeight = 30;
 	
-	Label sweepRefLabel;
-	Label IRRefLabel;
-	Label sweepCurrLabel;
-	Label IRCurrLabel;
-	Label IRinvfiltLabel;
+	Label sweepTargLabel;
+	Label IRTargLabel;
+	Label sweepBaseLabel;
+	Label IRBaseLabel;
+	Label IRFiltLabel;
 
 	Label titleLabel;
 	
-	DecibelSlider referenceZoomSlider;
-	Label referenceZoomSliderLabel;
-	DecibelSlider currentZoomSlider;
-	Label currentZoomSliderLabel;
-	DecibelSlider InvfiltZoomSlider;
-	Label InvfiltZoomSliderLabel;
+	DecibelSlider sliderZoomTarg;
+	Label sliderZoomTargLabel;
+	DecibelSlider sliderZoomBase;
+	Label sliderZoomBaseLabel;
+	DecibelSlider sliderZoomFilt;
+	Label sliderZoomFiltLabel;
 	DecibelSlider outputVolumeSlider;
 	Label outputVolumeSliderLabel;
 
