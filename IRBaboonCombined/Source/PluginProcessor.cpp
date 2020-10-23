@@ -58,13 +58,11 @@ AutoKalibraDemoAudioProcessor::AutoKalibraDemoAudioProcessor()
 	
 	
 	// init IRs
-//	IRBaseee.setSize(0, 0);
-	IRFilt.setSize(0, 0);
 	IRpulse.makeCopyOf(tools::generatePulse(makeupIRLengthSamples, 100));
 	
-	IRTargPtr = new ReferenceCountedBuffer("IRref", 0, 0);
-	IRBasePtr = new ReferenceCountedBuffer("IRcurr", 0, 0);
-	IRFiltPtr = new ReferenceCountedBuffer("IRinvfilt", IRFilt);
+	IRTargPtr = new ReferenceCountedBuffer("IRTarg", 0, 0);
+	IRBasePtr = new ReferenceCountedBuffer("IRBase", 0, 0);
+	IRFiltPtr = new ReferenceCountedBuffer("IRFilt", 0, 0);
 	
 	sweepTargPtr = new ReferenceCountedBuffer("sweepref", 0, 0);
 	sweepBasePtr = new ReferenceCountedBuffer("sweepcurr", 0, 0);
@@ -441,7 +439,7 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 	if ( NOT(captureTarget || captureBase || captureInput || captureThdn) && buffersWaitForResumeThroughput <= 0) {
 	
 		// set IR
-		if (playFiltered) IRtoConvolve = &IRFilt;
+		if (playFiltered) IRtoConvolve = IRFiltPtr->getBuffer();
 		else IRtoConvolve = &IRpulse;
 
 		
@@ -712,7 +710,6 @@ void AutoKalibraDemoAudioProcessor::createIRFilt(){
 //	return IRinvfiltchop;
 	
 	IRFiltPtr->getBuffer()->makeCopyOf(makeupIR);
-	IRFilt = *(IRFiltPtr->getBuffer());
 }
 
 
@@ -730,12 +727,12 @@ int AutoKalibraDemoAudioProcessor::getSamplerate(){
 
 
 bool AutoKalibraDemoAudioProcessor::filtReady(){
-	return (IRFilt.getNumSamples() > 0);
+	return (IRFiltPtr->getBuffer()->getNumSamples() > 0);
 }
 
 
 AudioSampleBuffer AutoKalibraDemoAudioProcessor::getMakeupIR(){
-	return IRFilt;
+	return *IRFiltPtr->getBuffer();
 }
 
 

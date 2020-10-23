@@ -142,7 +142,7 @@ private:
 	int totalSweepBreakSamples = 4 * tools::nextPowerOfTwo(silenceBeginningLengthSamples + silenceEndLengthSamples + 1);
 	int sweepLengthSamples = totalSweepBreakSamples - silenceBeginningLengthSamples - silenceEndLengthSamples;
 	
-	int samplesWaitBeforeInputCapture = 2048; // 12 * 256
+	int samplesWaitBeforeInputCapture = 2048; // 8 * 256
 	int buffersWaitForInputCapture = 0;
 	int buffersWaitForResumeThroughput = 0;
 	
@@ -174,9 +174,7 @@ private:
 	ReferenceCountedBuffer::Ptr sweepTargPtr;
 	ReferenceCountedBuffer::Ptr sweepBasePtr;
 	ReferenceCountedBuffer::Ptr IRTargPtr;
-	AudioSampleBuffer IRBaseee;
 	ReferenceCountedBuffer::Ptr IRBasePtr;
-	AudioSampleBuffer IRFilt;
 	ReferenceCountedBuffer::Ptr IRFiltPtr;
 	AudioSampleBuffer IRpulse;
 	AudioSampleBuffer* IRtoConvolve;
