@@ -17,11 +17,6 @@
 
 
 
-//==============================================================================
-
-
-
-
 class AutoKalibraDemoAudioProcessor  : public AudioProcessor, public Thread
 {
 public:
@@ -54,6 +49,28 @@ public:
 		JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ReferenceCountedBuffer)
 	};
 	
+	//==============================================================================
+	enum IRCapType {
+		IR_NONE,
+		IR_TARGET,
+		IR_BASE
+	};
+	
+	enum IRCapState {
+		IRCAP_IDLE,
+		IRCAP_PREP,
+		IRCAP_CAPTURE,
+		IRCAP_END,
+	};
+	
+	struct IRCapStruct {
+		IRCapType 	type;
+		IRCapState	state;
+		bool		playSweep;
+		bool 		doFadeout;
+		bool 		doFadein;
+	};
+	
     //==============================================================================
     AutoKalibraDemoAudioProcessor();
     ~AutoKalibraDemoAudioProcessor();
@@ -70,11 +87,10 @@ public:
 	void processBlockBypassed(AudioBuffer<float>& buffer, MidiBuffer& midiMessages) override;
 
 	void divideSweepBufIntoArray();
-//	void divideThdnSigBufIntoArray();
 
 	void startCaptureTarg();
 	void startCaptureBase();
-//	void startCaptureThdn();
+	void startCapture(IRCapType type);
 
 	AudioSampleBuffer createTargetOrBaseIR(AudioSampleBuffer& numeratorBuf, AudioSampleBuffer& denominatorBuf);
 	void createIRFilt();
@@ -91,7 +107,6 @@ public:
 	void run() override;
 	void saveIRTarg();
 	void saveIRBase();
-//	void exportThdn();
 	std::string getDateTimeString();
 	void printDebug();
 	std::string getPrintDirectoryDebug();
@@ -161,6 +176,8 @@ private:
 	bool captureInput = false;
 	bool inputIsTarget = false;
 	bool inputIsBase = false;
+	
+	IRCapStruct IRCapture;
 
 	ReferenceCountedBuffer::Ptr sweepTargPtr;
 	ReferenceCountedBuffer::Ptr sweepBasePtr;
