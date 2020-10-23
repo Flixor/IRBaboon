@@ -23,8 +23,9 @@ AutoKalibraDemoAudioProcessor::AutoKalibraDemoAudioProcessor()
 					   .withOutput ("Output", AudioChannelSet::stereo(), true)
 					   .withInput  ("Mic",  AudioChannelSet::mono(), true)
                        ),
-		Thread ("Print and thumbnail"),
-		window (8192, dsp::WindowingFunction<float>::blackman) // how can I do the init of window otherwise..?
+		Thread ("Print and thumbnail")
+
+//		, window (8192, dsp::WindowingFunction<float>::blackman) // how can I do the init of window otherwise..?
 {
 	
 	/* remove previously printed files */
@@ -53,8 +54,8 @@ AutoKalibraDemoAudioProcessor::AutoKalibraDemoAudioProcessor()
 	
 	
 	/* init THD+N signal buf */
-	thdnSigBuf.setSize(1, totalSweepBreakSamples);
-	tools::sineFill(&thdnSigBuf, thdnSigFreq, sampleRate);
+//	thdnSigBuf.setSize(1, totalSweepBreakSamples);
+//	tools::sineFill(&thdnSigBuf, thdnSigFreq, sampleRate);
 	
 	
 	// init IRs
@@ -202,7 +203,7 @@ void AutoKalibraDemoAudioProcessor::prepareToPlay (double sampleRate, int sample
 	
 	// init sweep circ buf array
 	divideSweepBufIntoArray();
-	divideThdnSigBufIntoArray();
+//	divideThdnSigBufIntoArray();
 
 	// init input capture circ buf array
 	inputCaptureArray.clearAndResize(sweepBufArray.getArraySize(), 1, generalHostBlockSize);
@@ -339,15 +340,15 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 				inputIsBase = false;
 				saveIRBaseFlag = true;
 			}
-			else if (inputIsThdn) {
-
-				inputConsolidated.makeCopyOf (inputCaptureArray.consolidate(0));
-
-				thdnRecBuf.makeCopyOf(inputConsolidated);
-				
-				inputIsThdn = false;
-				exportThdnFlag = true;
-			}
+//			else if (inputIsThdn) {
+//
+//				inputConsolidated.makeCopyOf (inputCaptureArray.consolidate(0));
+//
+//				thdnRecBuf.makeCopyOf(inputConsolidated);
+//
+//				inputIsThdn = false;
+//				exportThdnFlag = true;
+//			}
 
 			if (IRTargPtr->getBuffer()->getNumSamples() > 0 && IRBasePtr->getBuffer()->getNumSamples() > 0){
 				createIRFilt();
@@ -365,11 +366,11 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 	// Play sweep / thdn sig
 	// ===============================
 	
-	if (captureTarget || captureBase || captureThdn){
+	if (captureTarget || captureBase){
 		
 		if (captureTarget) inputIsTarget = true;
 		else if (captureBase) inputIsBase = true;
-		else if (captureThdn) inputIsThdn = true;
+//		else if (captureThdn) inputIsThdn = true;
 
 		buffersWaitForInputCapture--;
 		if (buffersWaitForInputCapture <= 0){
@@ -380,7 +381,7 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 			tools::linearFade (&buffer, false, 0, buffer.getNumSamples());
 			needToFadeout = false;
 		}
-		else if (NOT captureThdn){
+		else {
 			
 			// output sweep
 			const float* readPtr = sweepBufArray.getReadBufferPtr()->getReadPointer(0, 0);
@@ -400,28 +401,28 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 			}
 		}
 		/* captureThdn */
-		else {
-			// output sig
-			const float* readPtr = thdnSigBufArray.getReadBufferPtr()->getReadPointer(0, 0);
-			for (int channel = 0; channel < totalNumOutputChannels; channel++){
-				for (int sample = 0; sample < generalHostBlockSize; sample++){
-					buffer.setSample(channel, sample, *(readPtr + sample));
-				}
-			}
-			thdnSigBufArray.incrReadIndex();
-			
-			// sig is done
-			if (thdnSigBufArray.getReadIndex() == 0){
-				captureThdn = false;
-				buffersWaitForResumeThroughput = samplesWaitBeforeInputCapture / 256;
-				needToFadein = true;
-			}
-		}
+//		else {
+//			// output sig
+//			const float* readPtr = thdnSigBufArray.getReadBufferPtr()->getReadPointer(0, 0);
+//			for (int channel = 0; channel < totalNumOutputChannels; channel++){
+//				for (int sample = 0; sample < generalHostBlockSize; sample++){
+//					buffer.setSample(channel, sample, *(readPtr + sample));
+//				}
+//			}
+//			thdnSigBufArray.incrReadIndex();
+//
+//			// sig is done
+//			if (thdnSigBufArray.getReadIndex() == 0){
+//				captureThdn = false;
+//				buffersWaitForResumeThroughput = samplesWaitBeforeInputCapture / 256;
+//				needToFadein = true;
+//			}
+//		}
 	}
 
 	
 	
-	if ( NOT(captureTarget || captureBase || captureInput || captureThdn) ){
+	if ( NOT(captureTarget || captureBase || captureInput) ){
 		buffersWaitForResumeThroughput--;
 	}
 	
@@ -436,7 +437,7 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 	// ===============================
 	
 	
-	if ( NOT(captureTarget || captureBase || captureInput || captureThdn) && buffersWaitForResumeThroughput <= 0) {
+	if ( NOT(captureTarget || captureBase || captureInput) && buffersWaitForResumeThroughput <= 0) {
 	
 		// set IR
 		if (playFiltered) IRtoConvolve = IRFiltPtr->getBuffer();
@@ -648,22 +649,22 @@ void AutoKalibraDemoAudioProcessor::divideSweepBufIntoArray(){
 }
 
 
-void AutoKalibraDemoAudioProcessor::divideThdnSigBufIntoArray(){
-	if (thdnSigBuf.getNumSamples() == 0){
-		DBG("divideThdnSigBufIntoArray() error: thdnSigBuf not initialised yet.\n");
-		return;
-	}
-	
-	if (generalHostBlockSize <= 0) return;
-	
-	int bufArraySize = thdnSigBuf.getNumSamples() / generalHostBlockSize;
-	thdnSigBufArray.clearAndResize(bufArraySize, 1, generalHostBlockSize);
-	
-	for (int buf = 0; buf < bufArraySize; buf++){
-		thdnSigBufArray.getWriteBufferPtr()->copyFrom(0, 0, thdnSigBuf, 0, buf * generalHostBlockSize, generalHostBlockSize);
-		thdnSigBufArray.incrWriteIndex();
-	}
-}
+//void AutoKalibraDemoAudioProcessor::divideThdnSigBufIntoArray(){
+//	if (thdnSigBuf.getNumSamples() == 0){
+//		DBG("divideThdnSigBufIntoArray() error: thdnSigBuf not initialised yet.\n");
+//		return;
+//	}
+//
+//	if (generalHostBlockSize <= 0) return;
+//
+//	int bufArraySize = thdnSigBuf.getNumSamples() / generalHostBlockSize;
+//	thdnSigBufArray.clearAndResize(bufArraySize, 1, generalHostBlockSize);
+//
+//	for (int buf = 0; buf < bufArraySize; buf++){
+//		thdnSigBufArray.getWriteBufferPtr()->copyFrom(0, 0, thdnSigBuf, 0, buf * generalHostBlockSize, generalHostBlockSize);
+//		thdnSigBufArray.incrWriteIndex();
+//	}
+//}
 
 
 void AutoKalibraDemoAudioProcessor::startCaptureTarg(){
@@ -680,11 +681,11 @@ void AutoKalibraDemoAudioProcessor::startCaptureBase(){
 }
 
 
-void AutoKalibraDemoAudioProcessor::startCaptureThdn(){
-	captureThdn = true;
-	buffersWaitForInputCapture = samplesWaitBeforeInputCapture / processBlockSize;
-	needToFadeout = true;
-}
+//void AutoKalibraDemoAudioProcessor::startCaptureThdn(){
+//	captureThdn = true;
+//	buffersWaitForInputCapture = samplesWaitBeforeInputCapture / processBlockSize;
+//	needToFadeout = true;
+//}
 
 
 AudioSampleBuffer AutoKalibraDemoAudioProcessor::createTargetOrBaseIR(AudioSampleBuffer& numeratorBuf, AudioSampleBuffer& denominatorBuf){
@@ -750,10 +751,10 @@ void AutoKalibraDemoAudioProcessor::run() {
 		if (saveIRBaseFlag) {
 			saveIRBase();
 		}
-		if (exportThdnFlag) {
-			exportThdn();
-			exportThdnFlag = false;
-		}
+//		if (exportThdnFlag) {
+//			exportThdn();
+//			exportThdnFlag = false;
+//		}
 		
 		if (saveIRTargFlag || saveIRBaseFlag){
 			printDebug();
@@ -815,23 +816,23 @@ void AutoKalibraDemoAudioProcessor::saveIRBase(){
 }
 
 
-void AutoKalibraDemoAudioProcessor::exportThdn(){
-
-	std::string name = "THD+N ";
-	std::string date = getDateTimeString();
-	name += date;
-	
-	AudioSampleBuffer expbuf (1, thdnExportLength);
-	expbuf.copyFrom(0, 0, thdnRecBuf, 0, thdnRecBuf.getNumSamples()/2 - thdnExportLength/2, thdnExportLength);
-	
-	float *ptr = expbuf.getWritePointer(0);
-	window.multiplyWithWindowingTable(ptr, thdnExportLength);
-	
-	ParallelBufferPrinter freqPrinter;
-	AudioSampleBuffer expbuf_fft (convolver::fftTransform(expbuf));
-	freqPrinter.appendBuffer(name, expbuf_fft);
-	freqPrinter.printFreqToCsv(sampleRate, printDirectoryDebug);
-}
+//void AutoKalibraDemoAudioProcessor::exportThdn(){
+//
+//	std::string name = "THD+N ";
+//	std::string date = getDateTimeString();
+//	name += date;
+//
+//	AudioSampleBuffer expbuf (1, thdnExportLength);
+//	expbuf.copyFrom(0, 0, thdnRecBuf, 0, thdnRecBuf.getNumSamples()/2 - thdnExportLength/2, thdnExportLength);
+//
+//	float *ptr = expbuf.getWritePointer(0);
+//	window.multiplyWithWindowingTable(ptr, thdnExportLength);
+//
+//	ParallelBufferPrinter freqPrinter;
+//	AudioSampleBuffer expbuf_fft (convolver::fftTransform(expbuf));
+//	freqPrinter.appendBuffer(name, expbuf_fft);
+//	freqPrinter.printFreqToCsv(sampleRate, printDirectoryDebug);
+//}
 
 
 

@@ -70,11 +70,11 @@ public:
 	void processBlockBypassed(AudioBuffer<float>& buffer, MidiBuffer& midiMessages) override;
 
 	void divideSweepBufIntoArray();
-	void divideThdnSigBufIntoArray();
+//	void divideThdnSigBufIntoArray();
 
 	void startCaptureTarg();
 	void startCaptureBase();
-	void startCaptureThdn();
+//	void startCaptureThdn();
 
 	AudioSampleBuffer createTargetOrBaseIR(AudioSampleBuffer& numeratorBuf, AudioSampleBuffer& denominatorBuf);
 	void createIRFilt();
@@ -91,7 +91,7 @@ public:
 	void run() override;
 	void saveIRTarg();
 	void saveIRBase();
-	void exportThdn();
+//	void exportThdn();
 	std::string getDateTimeString();
 	void printDebug();
 	std::string getPrintDirectoryDebug();
@@ -155,22 +155,22 @@ private:
 	CircularBufferArray inputCaptureArray;
 	AudioSampleBuffer inputConsolidated;
 	
-	float thdnSigFreq = 1000.0;
-	AudioSampleBuffer thdnSigBuf;
-	CircularBufferArray thdnSigBufArray;
-	dsp::WindowingFunction<float> window;
-	int thdnExportLength = 8192;
+//	float thdnSigFreq = 1000.0;
+//	AudioSampleBuffer thdnSigBuf;
+//	CircularBufferArray thdnSigBufArray;
+//	dsp::WindowingFunction<float> window;
+//	int thdnExportLength = 8192;
 
 	int makeupIRLengthSamples = 2048;
 	bool captureTarget = false;
 	bool captureBase = false;
-	bool captureThdn = false;
+//	bool captureThdn = false;
 	bool captureInput = false;
 	bool inputIsTarget = false;
 	bool inputIsBase = false;
-	bool inputIsThdn = false;
+//	bool inputIsThdn = false;
 
-	AudioSampleBuffer thdnRecBuf;
+//	AudioSampleBuffer thdnRecBuf;
 	ReferenceCountedBuffer::Ptr sweepTargPtr;
 	ReferenceCountedBuffer::Ptr sweepBasePtr;
 	ReferenceCountedBuffer::Ptr IRTargPtr;
@@ -202,7 +202,7 @@ private:
 
 	bool saveIRTargFlag = false;
 	bool saveIRBaseFlag = false;
-	bool exportThdnFlag = false;
+//	bool exportThdnFlag = false;
 
 	float zoomTargdB = 0.0;
 	float zoomBasedB = 0.0;

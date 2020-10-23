@@ -44,7 +44,7 @@ AutoKalibraDemoAudioProcessorEditor::AutoKalibraDemoAudioProcessorEditor (AutoKa
 	/* capture & play buttons */
 	addAndMakeVisible (&captureReferenceButton);
 	addAndMakeVisible (&captureCurrentButton);
-	addAndMakeVisible (&captureThdnButton);
+//	addAndMakeVisible (&captureThdnButton);
 	addAndMakeVisible (&playUnprocessedAudioButton);
 	addAndMakeVisible (&playInvFiltAudioButton);
 	
@@ -56,8 +56,8 @@ AutoKalibraDemoAudioProcessorEditor::AutoKalibraDemoAudioProcessorEditor (AutoKa
 	captureReferenceButton.onClick = [this] { setStartCaptureReference(); };
 	captureCurrentButton.setColour(TextButton::buttonColourId, Colour (0xff602743));
 	captureCurrentButton.onClick = [this] { setStartCaptureCurrent(); };
-	captureThdnButton.setColour(TextButton::buttonColourId, Colour (0xff27605D));
-	captureThdnButton.onClick = [this] { setStartCaptureThdn(); };
+//	captureThdnButton.setColour(TextButton::buttonColourId, Colour (0xff27605D));
+//	captureThdnButton.onClick = [this] { setStartCaptureThdn(); };
 
 	playUnprocessedAudioButton.setClickingTogglesState(true);
 	playInvFiltAudioButton.setClickingTogglesState(true);
@@ -195,29 +195,29 @@ AutoKalibraDemoAudioProcessorEditor::~AutoKalibraDemoAudioProcessorEditor()
 void AutoKalibraDemoAudioProcessorEditor::setStartCaptureReference(){
 	processor.startCaptureTarg();
 	captureCurrentButton.setVisible(false);
-	captureThdnButton.setVisible(false);
+//	captureThdnButton.setVisible(false);
 	int ms = std::ceil( 1000 * ((float) processor.getTotalSweepBreakSamples()) / ((float) processor.getSamplerate()) );
 	Timer::callAfterDelay(ms, [this] { captureCurrentButton.setVisible(true); } );
-	Timer::callAfterDelay(ms, [this] { captureThdnButton.setVisible(true); } );
+//	Timer::callAfterDelay(ms, [this] { captureThdnButton.setVisible(true); } );
 }
 
 void AutoKalibraDemoAudioProcessorEditor::setStartCaptureCurrent(){
 	processor.startCaptureBase();
 	captureReferenceButton.setVisible(false);
-	captureThdnButton.setVisible(false);
+//	captureThdnButton.setVisible(false);
 	int ms = std::ceil( 1000 * ((float) processor.getTotalSweepBreakSamples()) / ((float) processor.getSamplerate()) );
 	Timer::callAfterDelay(ms, [this] { captureReferenceButton.setVisible(true); } );
-	Timer::callAfterDelay(ms, [this] { captureThdnButton.setVisible(true); } );
+//	Timer::callAfterDelay(ms, [this] { captureThdnButton.setVisible(true); } );
 }
 
-void AutoKalibraDemoAudioProcessorEditor::setStartCaptureThdn(){
-	processor.startCaptureThdn();
-	captureReferenceButton.setVisible(false);
-	captureCurrentButton.setVisible(false);
-	int ms = std::ceil( 1000 * ((float) processor.getTotalSweepBreakSamples()) / ((float) processor.getSamplerate()) );
-	Timer::callAfterDelay(ms, [this] { captureReferenceButton.setVisible(true); } );
-	Timer::callAfterDelay(ms, [this] { captureCurrentButton.setVisible(true); } );
-}
+//void AutoKalibraDemoAudioProcessorEditor::setStartCaptureThdn(){
+//	processor.startCaptureThdn();
+//	captureReferenceButton.setVisible(false);
+//	captureCurrentButton.setVisible(false);
+//	int ms = std::ceil( 1000 * ((float) processor.getTotalSweepBreakSamples()) / ((float) processor.getSamplerate()) );
+//	Timer::callAfterDelay(ms, [this] { captureReferenceButton.setVisible(true); } );
+//	Timer::callAfterDelay(ms, [this] { captureCurrentButton.setVisible(true); } );
+//}
 
 
 void AutoKalibraDemoAudioProcessorEditor::timerCallback(){
@@ -416,16 +416,16 @@ void AutoKalibraDemoAudioProcessorEditor::resized()
 	// top buttons
 	captureReferenceButton.setBounds 	(0,
 										0,
-										 getLocalBounds().getWidth()/3,
+										 getLocalBounds().getWidth()/2,
 										 buttonHeight);
-	captureCurrentButton.setBounds 		(getLocalBounds().getWidth()/3,
+	captureCurrentButton.setBounds 		(getLocalBounds().getWidth()/2,
 										 0,
-										 getLocalBounds().getWidth()/3,
+										 getLocalBounds().getWidth()/2,
 										 buttonHeight);
-	captureThdnButton.setBounds 		(getLocalBounds().getWidth()*2/3,
-										 0,
-										 getLocalBounds().getWidth()/3,
-										 buttonHeight);
+//	captureThdnButton.setBounds 		(getLocalBounds().getWidth()*2/3,
+//										 0,
+//										 getLocalBounds().getWidth()/3,
+//										 buttonHeight);
 	playUnprocessedAudioButton.setBounds (0,
 										  buttonHeight,
 										  getLocalBounds().getWidth()/2,
