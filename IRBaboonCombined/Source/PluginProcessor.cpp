@@ -288,7 +288,7 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 	
 	int currentHostBlockSize = buffer.getNumSamples();
 	
-	if (currentHostBlockSize <= 0){
+	if (currentHostBlockSize == 0){
 		return;
 	}
 	
@@ -355,7 +355,7 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 		else if (captureBase) inputIsBase = true;
 
 		buffersWaitForInputCapture--;
-		if (buffersWaitForInputCapture <= 0){
+		if (buffersWaitForInputCapture == 0){
 			captureInput = true;
 		}
 
