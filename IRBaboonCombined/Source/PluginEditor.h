@@ -45,7 +45,6 @@ public:
 
 	void setStartCaptureReference();
 	void setStartCaptureCurrent();
-//	void setStartCaptureThdn();
 
 	void timerCallback() override;
 	
@@ -54,7 +53,7 @@ public:
 	void loadTargetClicked();
 	void makeupSizeMenuChanged();
 
-	// thumbnail
+	/* thumbnails */
 	void changeListenerCallback(ChangeBroadcaster* source) override;
 	
     //==============================================================================
@@ -70,7 +69,6 @@ private:
 
 	TextButton captureReferenceButton  { "Capture target IR" };
 	TextButton captureCurrentButton  { "Capture base IR" };
-//	TextButton captureThdnButton  { "THD+N" };
 	TextButton playUnprocessedAudioButton  { "PLAYING unprocessed audio" };
 	TextButton playInvFiltAudioButton  { "Play filtered audio" };
 	

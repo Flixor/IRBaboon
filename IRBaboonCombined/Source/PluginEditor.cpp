@@ -44,7 +44,6 @@ AutoKalibraDemoAudioProcessorEditor::AutoKalibraDemoAudioProcessorEditor (AutoKa
 	/* capture & play buttons */
 	addAndMakeVisible (&captureReferenceButton);
 	addAndMakeVisible (&captureCurrentButton);
-//	addAndMakeVisible (&captureThdnButton);
 	addAndMakeVisible (&playUnprocessedAudioButton);
 	addAndMakeVisible (&playInvFiltAudioButton);
 	
@@ -56,8 +55,6 @@ AutoKalibraDemoAudioProcessorEditor::AutoKalibraDemoAudioProcessorEditor (AutoKa
 	captureReferenceButton.onClick = [this] { setStartCaptureReference(); };
 	captureCurrentButton.setColour(TextButton::buttonColourId, Colour (0xff602743));
 	captureCurrentButton.onClick = [this] { setStartCaptureCurrent(); };
-//	captureThdnButton.setColour(TextButton::buttonColourId, Colour (0xff27605D));
-//	captureThdnButton.onClick = [this] { setStartCaptureThdn(); };
 
 	playUnprocessedAudioButton.setClickingTogglesState(true);
 	playInvFiltAudioButton.setClickingTogglesState(true);
@@ -69,12 +66,12 @@ AutoKalibraDemoAudioProcessorEditor::AutoKalibraDemoAudioProcessorEditor (AutoKa
 	playInvFiltAudioButton.setRadioGroupId(playButtons);
 	
 	
-	// ghetto polling solution for checking whether IRinvfilt is ready in Processor
+	/* ghetto polling solution for checking whether IRFilt is ready in Processor */
 	startTimerHz(8);
 	
 	
 	
-	// thumbnails
+	/* thumbnails */
 	formatManagerReference.registerBasicFormats();
 	formatManagerCurrent.registerBasicFormats();
 	formatManagerInvfilt.registerBasicFormats();
@@ -113,7 +110,7 @@ AutoKalibraDemoAudioProcessorEditor::AutoKalibraDemoAudioProcessorEditor (AutoKa
 	
 	
 	
-	// sliders
+	/* sliders */
 	addAndMakeVisible(&referenceZoomSlider);
 	referenceZoomSlider.setRange(-6, 60);
 	referenceZoomSlider.setValue(0.0);
@@ -151,7 +148,7 @@ AutoKalibraDemoAudioProcessorEditor::AutoKalibraDemoAudioProcessorEditor (AutoKa
 	outputVolumeSliderLabel.attachToComponent(&outputVolumeSlider, true);
 
 	
-	// bottom buttons
+	/* bottom buttons */
 	addAndMakeVisible(&toggleButtonLabel);
 	toggleButtonLabel.setText("Filter:", dontSendNotification);
 	toggleButtonLabel.attachToComponent(&nullifyAmplitudeButton, true);
@@ -195,29 +192,17 @@ AutoKalibraDemoAudioProcessorEditor::~AutoKalibraDemoAudioProcessorEditor()
 void AutoKalibraDemoAudioProcessorEditor::setStartCaptureReference(){
 	processor.startCaptureTarg();
 	captureCurrentButton.setVisible(false);
-//	captureThdnButton.setVisible(false);
 	int ms = std::ceil( 1000 * ((float) processor.getTotalSweepBreakSamples()) / ((float) processor.getSamplerate()) );
 	Timer::callAfterDelay(ms, [this] { captureCurrentButton.setVisible(true); } );
-//	Timer::callAfterDelay(ms, [this] { captureThdnButton.setVisible(true); } );
 }
 
 void AutoKalibraDemoAudioProcessorEditor::setStartCaptureCurrent(){
 	processor.startCaptureBase();
 	captureReferenceButton.setVisible(false);
-//	captureThdnButton.setVisible(false);
 	int ms = std::ceil( 1000 * ((float) processor.getTotalSweepBreakSamples()) / ((float) processor.getSamplerate()) );
 	Timer::callAfterDelay(ms, [this] { captureReferenceButton.setVisible(true); } );
-//	Timer::callAfterDelay(ms, [this] { captureThdnButton.setVisible(true); } );
 }
 
-//void AutoKalibraDemoAudioProcessorEditor::setStartCaptureThdn(){
-//	processor.startCaptureThdn();
-//	captureReferenceButton.setVisible(false);
-//	captureCurrentButton.setVisible(false);
-//	int ms = std::ceil( 1000 * ((float) processor.getTotalSweepBreakSamples()) / ((float) processor.getSamplerate()) );
-//	Timer::callAfterDelay(ms, [this] { captureReferenceButton.setVisible(true); } );
-//	Timer::callAfterDelay(ms, [this] { captureCurrentButton.setVisible(true); } );
-//}
 
 
 void AutoKalibraDemoAudioProcessorEditor::timerCallback(){
@@ -320,7 +305,7 @@ void AutoKalibraDemoAudioProcessorEditor::changeListenerCallback(ChangeBroadcast
 void AutoKalibraDemoAudioProcessorEditor::paint (Graphics& g)
 {
 	
-	// Target thumbnail
+	/* Target thumbnail */
 	
 	Rectangle<int> thumbnailReferenceBounds (thumbnailSideMargin*3,
 										  buttonHeight*2 + thumbnailHeightMargin + sliderHeight + sliderHeightMargin,
@@ -348,7 +333,7 @@ void AutoKalibraDemoAudioProcessorEditor::paint (Graphics& g)
 
 
 	
-	// Current thumbnail
+	/* Base thumbnail */
 	
 	Rectangle<int> thumbnailCurrentBounds (thumbnailSideMargin*3,
 											 buttonHeight*2 + thumbnailHeightMargin + sliderHeight + sliderHeightMargin + thumbnailHeight*2,
@@ -376,7 +361,7 @@ void AutoKalibraDemoAudioProcessorEditor::paint (Graphics& g)
 
 
 	
-	// Invfilt thumbnail
+	/* Filt thumbnail */
 	
 	Rectangle<int> thumbnailInvfiltBounds (thumbnailSideMargin*3,
 									   buttonHeight*2 + thumbnailHeightMargin + sliderHeight + sliderHeightMargin + thumbnailHeight*4,
@@ -413,7 +398,7 @@ void AutoKalibraDemoAudioProcessorEditor::resized()
     // subcomponents in your editor..
 	
 	
-	// top buttons
+	/* top buttons */
 	captureReferenceButton.setBounds 	(0,
 										0,
 										 getLocalBounds().getWidth()/2,
@@ -422,10 +407,6 @@ void AutoKalibraDemoAudioProcessorEditor::resized()
 										 0,
 										 getLocalBounds().getWidth()/2,
 										 buttonHeight);
-//	captureThdnButton.setBounds 		(getLocalBounds().getWidth()*2/3,
-//										 0,
-//										 getLocalBounds().getWidth()/3,
-//										 buttonHeight);
 	playUnprocessedAudioButton.setBounds (0,
 										  buttonHeight,
 										  getLocalBounds().getWidth()/2,
