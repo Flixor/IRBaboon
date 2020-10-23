@@ -42,8 +42,8 @@ AutoKalibraDemoAudioProcessorEditor::AutoKalibraDemoAudioProcessorEditor (AutoKa
 	
 	
 	/* capture & play buttons */
-	addAndMakeVisible (&captureReferenceButton);
-	addAndMakeVisible (&captureCurrentButton);
+	addAndMakeVisible (&captureTargButton);
+	addAndMakeVisible (&captureBaseButton);
 	addAndMakeVisible (&playUnprocessedAudioButton);
 	addAndMakeVisible (&playFiltAudioButton);
 	
@@ -51,10 +51,10 @@ AutoKalibraDemoAudioProcessorEditor::AutoKalibraDemoAudioProcessorEditor (AutoKa
 	playFiltAudioButton.setColour(TextButton::buttonOnColourId, Colour (0xff805705));
 	playFiltAudioButton.setVisible(false);
 
-	captureReferenceButton.setColour(TextButton::buttonColourId, Colour (0xff365936));
-	captureReferenceButton.onClick = [this] { setStartCaptureReference(); };
-	captureCurrentButton.setColour(TextButton::buttonColourId, Colour (0xff602743));
-	captureCurrentButton.onClick = [this] { setStartCaptureCurrent(); };
+	captureTargButton.setColour(TextButton::buttonColourId, Colour (0xff365936));
+	captureTargButton.onClick = [this] { setStartCaptureTarget(); };
+	captureBaseButton.setColour(TextButton::buttonColourId, Colour (0xff602743));
+	captureBaseButton.onClick = [this] { setStartCaptureBase(); };
 
 	playUnprocessedAudioButton.setClickingTogglesState(true);
 	playFiltAudioButton.setClickingTogglesState(true);
@@ -189,18 +189,20 @@ AutoKalibraDemoAudioProcessorEditor::~AutoKalibraDemoAudioProcessorEditor()
 
 
 
-void AutoKalibraDemoAudioProcessorEditor::setStartCaptureReference(){
-	processor.startCaptureTarg();
-	captureCurrentButton.setVisible(false);
+void AutoKalibraDemoAudioProcessorEditor::setStartCaptureTarget(){
+//	processor.startCaptureTarg();
+	processor.startCapture(AutoKalibraDemoAudioProcessor::IR_TARGET);
+	captureBaseButton.setVisible(false);
 	int ms = std::ceil( 1000 * ((float) processor.getTotalSweepBreakSamples()) / ((float) processor.getSamplerate()) );
-	Timer::callAfterDelay(ms, [this] { captureCurrentButton.setVisible(true); } );
+	Timer::callAfterDelay(ms, [this] { captureBaseButton.setVisible(true); } );
 }
 
-void AutoKalibraDemoAudioProcessorEditor::setStartCaptureCurrent(){
-	processor.startCaptureBase();
-	captureReferenceButton.setVisible(false);
+void AutoKalibraDemoAudioProcessorEditor::setStartCaptureBase(){
+//	processor.startCaptureBase();
+	processor.startCapture(AutoKalibraDemoAudioProcessor::IR_BASE);
+	captureTargButton.setVisible(false);
 	int ms = std::ceil( 1000 * ((float) processor.getTotalSweepBreakSamples()) / ((float) processor.getSamplerate()) );
-	Timer::callAfterDelay(ms, [this] { captureReferenceButton.setVisible(true); } );
+	Timer::callAfterDelay(ms, [this] { captureTargButton.setVisible(true); } );
 }
 
 
@@ -399,11 +401,11 @@ void AutoKalibraDemoAudioProcessorEditor::resized()
 	
 	
 	/* top buttons */
-	captureReferenceButton.setBounds 	(0,
+	captureTargButton.setBounds 	(0,
 										0,
 										 getLocalBounds().getWidth()/2,
 										 buttonHeight);
-	captureCurrentButton.setBounds 		(getLocalBounds().getWidth()/2,
+	captureBaseButton.setBounds 		(getLocalBounds().getWidth()/2,
 										 0,
 										 getLocalBounds().getWidth()/2,
 										 buttonHeight);

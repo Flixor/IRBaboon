@@ -43,8 +43,8 @@ public:
     ~AutoKalibraDemoAudioProcessorEditor();
 	//==============================================================================
 
-	void setStartCaptureReference();
-	void setStartCaptureCurrent();
+	void setStartCaptureTarget();
+	void setStartCaptureBase();
 
 	void timerCallback() override;
 	
@@ -67,8 +67,8 @@ private:
     // access the processor object that created it.
     AutoKalibraDemoAudioProcessor& processor;
 
-	TextButton captureReferenceButton  { "Capture target IR" };
-	TextButton captureCurrentButton  { "Capture base IR" };
+	TextButton captureTargButton  { "Capture target IR" };
+	TextButton captureBaseButton  { "Capture base IR" };
 	TextButton playUnprocessedAudioButton  { "PLAYING unprocessed audio" };
 	TextButton playFiltAudioButton  { "Play filtered audio" };
 	
