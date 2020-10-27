@@ -33,14 +33,14 @@ namespace convolver {
 	AudioBuffer<float> convolvePeriodic(AudioBuffer<float>& buffer1, AudioBuffer<float>& buffer2, int processBlockSize = 256);
 	AudioBuffer<float> convolveNonPeriodic(AudioBuffer<float>& buffer1, AudioBuffer<float>& buffer2);
 	
-	/* deconcolve uses complex division
-	 * Assumes that denominator is mono! */
-	AudioBuffer<float> deconvolveNonPeriodic2(AudioBuffer<float>* numeratorBuffer, AudioBuffer<float>* denominatorBuffer, double sampleRate, bool smoothing = true, bool nullifyPhase = false, bool nullifyAmplitude = false);
+	/* Deconvolution is non-periodic, meaning it won't fold back, but output a buffer that is at least N_numerator + N_denominator + 1 samples.
+	 * The deconvolution uses complex division.
+	 * The denominator buffer needs to be mono! */
+	AudioBuffer<float> deconvolve(AudioBuffer<float>* numeratorBuffer, AudioBuffer<float>* denominatorBuffer, double sampleRate, bool smoothing = true, bool nullifyPhase = false, bool nullifyAmplitude = false);
 
-	/* the filter has a low-pass effect in the upper freqs, if the fft method
-	 * performForwardRealFreqOnly has been used, because the upper bin range
-	 * will eventually go into negative freq bin territory, where the contents
-	 * of the bins are 0, but still count towards the average. */
+	/* the filter has a low-pass effect in the upper freqs if the fft method performForwardRealFreqOnly() has been used,
+	 * because the upper bin range will eventually go into negative freq bin territory, where the contents of the bins are 0,
+	 * but these bins still count towards the average. */
 	void averagingFilter (AudioBuffer<float>* buffer, double octaveFraction, double sampleRate, bool logAvg, bool nullifyPhase = false, bool nullifyAmplitude = false);
 
 
@@ -56,8 +56,7 @@ namespace convolver {
 	AudioBuffer<float> invertFilter4 (AudioBuffer<float>& buffer, int samplerate);
 
 	
-	
-	/* algorithm:
+	/* chopping algorithm:
 	 	- find sample with max ampl
 	 	- chop start is sample before max ampl sample that is consecutiveSamplesBelowThreshold
 	 	- IRlength is length, and linear fadeout in final 1/8 or IR

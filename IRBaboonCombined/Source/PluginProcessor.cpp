@@ -634,7 +634,7 @@ void AutoKalibraDemoAudioProcessor::startCapture(IRCapType type){
 
 
 AudioSampleBuffer AutoKalibraDemoAudioProcessor::createTargetOrBaseIR(AudioSampleBuffer& numeratorBuf, AudioSampleBuffer& denominatorBuf){
-	return convolver::deconvolveNonPeriodic2(&numeratorBuf, &denominatorBuf, sampleRate, true, false);
+	return convolver::deconvolve(&numeratorBuf, &denominatorBuf, sampleRate, true, false);
 }
 
 
@@ -644,7 +644,7 @@ void AutoKalibraDemoAudioProcessor::createIRFilt(){
 	AudioSampleBuffer* IRTarg = IRTargPtr->getBuffer();
 	AudioSampleBuffer* IRBase = IRBasePtr->getBuffer();
 	
-	IR.makeCopyOf(convolver::deconvolveNonPeriodic2(IRTarg, IRBase, sampleRate, true, nullifyPhaseFilt, nullifyAmplFilt));
+	IR.makeCopyOf(convolver::deconvolve(IRTarg, IRBase, sampleRate, true, nullifyPhaseFilt, nullifyAmplFilt));
 
 	if (nullifyPhaseFilt) convolver::shifteroo(&IR);
 	
