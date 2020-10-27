@@ -388,8 +388,12 @@ AudioBuffer<float> deconvolve(AudioBuffer<float>* numeratorBuffer, AudioBuffer<f
 	}
 
 	
+	/* averagingFilter() applies a averaging based on moving, octave-based, rectangular window.
+	 * Rectangular window functions suck for FFT of course, but when you convolve a rectangular window with itself,
+	 * you get a triangular window, and if you convolve that with the rectangular window, you get a Gaussian window!
+	 * Which is perfectly fine for FFT. And this way, a lot easier to implement than directly programming a Gaussian window!
+	 */
 	if (smoothing){
-		/* in total 3 * smoothPerAvg gaussian smoothing */
 		float smoothPerAvg = 1.0/13.0;
 		
 		averagingFilter(&numBufFft, smoothPerAvg, sampleRate, true, nullifyPhase, nullifyAmplitude);
