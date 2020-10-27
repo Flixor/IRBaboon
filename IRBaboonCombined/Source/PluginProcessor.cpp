@@ -186,11 +186,9 @@ void AutoKalibraDemoAudioProcessor::prepareToPlay (double sampleRate, int sample
 	}
 	
 	
-	// delete previously existing printed bufs
+	/* delete previously existing printed bufs */
 	for (int name = 0; name < 5; name++){
-		String fileName (printDirectoryDebug + "/" + printNames[name] + ".wav");
-		File checkFile (fileName);
-		if (checkFile.existsAsFile()) checkFile.deleteFile();
+		boost::filesystem::remove(printDirectoryDebug + "/" + printNames[name] + ".wav");
 	}
 	
 	
@@ -202,9 +200,7 @@ void AutoKalibraDemoAudioProcessor::prepareToPlay (double sampleRate, int sample
 	
 	
 	/* init circ buf arrays for convolution */
-	
 	int inputArraySize = (int) std::ceil((float) generalHostBlockSize / (float) processBlockSize);
-	
 	int outputArraySize = (int) std::ceil((float) processBlockSize / (float) generalHostBlockSize);
 	BigInteger outputArraySizebitmask = (BigInteger) outputArraySize;
 	int power = outputArraySizebitmask.getHighestBit() + 1;
@@ -293,10 +289,19 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 	}
 	
 	
+	/*
+	 * fade out currently playing throughput
+	 */
+	if (IRCapture.doFadeout) {
+		tools::linearFade (&buffer, false, 0, buffer.getNumSamples());
+		IRCapture.doFadeout = false;
+	}
 	
-	// ===============================
-	// Capture input
-	// ===============================
+	
+	
+	/*
+	 * Capture input
+	 */
 
 	if (IRCapture.state == IRCAP_CAPTURE){
 		
@@ -329,36 +334,40 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 			IRCapture.type = IR_NONE;
 
 			/* create filter if both target and base have been captured */
-			if (IRTargPtr->getBuffer()->getNumSamples() > 0 && IRBasePtr->getBuffer()->getNumSamples() > 0){
+			if (IRTargPtr->bufferNotEmpty() && IRBasePtr->bufferNotEmpty()){
 				createIRFilt();
 			}
 			
 			IRCapture.state = IRCAP_END;
-
+			
+			/* run print thumbnail thread */
 			notify();
-		}
-	}
+			
+		} // when capture done
+		
+	} // if (IRCapture.state == IRCAP_CAPTURE)
 
 	
-	
-	// ===============================
-	// Play sweep 
-	// ===============================
+	/*
+	 * Play empty buffers before starting sweep / capture
+	 */
 	
 	if (IRCapture.state == IRCAP_PREP) {
 	
 		buffersWaitForInputCapture--;
+		buffer.clear();
+		
+		/* when done: play sweep now, start input capture next block */
 		if (buffersWaitForInputCapture == 0){
 			IRCapture.state = IRCAP_CAPTURE;
 			IRCapture.playSweep = true;
 		}
-		
-		if (IRCapture.doFadeout) {
-			tools::linearFade (&buffer, false, 0, buffer.getNumSamples());
-			IRCapture.doFadeout = false;
-		}
 	}
 
+	
+	/*
+	 * Play sweep
+	 */
 	
 	if (IRCapture.playSweep) {
 		
@@ -375,22 +384,29 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 		if (sweepBufArray.getReadIndex() == 0){
 			IRCapture.playSweep = false;
 			buffersWaitForResumeThroughput = samplesWaitBeforeInputCapture / 256;
-			IRCapture.doFadein = true;
 		}
 	}
 
 	
+	/*
+	 * Capture / sweep done: empty buffers before resuming throughput
+	 */
 	
 	if (IRCapture.state == IRCAP_END) {
 		buffersWaitForResumeThroughput--;
+
+		if (buffersWaitForResumeThroughput > 0){
+			buffer.clear();
+		}
+		/* done: resume throughput */
+		else {
+			IRCapture.state = IRCAP_IDLE;
+			/* fade in on first buffer */
+			tools::linearFade (&buffer, true, 0, buffer.getNumSamples());
+		}
 	}
 	
-	if (buffersWaitForResumeThroughput > 0){
-		buffer.clear();
-	}
-	else if (IRCapture.state == IRCAP_END && buffersWaitForResumeThroughput == 0) {
-		IRCapture.state = IRCAP_IDLE;
-	}
+
 	
 	
 	
@@ -406,13 +422,6 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 			IRtoConvolve = IRFiltPtr->getBuffer();
 		else
 			IRtoConvolve = &IRpulse;
-
-		
-		/* fade in buffer if necessary */
-		if (IRCapture.doFadein) {
-			tools::linearFade (&buffer, true, 0, buffer.getNumSamples());
-			IRCapture.doFadein = false;
-		}
 		
 			
 		/*
@@ -503,7 +512,7 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 					audioFftBufferArray.decrReadIndex();
 				}
 				
-				// FDL method --> IFFT after summing
+				// FDL method -> IFFT after summing
 				fftInverse->performRealOnlyInverseTransform(convResultPtr);
 				
 				// add existing overlap and save new overlap
@@ -565,7 +574,7 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 		}
 	
 	
-	} // end if capture state == IRCAP_IDLE (aka not playing sweep / capturing)
+	} // if (IRCapture.state == IRCAP_IDLE)  [aka not playing sweep / capturing]
 	
 	
 		

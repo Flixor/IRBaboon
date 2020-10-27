@@ -43,6 +43,10 @@ public:
 			return &buffer;
 		}
 		
+		bool bufferNotEmpty() {
+			return buffer.getNumSamples() > 0;
+		}
+		
 	private:
 		String name;
 		AudioSampleBuffer buffer;
@@ -68,7 +72,6 @@ public:
 		IRCapState	state;
 		bool		playSweep;
 		bool 		doFadeout;
-		bool 		doFadein;
 	};
 	
     //==============================================================================
