@@ -91,8 +91,6 @@ public:
 
 	void divideSweepBufIntoArray();
 
-	void startCaptureTarg();
-	void startCaptureBase();
 	void startCapture(IRCapType type);
 
 	AudioSampleBuffer createTargetOrBaseIR(AudioSampleBuffer& numeratorBuf, AudioSampleBuffer& denominatorBuf);
@@ -102,7 +100,7 @@ public:
 	int getMakeupIRLengthSamples();
 	int getSamplerate();
 	bool filtReady();
-	AudioSampleBuffer getMakeupIR();
+	AudioSampleBuffer getIRFilt();
 	
 	void setPlayFiltered(bool filtered);
 	
@@ -164,9 +162,6 @@ private:
 	int buffersWaitForInputCapture = 0;
 	int buffersWaitForResumeThroughput = 0;
 	
-	bool needToFadein = true;
-	bool needToFadeout = false;
-	
 	AudioSampleBuffer sweepBuf;
 	AudioSampleBuffer sweepBufForDeconv;
 	CircularBufferArray sweepBufArray;
@@ -174,11 +169,6 @@ private:
 	AudioSampleBuffer inputConsolidated;
 
 	int makeupIRLengthSamples = 2048;
-	bool captureTarget = false;
-	bool captureBase = false;
-	bool captureInput = false;
-	bool inputIsTarget = false;
-	bool inputIsBase = false;
 	
 	IRCapStruct IRCapture;
 
@@ -251,7 +241,7 @@ private:
 	
 
 	// ====== debug ==========
-	ParallelBufferPrinter printer;
+	ParallelBufferPrinter debugPrinter;
 	
 
 
