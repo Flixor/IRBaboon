@@ -193,19 +193,30 @@ void AutoKalibraDemoAudioProcessor::prepareToPlay (double sampleRate, int sample
 	
 	
 	/* init sweep circ buf array */
-	divideSweepBufIntoArray();
+	if (sweepBuf.getNumSamples() == 0){
+		DBG("divideSweepBufIntoArray() error: sweepBuf not initialised yet.\n");
+		return;
+	}
+		
+	int sweepBufArraySize = sweepBuf.getNumSamples() / generalHostBlockSize;
+	sweepBufArray.clearAndResize(sweepBufArraySize, 1, generalHostBlockSize);
+	
+	for (int buf = 0; buf < sweepBufArraySize; buf++){
+		sweepBufArray.getWriteBufferPtr()->copyFrom(0, 0, sweepBuf, 0, buf * generalHostBlockSize, generalHostBlockSize);
+		sweepBufArray.incrWriteIndex();
+	}
 
-	/* init input capture circ buf array */
+	
+	/* input capture array is the same size as the sweep array */
 	inputCaptureArray.clearAndResize(sweepBufArray.getArraySize(), 1, generalHostBlockSize);
 	
 	
 	/* init circ buf arrays for convolution */
 	int inputArraySize = (int) std::ceil((float) generalHostBlockSize / (float) processBlockSize);
-	int outputArraySize = (int) std::ceil((float) processBlockSize / (float) generalHostBlockSize);
-	BigInteger outputArraySizebitmask = (BigInteger) outputArraySize;
-	int power = outputArraySizebitmask.getHighestBit() + 1;
-	outputArraySize = (int) std::pow(2.0f, power); // outputArraySize needs to be rounded up to the closest power of 2
-	
+	/* outputArraySize needs to be rounded up to the closest power of 2 */
+	int outputArraySize = tools::nextPowerOfTwo(std::ceil((float) processBlockSize / (float) generalHostBlockSize) + 1);
+
+	/* apply array sizes */
 	inputBufferArray.		clearAndResize(inputArraySize, generalInputAudioChannels, fftBlockSize);
 	convResultBufferArray.	clearAndResize(inputArraySize, generalInputAudioChannels, fftBlockSize);
 	outputBufferArray.		clearAndResize(outputArraySize, generalInputAudioChannels, generalHostBlockSize);
@@ -215,26 +226,23 @@ void AutoKalibraDemoAudioProcessor::prepareToPlay (double sampleRate, int sample
 		audioFftBufferArray.clearAndResize(inputBufferArray.getArraySize(), generalInputAudioChannels, fftBlockSize);
 	}
 	
-	outputBufferArray.setReadIndex(1); // size is always at least 2, and we always want it to start 1 above the first one for proper latency behaviour
-	
-	savedIndex = audioFftBufferArray.getArraySize() - 1;
+	/* size is always at least 2, and we always want it to start 1 above the first one for proper latency behaviour */
+	outputBufferArray.setReadIndex(1);
 	
 	inputBufferSampleIndex = 0;
 	outputBufferSampleIndex = 0;
-	
+	savedIndex = audioFftBufferArray.getArraySize() - 1;
 	
 	
 	irPartitions = (int) std::ceil((float) IRpulse.getNumSamples() / (float) processBlockSize);
-	
 	irFftBufferArray.clearAndResize(irPartitions, 1, fftBlockSize);
 	
+	/* tricky tricks */
 	int newAudioArraySize = std::max(irPartitions, inputBufferArray.getArraySize());
-	
 	audioFftBufferArray.changeArraySize(newAudioArraySize);
 	audioFftBufferArray.setReadIndex(audioFftBufferArray.getWriteIndex());
 	audioFftBufferArray.decrReadIndex();
 	savedIndex = audioFftBufferArray.getReadIndex();
-	
 }
 
 
@@ -243,9 +251,7 @@ void AutoKalibraDemoAudioProcessor::prepareToPlay (double sampleRate, int sample
 
 void AutoKalibraDemoAudioProcessor::releaseResources()
 {
-    // When playback stops, you can use this as an opportunity to free up any
-    // spare memory, etc.
-	
+    /* memory used by buffer arrays is freed up */
 	inputBufferArray.changeArraySize(0);
 	audioFftBufferArray.changeArraySize(0);
 	irFftBufferArray.changeArraySize(0);
@@ -253,9 +259,9 @@ void AutoKalibraDemoAudioProcessor::releaseResources()
 	outputBufferArray.changeArraySize(0);
 }
 
+/* Boilerplate JUCE, to check whether channel layouts are supported. */
 bool AutoKalibraDemoAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
-    // This is the place where you check if the layout is supported.
     // In this template code we only support mono or stereo.
     if (layouts.getMainOutputChannelSet() != AudioChannelSet::mono()
      && layouts.getMainOutputChannelSet() != AudioChannelSet::stereo())
@@ -290,16 +296,6 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 	
 	
 	/*
-	 * fade out currently playing throughput
-	 */
-	if (IRCapture.doFadeout) {
-		tools::linearFade (&buffer, false, 0, buffer.getNumSamples());
-		IRCapture.doFadeout = false;
-	}
-	
-	
-	
-	/*
 	 * Capture input
 	 */
 
@@ -320,13 +316,13 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 			inputConsolidated.makeCopyOf (inputCaptureArray.consolidate(0));
 			
 			if (IRCapture.type == IR_TARGET) {
-				IRTargPtr->getBuffer()->makeCopyOf(createTargetOrBaseIR(inputConsolidated, sweepBufForDeconv));
+				IRTargPtr->getBuffer()->makeCopyOf(createIR(inputConsolidated, sweepBufForDeconv));
 				sweepTargPtr->getBuffer()->makeCopyOf(inputConsolidated);
 				
 				saveIRTargFlag = true;
 			}
 			else if (IRCapture.type == IR_BASE) {
-				IRBasePtr->getBuffer()->makeCopyOf(createTargetOrBaseIR(inputConsolidated, sweepBufForDeconv));
+				IRBasePtr->getBuffer()->makeCopyOf(createIR(inputConsolidated, sweepBufForDeconv));
 				sweepBasePtr->getBuffer()->makeCopyOf(inputConsolidated);
 				
 				saveIRBaseFlag = true;
@@ -355,8 +351,15 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 	
 	if (IRCapture.state == IRCAP_PREP) {
 	
-		buffersWaitForInputCapture--;
-		buffer.clear();
+		/* first, fade out last buffer of throughput */
+		if (IRCapture.doFadeout) {
+			tools::linearFade (&buffer, false, 0, buffer.getNumSamples());
+			IRCapture.doFadeout = false;
+		}
+		else {
+			buffersWaitForInputCapture--;
+			buffer.clear();
+		}
 		
 		/* when done: play sweep now, start input capture next block */
 		if (buffersWaitForInputCapture == 0){
@@ -454,7 +457,6 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 				blocksToProcess++;
 			}
 		}
-	
 	
 		
 		/*
@@ -602,24 +604,6 @@ void AutoKalibraDemoAudioProcessor::processBlockBypassed(AudioBuffer<float>& buf
 
 
 
-void AutoKalibraDemoAudioProcessor::divideSweepBufIntoArray(){
-	if (sweepBuf.getNumSamples() == 0){
-		DBG("divideSweepBufIntoArray() error: sweepBuf not initialised yet.\n");
-		return;
-	}
-	
-	if (generalHostBlockSize <= 0) return;
-	
-	int bufArraySize = sweepBuf.getNumSamples() / generalHostBlockSize;
-	sweepBufArray.clearAndResize(bufArraySize, 1, generalHostBlockSize);
-	
-	for (int buf = 0; buf < bufArraySize; buf++){
-		sweepBufArray.getWriteBufferPtr()->copyFrom(0, 0, sweepBuf, 0, buf * generalHostBlockSize, generalHostBlockSize);
-		sweepBufArray.incrWriteIndex();
-	}
-}
-
-
 
 void AutoKalibraDemoAudioProcessor::startCapture(IRCapType type){
 	if (type == IR_NONE) return;
@@ -633,7 +617,7 @@ void AutoKalibraDemoAudioProcessor::startCapture(IRCapType type){
 
 
 
-AudioSampleBuffer AutoKalibraDemoAudioProcessor::createTargetOrBaseIR(AudioSampleBuffer& numeratorBuf, AudioSampleBuffer& denominatorBuf){
+AudioSampleBuffer AutoKalibraDemoAudioProcessor::createIR(AudioSampleBuffer& numeratorBuf, AudioSampleBuffer& denominatorBuf){
 	return convolver::deconvolve(&numeratorBuf, &denominatorBuf, sampleRate, true, false);
 }
 
@@ -641,21 +625,19 @@ AudioSampleBuffer AutoKalibraDemoAudioProcessor::createTargetOrBaseIR(AudioSampl
 
 void AutoKalibraDemoAudioProcessor::createIRFilt(){
 	AudioSampleBuffer IR;
-	AudioSampleBuffer* IRTarg = IRTargPtr->getBuffer();
-	AudioSampleBuffer* IRBase = IRBasePtr->getBuffer();
 	
-	IR.makeCopyOf(convolver::deconvolve(IRTarg, IRBase, sampleRate, true, nullifyPhaseFilt, nullifyAmplFilt));
+	IR.makeCopyOf(convolver::deconvolve(IRTargPtr->getBuffer(), IRBasePtr->getBuffer(), sampleRate, true, nullifyPhaseFilt, nullifyAmplFilt));
 
 	if (nullifyPhaseFilt) convolver::shifteroo(&IR);
 	
 	ParallelBufferPrinter printer;
 	printer.appendBuffer("IRFilt unchopped", IR);
 	printer.printToWav(0, printer.getMaxBufferLength(), sampleRate, printDirectoryDebug);
-
-//	AudioSampleBuffer IRinvfiltchop (convolver::IRchop(IRinvfilt, makeupIRLengthSamples, -24.0, 25));
-//	return IRinvfiltchop;
 	
 	IRFiltPtr->getBuffer()->makeCopyOf(IR);
+	
+//	AudioSampleBuffer IRinvfiltchop (convolver::IRchop(IRinvfilt, makeupIRLengthSamples, -24.0, 25));
+//	return IRinvfiltchop;
 }
 
 

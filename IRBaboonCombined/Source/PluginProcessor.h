@@ -89,11 +89,9 @@ public:
     void processBlock (AudioBuffer<float>&, MidiBuffer&) override;
 	void processBlockBypassed(AudioBuffer<float>& buffer, MidiBuffer& midiMessages) override;
 
-	void divideSweepBufIntoArray();
-
 	void startCapture(IRCapType type);
 
-	AudioSampleBuffer createTargetOrBaseIR(AudioSampleBuffer& numeratorBuf, AudioSampleBuffer& denominatorBuf);
+	AudioSampleBuffer createIR(AudioSampleBuffer& numeratorBuf, AudioSampleBuffer& denominatorBuf);
 	void createIRFilt();
 	
 	int getTotalSweepBreakSamples();

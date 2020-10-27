@@ -39,7 +39,7 @@ AudioBuffer<float> convolvePeriodic(AudioSampleBuffer& buffer1, AudioSampleBuffe
 		chLayout = IRStereoAudioStereo;
 	
 	if (chLayout == unknown){
-		printf("Either buffer1 or buffer2 is not mono nor stereo. Abort abort \n");
+		DBG("Either buffer1 or buffer2 is not mono nor stereo. Abort abort \n");
 		return outputBuffer;
 	}
 	
@@ -387,21 +387,19 @@ AudioBuffer<float> deconvolve(AudioBuffer<float>* numeratorBuffer, AudioBuffer<f
 		 * JUCE does this automatically */
 	}
 
-
-	
-	// in total 3 * smoothPerAvg gaussian smoothing
-	float smoothPerAvg = 1.0/13.0;
 	
 	if (smoothing){
+		/* in total 3 * smoothPerAvg gaussian smoothing */
+		float smoothPerAvg = 1.0/13.0;
+		
 		averagingFilter(&numBufFft, smoothPerAvg, sampleRate, true, nullifyPhase, nullifyAmplitude);
 		averagingFilter(&numBufFft, smoothPerAvg, sampleRate, true, nullifyPhase, nullifyAmplitude);
 		averagingFilter(&numBufFft, smoothPerAvg, sampleRate, true, nullifyPhase, nullifyAmplitude);
 	}
 
 	
-	// IFFT
+	/* IFFT */
 	numBuf = fftInvTransform(numBufFft);
-	
 	
 	return numBuf;
 }
