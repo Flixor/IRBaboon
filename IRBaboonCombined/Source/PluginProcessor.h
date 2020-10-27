@@ -10,22 +10,10 @@
 
 #pragma once
 
+#include <fp_include_all.hpp>
 #include <JuceHeader.h>
-#include "/Users/flixor/Projects/IRBaboon/IRBaboonCombined/Builds/MacOSX/includes/FP_ParallelBufferPrinter.hpp"
-#include "/Users/flixor/Documents/Audio Ease/HelperTools/FP_Convolver.hpp"
-#include "/Users/flixor/Documents/Audio Ease/HelperTools/FP_Tools.hpp"
-#include "/Users/flixor/Documents/Audio Ease/HelperTools/FP_ExpSineSweep.hpp"
-#include "/Users/flixor/Documents/Audio Ease/HelperTools/FP_CircularBufferArray.hpp"
 
 #include <ctime>
-
-
-#define NOT not
-#define BREAK JUCE_BREAK_IN_DEBUGGER
-
-
-//==============================================================================
-
 
 
 
@@ -33,6 +21,9 @@ class AutoKalibraDemoAudioProcessor  : public AudioProcessor, public Thread
 {
 public:
 	
+	/* From Juce tutorial
+	 https://docs.juce.com/master/tutorial_looping_audio_sample_buffer_advanced.html
+	 */
 	class ReferenceCountedBuffer : public ReferenceCountedObject
 	{
 	public:
@@ -48,14 +39,39 @@ public:
 		~ReferenceCountedBuffer() {
 		}
 		
-		AudioSampleBuffer* getAudioSampleBuffer() {
+		AudioSampleBuffer* getBuffer() {
 			return &buffer;
+		}
+		
+		bool bufferNotEmpty() {
+			return buffer.getNumSamples() > 0;
 		}
 		
 	private:
 		String name;
 		AudioSampleBuffer buffer;
 		JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ReferenceCountedBuffer)
+	};
+	
+	//==============================================================================
+	enum IRCapType {
+		IR_NONE,
+		IR_TARGET,
+		IR_BASE
+	};
+	
+	enum IRCapState {
+		IRCAP_IDLE,
+		IRCAP_PREP,
+		IRCAP_CAPTURE,
+		IRCAP_END,
+	};
+	
+	struct IRCapStruct {
+		IRCapType 	type;
+		IRCapState	state;
+		bool		playSweep;
+		bool 		doFadeout;
 	};
 	
     //==============================================================================
@@ -73,44 +89,37 @@ public:
     void processBlock (AudioBuffer<float>&, MidiBuffer&) override;
 	void processBlockBypassed(AudioBuffer<float>& buffer, MidiBuffer& midiMessages) override;
 
-	void divideSweepBufIntoArray();
-	void divideThdnSigBufIntoArray();
+	void startCapture(IRCapType type);
 
-	void startCaptureReference();
-	void startCaptureCurrent();
-	void startCaptureThdn();
-
-	AudioSampleBuffer createTargetOrCurrentIR(AudioSampleBuffer& numeratorBuf, AudioSampleBuffer& denominatorBuf);
-	AudioSampleBuffer createMakeupIR();
+	AudioSampleBuffer createIR(AudioSampleBuffer& numeratorBuf, AudioSampleBuffer& denominatorBuf);
+	void createIRFilt();
 	
 	int getTotalSweepBreakSamples();
 	int getMakeupIRLengthSamples();
 	int getSamplerate();
-	bool invFiltReady();
-	AudioSampleBuffer getMakeupIR();
+	bool filtReady();
+	AudioSampleBuffer getIRFilt();
 	
-	void setPlayUnprocessed();
-	void setPlayInvFilt();
+	void setPlayFiltered(bool filtered);
 	
-	// Print and thumbnail thread
+	/* Print and thumbnail thread */
 	void run() override;
-	void saveIRref();
-	void saveIRcurr();
-	void exportThdn();
+	void saveIRTarg();
+	void saveIRBase();
 	std::string getDateTimeString();
 	void printDebug();
 	std::string getPrintDirectoryDebug();
 	std::string getSavedIRExtension();
 	
-	void setReferenceZoomdB(float dB);
-	void setCurrentZoomdB(float dB);
-	void setInvfiltZoomdB(float dB);
+	void setZoomTarg(float dB);
+	void setZoomBase(float dB);
+	void setZoomFilt(float dB);
 	void setOutputVolume(float dB);
 	
-	void setNullifyPhaseInvfilt(bool nullifyPhase);
-	void setNullifyAmplitudeInvfilt(bool nullifyAmplitude);
+	void setNullifyPhaseFilt(bool nullifyPhase);
+	void setNullifyAmplFilt(bool nullifyAmplitude);
 	void setMakeupSize(int makeupSize);
-	void swapTargetAndCurrent();
+	void swapTargetBase();
 	void loadTarget(File file);
 
     //==============================================================================
@@ -144,52 +153,32 @@ private:
 	int silenceBeginningLengthSamples = 4096;
 	int silenceEndLengthSamples = 16384;
 	/* total samples = 4 * 32786 = 131072 */
-	int totalSweepBreakSamples = 4 * FP_Tools::nextPowerOfTwo(silenceBeginningLengthSamples + silenceEndLengthSamples + 1);
+	int totalSweepBreakSamples = 4 * tools::nextPowerOfTwo(silenceBeginningLengthSamples + silenceEndLengthSamples + 1);
 	int sweepLengthSamples = totalSweepBreakSamples - silenceBeginningLengthSamples - silenceEndLengthSamples;
 	
-	int samplesWaitBeforeInputCapture = 2048; // 12 * 256
+	int samplesWaitBeforeInputCapture = 2048; // 8 * 256
 	int buffersWaitForInputCapture = 0;
 	int buffersWaitForResumeThroughput = 0;
 	
-	bool needToFadein = true;
-	bool needToFadeout = false;
-	
 	AudioSampleBuffer sweepBuf;
 	AudioSampleBuffer sweepBufForDeconv;
-	FP_CircularBufferArray sweepBufArray;
-	FP_CircularBufferArray inputCaptureArray;
+	CircularBufferArray sweepBufArray;
+	CircularBufferArray inputCaptureArray;
 	AudioSampleBuffer inputConsolidated;
-	
-	float thdnSigFreq = 1000.0;
-	AudioSampleBuffer thdnSigBuf;
-	FP_CircularBufferArray thdnSigBufArray;
-	dsp::WindowingFunction<float> window;
-	int thdnExportLength = 8192;
 
 	int makeupIRLengthSamples = 2048;
-	bool captureReference = false;
-	bool captureCurrent = false;
-	bool captureThdn = false;
-	bool captureInput = false;
-	bool inputIsReference = false;
-	bool inputIsCurrent = false;
-	bool inputIsThdn = false;
+	
+	IRCapStruct IRCapture;
 
-	AudioSampleBuffer thdnRecBuf;
-	ReferenceCountedBuffer::Ptr sweeprefObjectPtr;
-	ReferenceCountedBuffer::Ptr sweepcurrObjectPtr;
-	AudioSampleBuffer IRref;
-	ReferenceCountedBuffer::Ptr IRrefObjectPtr;
-	AudioSampleBuffer IRcurr;
-	ReferenceCountedBuffer::Ptr IRcurrObjectPtr;
-	AudioSampleBuffer IRinvfilt;
-	ReferenceCountedBuffer::Ptr IRinvfiltObjectPtr;
+	ReferenceCountedBuffer::Ptr sweepTargPtr;
+	ReferenceCountedBuffer::Ptr sweepBasePtr;
+	ReferenceCountedBuffer::Ptr IRTargPtr;
+	ReferenceCountedBuffer::Ptr IRBasePtr;
+	ReferenceCountedBuffer::Ptr IRFiltPtr;
 	AudioSampleBuffer IRpulse;
 	AudioSampleBuffer* IRtoConvolve;
-	FP_Convolver convolver;
 	
-	bool playUnprocessed = true;
-	bool playInvFilt = false;
+	bool playFiltered = false;
 	
 	int generalInputAudioChannels = 2;
 	int inputCaptureChannel = 2;
@@ -210,16 +199,15 @@ private:
 	std::string printDirectorySavedIRs = "~/Documents/Super MakeupFilteraarder 2027/Saved IRs";
 	std::string savedIRExtension = ".sweepandir";
 
-	bool saveIRrefFlag = false;
-	bool saveIRcurrFlag = false;
-	bool exportThdnFlag = false;
+	bool saveIRTargFlag = false;
+	bool saveIRBaseFlag = false;
 
-	float referenceZoomdB = 0.0;
-	float currentZoomdB = 0.0;
-	float invfiltZoomdB = 0.0;
+	float zoomTargdB = 0.0;
+	float zoomBasedB = 0.0;
+	float zoomFiltdB = 0.0;
 	
-	bool nullifyPhaseInvfilt = false;
-	bool nullifyAmplitudeInvfilt = false;
+	bool nullifyPhaseFilt = false;
+	bool nullifyAmplFilt = false;
 
 	
 	
@@ -229,16 +217,17 @@ private:
 	const int processBlockSize = 256;
 	int N, fftBlockSize;
 
-	FP_CircularBufferArray inputBufferArray;
-	FP_CircularBufferArray audioFftBufferArray;
-	FP_CircularBufferArray irFftBufferArray;
+	CircularBufferArray inputBufferArray;
+	CircularBufferArray audioFftBufferArray;
+	CircularBufferArray irFftBufferArray;
 	
 	dsp::FFT *fftIR, *fftForward, *fftInverse;
 	AudioSampleBuffer inplaceBuffer;
 	AudioSampleBuffer overlapBuffer;
-	FP_CircularBufferArray convResultBufferArray;
-	FP_CircularBufferArray outputBufferArray;
-	FP_CircularBufferArray bypassOutputBufferArray;
+	
+	CircularBufferArray convResultBufferArray;
+	CircularBufferArray outputBufferArray;
+	CircularBufferArray bypassOutputBufferArray;
 	
 	int inputBufferSampleIndex = 0;
 	int outputBufferSampleIndex = 0;
@@ -250,7 +239,7 @@ private:
 	
 
 	// ====== debug ==========
-	FP_ParallelBufferPrinter printer;
+	ParallelBufferPrinter debugPrinter;
 	
 
 
