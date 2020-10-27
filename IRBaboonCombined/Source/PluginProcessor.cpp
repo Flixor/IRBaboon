@@ -768,7 +768,7 @@ std::string AutoKalibraDemoAudioProcessor::getDateTimeString(){
 	std::time_t now = std::time(NULL);
 	std::tm* ptm = std::localtime(&now);
 	char date[32];
-	std::strftime(date, 32, "%Y-%m-%d %H_%M_%S", ptm);
+	std::strftime(date, 32, "%Y-%m-%d %H%M%S", ptm);
 	
 	return date;
 }

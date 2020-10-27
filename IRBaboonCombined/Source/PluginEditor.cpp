@@ -99,7 +99,7 @@ AutoKalibraDemoAudioProcessorEditor::AutoKalibraDemoAudioProcessorEditor (AutoKa
 
 	
 	addAndMakeVisible (&titleLabel);
-	titleLabel.setText("Felix Postma 2020", dontSendNotification);
+	titleLabel.setText("IRBaboon build "+processor.getDateTimeString(), dontSendNotification);
 	titleLabel.setJustificationType(justification);
 	labelFont.setStyleFlags(Font::italic);
 	labelFont.setHeight(14.0);
