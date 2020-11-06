@@ -1,5 +1,7 @@
 ## IRBaboon: Filter capture, transformation and convolution
 
+Copyright © 2020 Felix Postma. All rights reserved.
+
 ##### Current version: 
 Only available in debug mode in the JUCE AudioPluginHost. No steady release yet!
 
