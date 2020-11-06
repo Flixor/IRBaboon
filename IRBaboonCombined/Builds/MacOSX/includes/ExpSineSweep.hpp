@@ -1,9 +1,7 @@
 //
-//  ExpSineSweep.hpp
-//  SineSweepGeneration - ConsoleApp
+//  Copyright © 2020 Felix Postma. All rights reserved.
 //
-//  Created by Felix Postma on 21/03/2019.
-//
+
 
 #ifndef FP_EXPSINESWEEP_HPP
 #define FP_EXPSINESWEEP_HPP

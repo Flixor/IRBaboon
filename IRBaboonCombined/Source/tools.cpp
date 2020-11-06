@@ -1,9 +1,5 @@
 //
-//  Tools_nstest.cpp
-//  IRBaboon - Shared Code
-//
-//  Created by Felix Postma on 22/10/2020.
-//  Copyright © 2020 Flixor. All rights reserved.
+//  Copyright © 2020 Felix Postma. All rights reserved.
 //
 
 #include <stdio.h>

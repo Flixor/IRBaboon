@@ -1,9 +1,7 @@
 //
-//  SineSweepGenerator.cpp
-//  SineSweepGeneration - ConsoleApp
+//  Copyright © 2020 Felix Postma. All rights reserved.
 //
-//  Created by Felix Postma on 21/03/2019.
-//
+
 
 #include <fp_include_all.hpp>
 

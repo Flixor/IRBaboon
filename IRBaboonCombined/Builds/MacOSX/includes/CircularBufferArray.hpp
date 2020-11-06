@@ -1,9 +1,7 @@
 //
-//  AudioBuffer<float>Array.hpp
-//  ConvUniformPartPlugin - Shared Code
+//  Copyright © 2020 Felix Postma. All rights reserved.
 //
-//  Created by Felix Postma on 14/03/2019.
-//
+
 
 #ifndef FP_CIRCULARBUFFERARRAY_HPP
 #define FP_CIRCULARBUFFERARRAY_HPP

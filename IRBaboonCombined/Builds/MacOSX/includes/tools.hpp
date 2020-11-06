@@ -1,10 +1,7 @@
 //
-//  FP_Tools_nstest.hpp
-//  IRBaboon
+//  Copyright © 2020 Felix Postma. All rights reserved.
 //
-//  Created by Felix Postma on 21/10/2020.
-//  Copyright © 2020 Flixor. All rights reserved.
-//
+
 
 #ifndef FP_TOOLS_HPP
 #define FP_TOOLS_HPP

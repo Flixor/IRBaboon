@@ -1,9 +1,7 @@
 //
-//  CircularBufferArray.cpp
-//  ConvUniformPartPlugin - Shared Code
+//  Copyright © 2020 Felix Postma. All rights reserved.
 //
-//  Created by Felix Postma on 14/03/2019.
-//
+
 
 #include <fp_include_all.hpp>
 

@@ -1,4 +1,4 @@
-/* Created by Felix Postma on 21/10/
+/* 
  * Copyright © 2020 Flixor. All rights reserved.
  *
  * The fp namespace is to encompass all custom functions and classes,

@@ -1,9 +1,7 @@
 //
-//  Convolver.hpp
-//  SineSweepGeneration - ConsoleApp
+//  Copyright © 2020 Felix Postma. All rights reserved.
 //
-//  Created by Felix Postma on 22/03/2019.
-//
+
 
 #ifndef FP_CONVOLVER_HPP
 #define FP_CONVOLVER_HPP
