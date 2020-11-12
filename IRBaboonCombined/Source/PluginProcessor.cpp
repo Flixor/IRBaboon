@@ -790,10 +790,10 @@ void AutoKalibraDemoAudioProcessor::printDebug() {
 	if (IRrefprint.getNumSamples() > 0)
 		referenceForThumbnail.copyFrom(1, 0, IRrefprint, 0, 0, IRrefprint.getNumSamples());
 	referenceForThumbnail.applyGain(tools::dBToLin(zoomTargdB));
-	wavPrinter.appendBuffer("targetForThumbnail", referenceForThumbnail);
+	wavPrinter.appendBuffer("thumbnailTarg", referenceForThumbnail);
 	
 	// delete thumbnail file again if it has been swaped with empty current
-	String nameReference (printDirectoryDebug + "/targetForThumbnail.wav");
+	String nameReference (printDirectoryDebug + "/thumbnailTarg.wav");
 	File fileReference (nameReference);
 	if (referenceForThumbnail.getNumSamples() == 0 && fileReference.existsAsFile()){
 		fileReference.deleteFile();
@@ -807,10 +807,10 @@ void AutoKalibraDemoAudioProcessor::printDebug() {
 	if (IRcurrprint.getNumSamples() > 0)
 		currentForThumbnail.copyFrom(1, 0, IRcurrprint, 0, 0, IRcurrprint.getNumSamples());
 	currentForThumbnail.applyGain(tools::dBToLin(zoomBasedB));
-	wavPrinter.appendBuffer("baseForThumbnail", currentForThumbnail);
+	wavPrinter.appendBuffer("thumbnailBase", currentForThumbnail);
 
 	// delete thumbnail file again if it has been swaped with empty reference
-	String nameCurrent (printDirectoryDebug + "/baseForThumbnail.wav");
+	String nameCurrent (printDirectoryDebug + "/thumbnailBase.wav");
 	File fileCurrent (nameCurrent);
 	if (currentForThumbnail.getNumSamples() == 0 && fileCurrent.existsAsFile()){
 		fileCurrent.deleteFile();
@@ -821,7 +821,7 @@ void AutoKalibraDemoAudioProcessor::printDebug() {
 	if (IRinvfiltprint.getNumSamples() > 0)
 		InvfiltForThumbnail.copyFrom(0, 0, IRinvfiltprint, 0, 0, IRinvfiltprint.getNumSamples());
 	InvfiltForThumbnail.applyGain(tools::dBToLin(zoomFiltdB));
-	wavPrinter.appendBuffer("filterForThumbnail", InvfiltForThumbnail);
+	wavPrinter.appendBuffer("thumbnailFilt", InvfiltForThumbnail);
 	
 	// print everything
 	wavPrinter.printToWav(0, wavPrinter.getMaxBufferLength(), sampleRate, printDirectoryDebug);

@@ -190,8 +190,8 @@ private:
 		"IR base",
 		"IR filter"
 	};
-	std::string printDirectoryDebug = "/Users/flixor/Documents/Super MakeupFilteraarder 2027/Debug exports";
-	std::string printDirectorySavedIRs = "~/Documents/Super MakeupFilteraarder 2027/Saved IRs";
+	std::string printDirectoryDebug = "/Users/flixor/Projects/IRBaboon/Debug exports";
+	std::string printDirectorySavedIRs = "/Users/flixor/Projects/IRBaboon/Saved IRs";
 	std::string savedIRExtension = ".sweepandir";
 
 	bool saveIRTargFlag = false;
