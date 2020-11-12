@@ -22,9 +22,10 @@ AutoKalibraDemoAudioProcessor::AutoKalibraDemoAudioProcessor()
 {
 	
 	/* remove previously printed files */
-	boost::filesystem::remove(printDirectoryDebug + "/targetForThumbnail.wav");
-	boost::filesystem::remove(printDirectoryDebug + "/baseForThumbnail.wav");
-	boost::filesystem::remove(printDirectoryDebug + "/filterForThumbnail.wav");
+	// TODO: regex all 'thumbnail' and remove
+	boost::filesystem::remove(printDirectoryDebug + "/thumbnailBase.wav");
+	boost::filesystem::remove(printDirectoryDebug + "/thumbnailTarg.wav");
+	boost::filesystem::remove(printDirectoryDebug + "/thumbnailFilt.wav");
 	
 
 	
@@ -760,15 +761,15 @@ void AutoKalibraDemoAudioProcessor::printDebug() {
 	/* print freq */
 	if (IRrefprint.getNumSamples() > 0) {
 		AudioSampleBuffer IRrefprint_fft (convolver::fftTransform(IRrefprint));
-		freqPrinter.appendBuffer("IR target fft", IRrefprint_fft);
+		freqPrinter.appendBuffer("fft IR target", IRrefprint_fft);
 	}
 	if (IRcurrprint.getNumSamples() > 0) {
 		AudioSampleBuffer IRcurrprint_fft (convolver::fftTransform(IRcurrprint));
-		freqPrinter.appendBuffer("IR base fft", IRcurrprint_fft);
+		freqPrinter.appendBuffer("fft IR base", IRcurrprint_fft);
 	}
 	if (IRinvfiltprint.getNumSamples() > 0) {
 		AudioSampleBuffer IRinvfiltprint_fft (convolver::fftTransform(IRinvfiltprint));
-		freqPrinter.appendBuffer("IR filter fft", IRinvfiltprint_fft);
+		freqPrinter.appendBuffer("fft IR filter", IRinvfiltprint_fft);
 	}
 	if (freqPrinter.getMaxBufferLength() > 0){
 		freqPrinter.printFreqToCsv(sampleRate, printDirectoryDebug);

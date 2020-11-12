@@ -211,7 +211,7 @@ void AutoKalibraDemoAudioProcessorEditor::timerCallback(){
 
 	
 	// thumbnails
-	String nameReference (processor.getPrintDirectoryDebug() + "/targetForThumbnail.wav");
+	String nameReference (processor.getPrintDirectoryDebug() + "/thumbnailTarg.wav");
 	File fileReference (nameReference);
 	if (fileReference.existsAsFile()){
 		thumbnailTarg.setSource(new FileInputSource(fileReference));
@@ -220,7 +220,7 @@ void AutoKalibraDemoAudioProcessorEditor::timerCallback(){
 		thumbnailTarg.setSource(nullptr);
 	}
 	
-	String nameCurrent (processor.getPrintDirectoryDebug() + "/baseForThumbnail.wav");
+	String nameCurrent (processor.getPrintDirectoryDebug() + "/thumbnailBase.wav");
 	File fileCurrent (nameCurrent);
 	if (fileCurrent.existsAsFile()){
 		thumbnailBase.setSource(new FileInputSource(fileCurrent));
@@ -229,7 +229,7 @@ void AutoKalibraDemoAudioProcessorEditor::timerCallback(){
 		thumbnailBase.setSource(nullptr);
 	}
 	
-	String nameInvfilt (processor.getPrintDirectoryDebug() + "/filterForThumbnail.wav");
+	String nameInvfilt (processor.getPrintDirectoryDebug() + "/thumbnailFilt.wav");
 	File fileInvfilt (nameInvfilt);
 	if (fileInvfilt.existsAsFile()){
 		thumbnailFilt.setSource(new FileInputSource(fileInvfilt));
