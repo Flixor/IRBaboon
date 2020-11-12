@@ -49,7 +49,7 @@ public:
 	};
 	
 	//==============================================================================
-	enum IRCapType {
+	enum IRType {
 		IR_NONE,
 		IR_TARGET,
 		IR_BASE
@@ -63,7 +63,7 @@ public:
 	};
 	
 	struct IRCapStruct {
-		IRCapType 	type;
+		IRType 	type;
 		IRCapState	state;
 		bool		playSweep;
 		bool 		doFadeout;
@@ -84,7 +84,7 @@ public:
     void processBlock (AudioBuffer<float>&, MidiBuffer&) override;
 	void processBlockBypassed(AudioBuffer<float>& buffer, MidiBuffer& midiMessages) override;
 
-	void startCapture(IRCapType type);
+	void startCapture(IRType type);
 
 	AudioSampleBuffer createIR(AudioSampleBuffer& numeratorBuf, AudioSampleBuffer& denominatorBuf);
 	void createIRFilt();
@@ -101,6 +101,7 @@ public:
 	void run() override;
 	void saveIRTarg();
 	void saveIRBase();
+	void saveCustomExt(IRType type);
 	std::string getDateTimeString();
 	void printDebug();
 	std::string getPrintDirectoryDebug();
@@ -190,12 +191,11 @@ private:
 		"IR base",
 		"IR filter"
 	};
-	std::string printDirectoryDebug = "/Users/flixor/Projects/IRBaboon/Debug exports";
-	std::string printDirectorySavedIRs = "/Users/flixor/Projects/IRBaboon/Saved IRs";
+	std::string printDirectoryDebug = "/Users/flixor/Projects/IRBaboon/Debug exports/";
+	std::string printDirectorySavedIRs = "/Users/flixor/Projects/IRBaboon/Saved IRs/";
 	std::string savedIRExtension = ".sweepandir";
 
-	bool saveIRTargFlag = false;
-	bool saveIRBaseFlag = false;
+	IRType saveIRCustomType = IR_NONE;
 
 	float zoomTargdB = 0.0;
 	float zoomBasedB = 0.0;
