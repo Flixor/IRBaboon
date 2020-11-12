@@ -22,9 +22,10 @@ AutoKalibraDemoAudioProcessor::AutoKalibraDemoAudioProcessor()
 {
 	
 	/* remove previously printed files */
-	boost::filesystem::remove(printDirectoryDebug + "/targetForThumbnail.wav");
-	boost::filesystem::remove(printDirectoryDebug + "/baseForThumbnail.wav");
-	boost::filesystem::remove(printDirectoryDebug + "/filterForThumbnail.wav");
+	// TODO: regex all 'thumbnail' and remove
+	boost::filesystem::remove(printDirectoryDebug + "thumbnailBase.wav");
+	boost::filesystem::remove(printDirectoryDebug + "thumbnailTarg.wav");
+	boost::filesystem::remove(printDirectoryDebug + "thumbnailFilt.wav");
 	
 
 	
@@ -183,7 +184,7 @@ void AutoKalibraDemoAudioProcessor::prepareToPlay (double sampleRate, int sample
 	
 	/* delete previously existing printed bufs */
 	for (int name = 0; name < 5; name++){
-		boost::filesystem::remove(printDirectoryDebug + "/" + printNames[name] + ".wav");
+		boost::filesystem::remove(printDirectoryDebug + printNames[name] + ".wav");
 	}
 	
 	
@@ -314,13 +315,13 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 				IRTargPtr->getBuffer()->makeCopyOf(createIR(inputConsolidated, sweepBufForDeconv));
 				sweepTargPtr->getBuffer()->makeCopyOf(inputConsolidated);
 				
-				saveIRTargFlag = true;
+				saveIRCustomType = IR_TARGET;
 			}
 			else if (IRCapture.type == IR_BASE) {
 				IRBasePtr->getBuffer()->makeCopyOf(createIR(inputConsolidated, sweepBufForDeconv));
 				sweepBasePtr->getBuffer()->makeCopyOf(inputConsolidated);
 				
-				saveIRBaseFlag = true;
+				saveIRCustomType = IR_BASE;
 			}
 
 			IRCapture.type = IR_NONE;
@@ -600,7 +601,7 @@ void AutoKalibraDemoAudioProcessor::processBlockBypassed(AudioBuffer<float>& buf
 
 
 
-void AutoKalibraDemoAudioProcessor::startCapture(IRCapType type){
+void AutoKalibraDemoAudioProcessor::startCapture(IRType type){
 	if (type == IR_NONE) return;
 	
 	IRCapture.type = type;
@@ -667,17 +668,12 @@ void AutoKalibraDemoAudioProcessor::setPlayFiltered (bool filtered){
 
 void AutoKalibraDemoAudioProcessor::run() {
 	while (NOT threadShouldExit()) {
-		if (saveIRTargFlag) {
-			saveIRTarg();
-		}
-		if (saveIRBaseFlag) {
-			saveIRBase();
-		}
 		
-		if (saveIRTargFlag || saveIRBaseFlag){
+		saveCustomExt(saveIRCustomType);
+		
+		if (saveIRCustomType != IR_NONE){
 			printDebug();
-			saveIRTargFlag = false;
-			saveIRBaseFlag = false;
+			saveIRCustomType = IR_NONE;
 		}
 		
 		/* A negative timeout value means that the method will wait indefinitely (until notify() is called) */
@@ -687,47 +683,38 @@ void AutoKalibraDemoAudioProcessor::run() {
 
 
 
-void AutoKalibraDemoAudioProcessor::saveIRTarg(){
-
-	std::string name = "IR target ";
-	std::string date = getDateTimeString();
-	name += date;
+void AutoKalibraDemoAudioProcessor::saveCustomExt(IRType type){
 	
 	AudioSampleBuffer savebuf (2, totalSweepBreakSamples);
-	savebuf.copyFrom(0, 0, *(sweepTargPtr->getBuffer()), 0, 0, totalSweepBreakSamples);
-	savebuf.copyFrom(1, 0, *(IRTargPtr->getBuffer()), 0, 0, totalSweepBreakSamples);
+	std::string date = getDateTimeString();
+	std::string name;
+
+	switch (type) {
+		case IR_BASE:
+			name = "IR Base ";
+			savebuf.copyFrom(0, 0, *(sweepBasePtr->getBuffer()), 0, 0, totalSweepBreakSamples);
+			savebuf.copyFrom(1, 0, *(IRBasePtr->getBuffer()), 0, 0, totalSweepBreakSamples);
+			break;
+
+		case IR_TARGET:
+			name = "IR Target ";
+			savebuf.copyFrom(0, 0, *(sweepTargPtr->getBuffer()), 0, 0, totalSweepBreakSamples);
+			savebuf.copyFrom(1, 0, *(IRTargPtr->getBuffer()), 0, 0, totalSweepBreakSamples);
+			break;
+
+		default:
+			return;
+	}
+	
+	name += date;
 	
 	ParallelBufferPrinter wavPrinter;
 	wavPrinter.appendBuffer(name, savebuf);
 	wavPrinter.printToWav(0, wavPrinter.getMaxBufferLength(), sampleRate, printDirectorySavedIRs);
 	
-	// replace .wav extension with custom extension
-	std::string path = printDirectorySavedIRs + "/" + name + ".wav";
-	std::string pathCustomExtension = printDirectorySavedIRs + "/" + name + savedIRExtension;
-	File f (path);
-	File f2 (pathCustomExtension);
-	f.moveFileTo(f2); // function to rename with
-}
-
-
-
-void AutoKalibraDemoAudioProcessor::saveIRBase(){
-	
-	std::string name = "IR current ";
-	std::string date = getDateTimeString();
-	name += date;
-	
-	AudioSampleBuffer savebuf (2, totalSweepBreakSamples);
-	savebuf.copyFrom(0, 0, *(sweepBasePtr->getBuffer()), 0, 0, totalSweepBreakSamples);
-	savebuf.copyFrom(1, 0, *(IRBasePtr->getBuffer()), 0, 0, totalSweepBreakSamples);
-	
-	ParallelBufferPrinter wavPrinter;
-	wavPrinter.appendBuffer(name, savebuf);
-	wavPrinter.printToWav(0, wavPrinter.getMaxBufferLength(), sampleRate, printDirectorySavedIRs);
-
 	/* replace .wav extension with custom extension */
-	std::string path = printDirectorySavedIRs + "/" + name + ".wav";
-	std::string pathCustomExtension = printDirectorySavedIRs + "/" + name + savedIRExtension;
+	std::string path = printDirectorySavedIRs + name + ".wav";
+	std::string pathCustomExtension = printDirectorySavedIRs + name + savedIRExtension;
 	File f (path);
 	File f2 (pathCustomExtension);
 	f.moveFileTo(f2); // function to rename with
@@ -751,76 +738,76 @@ void AutoKalibraDemoAudioProcessor::printDebug() {
 	ParallelBufferPrinter freqPrinter;
 
 	/* dereference the buffers */
-	AudioSampleBuffer sweeprefprint (*(sweepTargPtr->getBuffer()));
-	AudioSampleBuffer IRrefprint (*(IRTargPtr->getBuffer()));
-	AudioSampleBuffer sweepcurrprint (*(sweepBasePtr->getBuffer()));
-	AudioSampleBuffer IRcurrprint (*(IRBasePtr->getBuffer()));
-	AudioSampleBuffer IRinvfiltprint (*(IRFiltPtr->getBuffer()));
+	AudioSampleBuffer sweepPrintTarg (*(sweepTargPtr->getBuffer()));
+	AudioSampleBuffer IRPrintTarg (*(IRTargPtr->getBuffer()));
+	AudioSampleBuffer sweepPrintBase (*(sweepBasePtr->getBuffer()));
+	AudioSampleBuffer IRPrintBase (*(IRBasePtr->getBuffer()));
+	AudioSampleBuffer IRPrintFilt (*(IRFiltPtr->getBuffer()));
 
 	/* print freq */
-	if (IRrefprint.getNumSamples() > 0) {
-		AudioSampleBuffer IRrefprint_fft (convolver::fftTransform(IRrefprint));
-		freqPrinter.appendBuffer("IR target fft", IRrefprint_fft);
+	if (IRPrintTarg.getNumSamples() > 0) {
+		AudioSampleBuffer IRrefprint_fft (convolver::fftTransform(IRPrintTarg));
+		freqPrinter.appendBuffer("fft IR target", IRrefprint_fft);
 	}
-	if (IRcurrprint.getNumSamples() > 0) {
-		AudioSampleBuffer IRcurrprint_fft (convolver::fftTransform(IRcurrprint));
-		freqPrinter.appendBuffer("IR base fft", IRcurrprint_fft);
+	if (IRPrintBase.getNumSamples() > 0) {
+		AudioSampleBuffer IRcurrprint_fft (convolver::fftTransform(IRPrintBase));
+		freqPrinter.appendBuffer("fft IR base", IRcurrprint_fft);
 	}
-	if (IRinvfiltprint.getNumSamples() > 0) {
-		AudioSampleBuffer IRinvfiltprint_fft (convolver::fftTransform(IRinvfiltprint));
-		freqPrinter.appendBuffer("IR filter fft", IRinvfiltprint_fft);
+	if (IRPrintFilt.getNumSamples() > 0) {
+		AudioSampleBuffer IRinvfiltprint_fft (convolver::fftTransform(IRPrintFilt));
+		freqPrinter.appendBuffer("fft IR filter", IRinvfiltprint_fft);
 	}
 	if (freqPrinter.getMaxBufferLength() > 0){
 		freqPrinter.printFreqToCsv(sampleRate, printDirectoryDebug);
 	}
 	
 	// include separate buffers in printer
-	wavPrinter.appendBuffer(printNames[0], sweeprefprint);
-	wavPrinter.appendBuffer(printNames[1], sweepcurrprint);
-	wavPrinter.appendBuffer(printNames[2], IRrefprint);
-	wavPrinter.appendBuffer(printNames[3], IRcurrprint);
-	wavPrinter.appendBuffer(printNames[4], IRinvfiltprint);
+	wavPrinter.appendBuffer(printNames[0], sweepPrintTarg);
+	wavPrinter.appendBuffer(printNames[1], sweepPrintBase);
+	wavPrinter.appendBuffer(printNames[2], IRPrintTarg);
+	wavPrinter.appendBuffer(printNames[3], IRPrintBase);
+	wavPrinter.appendBuffer(printNames[4], IRPrintFilt);
 	
 	// create target sweep & IR file for thumbnail
-	AudioSampleBuffer referenceForThumbnail (2, std::max(sweeprefprint.getNumSamples(), IRrefprint.getNumSamples()));
-	referenceForThumbnail.clear();
-	if (sweeprefprint.getNumSamples() > 0)
-		referenceForThumbnail.copyFrom(0, 0, sweeprefprint, 0, 0, sweeprefprint.getNumSamples());
-	if (IRrefprint.getNumSamples() > 0)
-		referenceForThumbnail.copyFrom(1, 0, IRrefprint, 0, 0, IRrefprint.getNumSamples());
-	referenceForThumbnail.applyGain(tools::dBToLin(zoomTargdB));
-	wavPrinter.appendBuffer("targetForThumbnail", referenceForThumbnail);
+	AudioSampleBuffer thumbnailTarg (2, std::max(sweepPrintTarg.getNumSamples(), IRPrintTarg.getNumSamples()));
+	thumbnailTarg.clear();
+	if (sweepPrintTarg.getNumSamples() > 0)
+		thumbnailTarg.copyFrom(0, 0, sweepPrintTarg, 0, 0, sweepPrintTarg.getNumSamples());
+	if (IRPrintTarg.getNumSamples() > 0)
+		thumbnailTarg.copyFrom(1, 0, IRPrintTarg, 0, 0, IRPrintTarg.getNumSamples());
+	thumbnailTarg.applyGain(tools::dBToLin(zoomTargdB));
+	wavPrinter.appendBuffer("thumbnailTarg", thumbnailTarg);
 	
 	// delete thumbnail file again if it has been swaped with empty current
-	String nameReference (printDirectoryDebug + "/targetForThumbnail.wav");
-	File fileReference (nameReference);
-	if (referenceForThumbnail.getNumSamples() == 0 && fileReference.existsAsFile()){
-		fileReference.deleteFile();
+	String nameTarg (printDirectoryDebug + "thumbnailTarg.wav");
+	File fileTarg (nameTarg);
+	if (thumbnailTarg.getNumSamples() == 0 && fileTarg.existsAsFile()){
+		fileTarg.deleteFile();
 	}
 
 	// create current sweep & IR file for thumbnail
-	AudioSampleBuffer currentForThumbnail (2, std::max(sweepcurrprint.getNumSamples(), IRcurrprint.getNumSamples()));
+	AudioSampleBuffer currentForThumbnail (2, std::max(sweepPrintBase.getNumSamples(), IRPrintBase.getNumSamples()));
 	currentForThumbnail.clear();
-	if (sweepcurrprint.getNumSamples() > 0)
-		currentForThumbnail.copyFrom(0, 0, sweepcurrprint, 0, 0, sweepcurrprint.getNumSamples());
-	if (IRcurrprint.getNumSamples() > 0)
-		currentForThumbnail.copyFrom(1, 0, IRcurrprint, 0, 0, IRcurrprint.getNumSamples());
+	if (sweepPrintBase.getNumSamples() > 0)
+		currentForThumbnail.copyFrom(0, 0, sweepPrintBase, 0, 0, sweepPrintBase.getNumSamples());
+	if (IRPrintBase.getNumSamples() > 0)
+		currentForThumbnail.copyFrom(1, 0, IRPrintBase, 0, 0, IRPrintBase.getNumSamples());
 	currentForThumbnail.applyGain(tools::dBToLin(zoomBasedB));
-	wavPrinter.appendBuffer("baseForThumbnail", currentForThumbnail);
+	wavPrinter.appendBuffer("thumbnailBase", currentForThumbnail);
 
 	// delete thumbnail file again if it has been swaped with empty reference
-	String nameCurrent (printDirectoryDebug + "/baseForThumbnail.wav");
+	String nameCurrent (printDirectoryDebug + "thumbnailBase.wav");
 	File fileCurrent (nameCurrent);
 	if (currentForThumbnail.getNumSamples() == 0 && fileCurrent.existsAsFile()){
 		fileCurrent.deleteFile();
 	}
 
 	// create makeup IR file for thumbnail
-	AudioSampleBuffer InvfiltForThumbnail (1, IRinvfiltprint.getNumSamples());
-	if (IRinvfiltprint.getNumSamples() > 0)
-		InvfiltForThumbnail.copyFrom(0, 0, IRinvfiltprint, 0, 0, IRinvfiltprint.getNumSamples());
+	AudioSampleBuffer InvfiltForThumbnail (1, IRPrintFilt.getNumSamples());
+	if (IRPrintFilt.getNumSamples() > 0)
+		InvfiltForThumbnail.copyFrom(0, 0, IRPrintFilt, 0, 0, IRPrintFilt.getNumSamples());
 	InvfiltForThumbnail.applyGain(tools::dBToLin(zoomFiltdB));
-	wavPrinter.appendBuffer("filterForThumbnail", InvfiltForThumbnail);
+	wavPrinter.appendBuffer("thumbnailFilt", InvfiltForThumbnail);
 	
 	// print everything
 	wavPrinter.printToWav(0, wavPrinter.getMaxBufferLength(), sampleRate, printDirectoryDebug);

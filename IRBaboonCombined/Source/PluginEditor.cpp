@@ -203,7 +203,7 @@ void AutoKalibraDemoAudioProcessorEditor::setStartCaptureBase(){
 
 
 void AutoKalibraDemoAudioProcessorEditor::timerCallback(){
-	// invfilt button
+	// filt button
 	if (processor.filtReady()){
 		playFiltAudioButton.setVisible(true);
 		makeupSizeMenu.setVisible(true);
@@ -211,28 +211,28 @@ void AutoKalibraDemoAudioProcessorEditor::timerCallback(){
 
 	
 	// thumbnails
-	String nameReference (processor.getPrintDirectoryDebug() + "/targetForThumbnail.wav");
-	File fileReference (nameReference);
-	if (fileReference.existsAsFile()){
-		thumbnailTarg.setSource(new FileInputSource(fileReference));
+	String nameTarg (processor.getPrintDirectoryDebug() + "thumbnailTarg.wav");
+	File fileTarg (nameTarg);
+	if (fileTarg.existsAsFile()){
+		thumbnailTarg.setSource(new FileInputSource(fileTarg));
 	}
 	else {
 		thumbnailTarg.setSource(nullptr);
 	}
 	
-	String nameCurrent (processor.getPrintDirectoryDebug() + "/baseForThumbnail.wav");
-	File fileCurrent (nameCurrent);
-	if (fileCurrent.existsAsFile()){
-		thumbnailBase.setSource(new FileInputSource(fileCurrent));
+	String nameBase (processor.getPrintDirectoryDebug() + "thumbnailBase.wav");
+	File fileBase (nameBase);
+	if (fileBase.existsAsFile()){
+		thumbnailBase.setSource(new FileInputSource(fileBase));
 	}
 	else {
 		thumbnailBase.setSource(nullptr);
 	}
 	
-	String nameInvfilt (processor.getPrintDirectoryDebug() + "/filterForThumbnail.wav");
-	File fileInvfilt (nameInvfilt);
-	if (fileInvfilt.existsAsFile()){
-		thumbnailFilt.setSource(new FileInputSource(fileInvfilt));
+	String nameFilt (processor.getPrintDirectoryDebug() + "thumbnailFilt.wav");
+	File fileFilt (nameFilt);
+	if (fileFilt.existsAsFile()){
+		thumbnailFilt.setSource(new FileInputSource(fileFilt));
 	}
 	
 }
@@ -261,7 +261,7 @@ void AutoKalibraDemoAudioProcessorEditor::playFiltAudioClick (bool toggleState){
 
 void AutoKalibraDemoAudioProcessorEditor::loadTargetClicked(){
 	FileChooser myChooser ("Please select the sweepandir you want to load...",
-						   File("/Users/flixor/Documents/Super MakeupFilteraarder 2027/Saved IRs"),
+						   File("../../../../../Saved IRs"),
 						   String("*" + processor.getSavedIRExtension()));
 	if (myChooser.browseForFileToOpen()) {
 		processor.loadTarget(myChooser.getResult());
