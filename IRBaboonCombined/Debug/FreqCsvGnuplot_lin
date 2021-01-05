@@ -1,3 +1,7 @@
+# usage:
+# > gnuplot
+# > load "FreqCsvGnuplot_lin"
+
 reset session
 
 set style line 1 lw 2 lc rgb "#80AA00B8" 
