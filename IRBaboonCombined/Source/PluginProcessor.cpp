@@ -686,18 +686,17 @@ void AutoKalibraDemoAudioProcessor::run() {
 void AutoKalibraDemoAudioProcessor::saveCustomExt(IRType type){
 	
 	AudioSampleBuffer savebuf (2, totalSweepBreakSamples);
-	std::string date = getDateTimeString();
-	std::string name;
+	std::string name = getDateTimeString();
 
 	switch (type) {
 		case IR_BASE:
-			name = "IR Base ";
+			name += " IR Base";
 			savebuf.copyFrom(0, 0, *(sweepBasePtr->getBuffer()), 0, 0, totalSweepBreakSamples);
 			savebuf.copyFrom(1, 0, *(IRBasePtr->getBuffer()), 0, 0, totalSweepBreakSamples);
 			break;
 
 		case IR_TARGET:
-			name = "IR Target ";
+			name += " IR Target";
 			savebuf.copyFrom(0, 0, *(sweepTargPtr->getBuffer()), 0, 0, totalSweepBreakSamples);
 			savebuf.copyFrom(1, 0, *(IRTargPtr->getBuffer()), 0, 0, totalSweepBreakSamples);
 			break;
@@ -705,8 +704,6 @@ void AutoKalibraDemoAudioProcessor::saveCustomExt(IRType type){
 		default:
 			return;
 	}
-	
-	name += date;
 	
 	ParallelBufferPrinter wavPrinter;
 	wavPrinter.appendBuffer(name, savebuf);
