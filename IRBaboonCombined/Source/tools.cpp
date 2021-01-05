@@ -73,7 +73,7 @@ namespace tools {
 	void complexDivCartesian(float* a, float* b, float c, float d){
 		
 		if (c == 0.0 && d == 0.0) {
-			DBG("complexDivCartesian: c and d are both 0.\n");
+			// no action necessary
 			return;
 		}
 		
