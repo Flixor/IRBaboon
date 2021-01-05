@@ -15,7 +15,7 @@ It is possible to capture the influence of any *linear, time-invariant* (LTI) fi
 The way that the filter is captured is by recording an **impulse response** of the filter. This comprises the way the filter dampens, amplifies or delays the frequencies passing through it, and if LTI is observed then you will have a perfect reproduction of the real life system!
 
 Impulse responses are often referred to as **IRs**, hence the name! They are the backbone of this idea, and are used all over, for example in convolution reverbs.  
-The **Baboon** part refers to how this application is different: the digital domain allows us to flip IRs on their heads, make them more surreal than real and misbehave in other ways. So let's go and try that. 
+The **Baboon** part refers to how this application is different: the digital domain allows us to flip IRs on their heads, make them more surreal than real and misbehave in other ways. 
 
 
 ### Projected features:
