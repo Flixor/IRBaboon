@@ -191,8 +191,8 @@ private:
 		"IR base",
 		"IR filter"
 	};
-	std::string printDirectoryDebug = "/Users/flixor/Projects/IRBaboon/Debug exports/";
-	std::string printDirectorySavedIRs = "/Users/flixor/Projects/IRBaboon/Saved IRs/";
+	std::string printDirectoryDebug = "/Users/flixor/Projects/IRBaboon/IRBaboonCombined/Debug/";
+	std::string printDirectorySavedIRs = "/Users/flixor/Projects/IRBaboon/IRBaboonCombined/Debug/sweepir/";
 	std::string savedIRExtension = ".sweepandir";
 
 	IRType saveIRCustomType = IR_NONE;
