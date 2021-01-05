@@ -35,7 +35,7 @@
           uiopen_Normal="1">
     <PLUGIN name="IRBaboon" format="VST3" category="Fx" manufacturer="Flixor"
             version="1.0.0" file="/Users/flixor/Projects/IRBaboon/IRBaboonCombined/Builds/MacOSX/build/Debug/IRBaboon.vst3"
-            uid="acfc6b5c" isInstrument="0" fileTime="176d3d5d130" infoUpdateTime="176d3d67e2c"
+            uid="acfc6b5c" isInstrument="0" fileTime="176d3f3ec38" infoUpdateTime="176d3facd99"
             numInputs="3" numOutputs="2" isShell="0"/>
     <STATE>191.VMjLgXK....O+fWarAhckI2bo8la8HRLt.iHfTlai8FYo41Y8HRUTYTK3HxO9.BOVMEUy.Ea0cVZtMEcgQWY9vSRC8Vav8lak4Fc9XCLt3hKt3hKt3hKt3hYRUUSTEETIckVwTjQisVTTgkdEYjKAQjYPQSPWgUdMcjKAQjct3hdA4hKt3hKt3hKtnTUv.UQAslXuk0UXoWUFE0YQcEV77RRC8Vav8lak4Fc9vyKVMEUy.Ea0cVZtMEcgQWY9..</STATE>
     <LAYOUT>
@@ -50,6 +50,7 @@
   </FILTER>
   <CONNECTION srcFilter="7" srcChannel="0" dstFilter="9" dstChannel="0"/>
   <CONNECTION srcFilter="7" srcChannel="1" dstFilter="9" dstChannel="1"/>
+  <CONNECTION srcFilter="7" srcChannel="2" dstFilter="9" dstChannel="2"/>
   <CONNECTION srcFilter="9" srcChannel="0" dstFilter="8" dstChannel="0"/>
   <CONNECTION srcFilter="9" srcChannel="1" dstFilter="8" dstChannel="1"/>
 </FILTERGRAPH>
