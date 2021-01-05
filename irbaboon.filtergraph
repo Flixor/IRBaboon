@@ -12,14 +12,14 @@
         <BUS index="0" layout="disabled"/>
       </INPUTS>
       <OUTPUTS>
-        <BUS index="0" layout="L R"/>
+        <BUS index="0" layout="L R Ls Rs"/>
       </OUTPUTS>
     </LAYOUT>
   </FILTER>
-  <FILTER uid="8" x="0.528" y="0.825">
+  <FILTER uid="8" x="0.486" y="0.784375">
     <PLUGIN name="Audio Output" descriptiveName="" format="Internal" category="I/O devices"
             manufacturer="JUCE" version="1.0" file="" uid="724248cb" isInstrument="0"
-            fileTime="0" infoUpdateTime="0" numInputs="2" numOutputs="0"
+            fileTime="0" infoUpdateTime="0" numInputs="4" numOutputs="0"
             isShell="0"/>
     <STATE>0.</STATE>
     <LAYOUT>
@@ -31,11 +31,11 @@
       </OUTPUTS>
     </LAYOUT>
   </FILTER>
-  <FILTER uid="9" x="0.356" y="0.446875" uiLastX_Normal="396" uiLastY_Normal="23"
+  <FILTER uid="9" x="0.478" y="0.459375" uiLastX_Normal="531" uiLastY_Normal="23"
           uiopen_Normal="1">
     <PLUGIN name="IRBaboon" format="VST3" category="Fx" manufacturer="Flixor"
             version="1.0.0" file="/Users/flixor/Projects/IRBaboon/IRBaboonCombined/Builds/MacOSX/build/Debug/IRBaboon.vst3"
-            uid="acfc6b5c" isInstrument="0" fileTime="1756b1af838" infoUpdateTime="175bc734c1d"
+            uid="acfc6b5c" isInstrument="0" fileTime="176d3d5d130" infoUpdateTime="176d3d67e2c"
             numInputs="3" numOutputs="2" isShell="0"/>
     <STATE>191.VMjLgXK....O+fWarAhckI2bo8la8HRLt.iHfTlai8FYo41Y8HRUTYTK3HxO9.BOVMEUy.Ea0cVZtMEcgQWY9vSRC8Vav8lak4Fc9XCLt3hKt3hKt3hKt3hYRUUSTEETIckVwTjQisVTTgkdEYjKAQjYPQSPWgUdMcjKAQjct3hdA4hKt3hKt3hKtnTUv.UQAslXuk0UXoWUFE0YQcEV77RRC8Vav8lak4Fc9vyKVMEUy.Ea0cVZtMEcgQWY9..</STATE>
     <LAYOUT>
@@ -48,26 +48,8 @@
       </OUTPUTS>
     </LAYOUT>
   </FILTER>
-  <FILTER uid="11" x="0.654" y="0.4625" uiLastX_Normal="448" uiLastY_Normal="156"
-          uiopen_Normal="1">
-    <PLUGIN name="DSPModulePluginDemo" format="Internal" category="Effect"
-            manufacturer="JUCE" version="1.0.0" file="DSPModulePluginDemo"
-            uid="fa106703" isInstrument="0" fileTime="0" infoUpdateTime="0"
-            numInputs="2" numOutputs="2" isShell="0"/>
-    <STATE>2790.VMjLgzsB...O+fWarAhckI2bo8la8HRLt.iHfTlai8FYo41Y8HRUTYTK3HxO9.BOyQWXzUlO7.UPRETSfjFY8HxXn8lb0M2Pk4FcxUFQkwVX4IBH1EFa0UVOhbiKv.CLv.CL4TyL1bCMyDiMh7hO7.UPRETSfjFY8HxXn8lb0MGQkAGcnIBH1EFa0UVOhTCLt.iHu3COPEjTA0DHoQVOhLFZuIWcyUjagIFakQlHfXWXrUWY8HBLt.iHu3COPEjTA0DHoQVOhLFZuIWcyYTYkQlXgM1Zh.hcgwVck0iH0.iKvHxK9vCTAIUPMARZj0iHig1axU2bMkFdh.hcgwVck0iH0.iKvHxK9vCTAIUPMARZj0iHig1axU2bREFckIBH1EFa0UVOhDiKvHxK9vCTAIUPMARZj0iHi8VavIWYyM2axEDczE1XqIBH1EFa0UVOh.iK4jSN4jSN4PCLyjSMyTSMxHxK9vCTAIUPMARZj0iHi8VavIWYyM2axUjagIFakQlHfXWXrUWY8HBLt.iHu3COPEjTA0DHoQVOhL1asAmbkM2buImTgQWZuIBH1EFa0UVOhDiKvHxK9vCTAIUPMARZj0iHi8VavIWYyM2axIUYrUVXyUlHfXWXrUWY8HRN43RN4jSN3PyMzDiLw.SNzHxK9vCTAIUPMARZj0iHi8VavIWYyM2axQEZxU1bn8FajIBH1EFa0UVOh.iKvHxK9vCTAIUPMARZj0iHi8la18Fa0QWZu41PgIVQtElXrUFYh.hcgwVck0iHv3BLh7hO7.UPRETSfjFY8HxXu4lcuwVczk1atIUY1UlbhUjagIFakQlHfXWXrUWY8HBLt.iHu3COPEjTA0DHoQVOhL1atY2arUGco8laRUlckImXMkFdh.hcgwVck0iH0.iKvHxK9vCTAIUPMARZj0iHjUFagkWQlYVYiQWQtElXrUFYh.hcgwVck0iHv3BLh7hO7.UPRETSfjFY8HBYkwVX4UjYlU1XzYTYkQlXgM1Zh.hcgwVck0iHsDCLv3BLh7hO7.UPRETSfjFY8HBYkwVX4UjYlU1Xzwza2AWXyMmHfXWXrUWY8HhLx.CLv3BLh7hO7.UPRETSfjFY8HBYkwVX4UjYlU1Xz0TZ3IBH1EFa0UVOhTCLt.iHu3COPEjTA0DHoQVOhPVYrEVdEYlYkMFcS01auQGZo41Yh.hcgwVck0iHyjSNtjSN4jyL3jiMzfCMyfiHu3COPEjTA0DHoQVOhPVYrEVdEYlYkMFcTkGbkIBH1EFa0UVOhDiKvHxK9vCTAIUPMARZj0iHjUFagkWQlYVYiQmUgwVckIBH1EFa0UVOhDCLv3BLh7hO7.UPRETSfjFY8HBYoIWYiQGQkwVX4UjagIFakQlHfXWXrUWY8HBLt.iHu3COPEjTA0DHoQVOhPVZxU1XzQTYrEVdMkFdh.hcgwVck0iH0.iKvHxK9vCTAIUPMARZj0iHjklbkMFcDUFagk2Ts81azgVZtclHfXWXrUWY8HhLv.iKv.CLvLCL0DyM0bCNwHxK9vCTAIUPMARZj0iHjklbkMFcDUFagkGU4AWYh.hcgwVck0iHw3BLh7hO7.UPRETSfjFY8HBYoIWYiQGQkwVX4YUXrUWYh.hcgwVck0iHv3BLh7hO7.UPRETSfjFY8HBYoMGcuIGco8laC8VavcTXo4lHfXWXrUWY8HRLtPiL1HCM1XCMy.iM1PCL1HxK9vCTAIUPMARZj0iHjk1bz8lbzk1atUjagIFakQlHfXWXrUWY8HBLt.iHu3COPEjTA0DHoQVOhPVZyQ2axQWZu4FRocFZvE1byIBH1EFa0UVOhHCLt.iHu3COPEjTA0DHoQVOhPVZyQ2axQWZu4VRtcTXo4lHfXWXrUWY8HhL43BM3TCLv.iMw.yL0DSM1HxK9vCTAIUPMARZj0iHjk1bz8lbzk1atwza2AWXyMmHfXWXrUWY8HRLyLiKxfiLxPSL3HSLxfSNwHxK9vCTAIUPMARZj0iHjk1bz8lbzk1at0TZ3IBH1EFa0UVOhDCLv3BLh7hO7.UPRETSfjFY8HBYoMGcuIGco8laOYWYxMWXsAGakImHfXWXrUWY8HRLt.iHu3COPEjTA0DHoQVOhPVZyQ2axQWZu4FU4AWYh.hcgwVck0iHv3BLh7hO7.UPRETSfjFY8HRZtAWczcTXo4lHfXWXrUWY8HhLw3xM3HCM4bCMvXCLvTCN1HxK9vCTAIUPMARZj0iHrEFYjUlbCUGcuYlYh.hcgwVck0iH3LiLtPSNw.iL2fyLx.yLwHiHu3COPEjTA0DHoQVOhvVXjQVYxQjboYWYh.hcgwVck0iHw.iK1fiM3bSMyPyLyHiL2TiHu3COPEjTA0DHoQVOhvVXjQVYxUjagIFakQlHfXWXrUWY8HRLt.iHu3COPEjTA0DHoQVOhvVXjQVYx0zajUlHfXWXrUWY8HRLt.iHu3COPEjTA0DHoQVOhvVXjQVYxIUYy8lag41XkIBH1EFa0UVOhTSMtbCNwHSMh7hO7.UPRETSfjFY8HBao0VZzUlbE4VXhwVYjIBH1EFa0UVOh.iKvHxK9vCTAIUPMARZj0iHrkVaoQWYxIUYrUVXyUlHfXWXrUWY8HRN43RN4jSN3PyMzDiLw.SNzHxK9vCTAIUPMARZj0iHrkVaoQWYxQEZxU1bn8FajIBH1EFa0UVOh.iKvHxK9vCTAIUPMARZj0iHsUGazklPg4FYE4VXhwVYjIBH1EFa0UVOh.iKvHxK9vCTAIUPMARZj0iHsUGazklPg4FYFIWYwIBH1EFa0UVOhDSN4jiK4jSN1LyL2fSNvXiLh7hO7.UPRETSfjFY8HRa0wFcoITXtQFRocFZV8Fa00VYh.hcgwVck0iHv3BLh7hO7.UPRETSfjFY8HRa0wFcoITXtQFSucmUuwVcsUlHfXWXrUWY8HBLt.iHu3COPEjTA0DHoQVOh31aoMWYGEFckEDczE1XqIBH1EFa0UVOh.iK4jSN4jSN4PCLyjSMyTSMxHxK9vCTAIUPMARZj0iHt8VZyU1QgQWYE4VXhwVYjIBH1EFa0UVOh.iKvHxK9vCTAIUPMARZj0iHt8VZyU1QgQWYREFco8lHfXWXrUWY8HRLv3BLv.CLvDSNvbyLzfiMyHxK9vCTAIUPMARZj0iHt8VZyU1QgQWYRUFakE1bkIBH1EFa0UVOhjSNtjSN4jCNzbCMwHSLvjCMh7hO7.UPRETSfjFY8Hhauk1bkcTXzUFUnIWYyg1arQlHfXWXrUWY8HRKw.CLt.iHu3COPEjTA0DHoQVOh7VczAWczcTXo4lHfXWXrUWY8HBLt.iHu3COPEjTA0DHoQVOh.WXtIBH1EFa0UVOh.iKvHxK9vCTAIUPMARZj0iHvgVXyUlbCUlazIWYFIWYwUWYtMVdh.hcgwVck0iH1.CLt.iHu3COPEjTA0DHoQVOh.GZgMWYxQTYvQGZh.hcgwVck0iH0.iKvHxK9vCTAIUPMARZj0iHvgVXyUlbE4VXhwVYjIBH1EFa0UVOh.iKvHxK9vCTAIUPMARZj0iHvgVXyUlbFUVYjIVXislHfXWXrUWY8HRMv3BLh7hO7.UPRETSfjFY8HBbnE1bkIWSogmHfXWXrUWY8HRMv3BLh7hO7.UPRETSfjFY8HBbnE1bkImTgQWYh.hcgwVck0iHw3BLh7hO77xbzEFck4C.</STATE>
-    <LAYOUT>
-      <INPUTS>
-        <BUS index="0" layout="L R"/>
-      </INPUTS>
-      <OUTPUTS>
-        <BUS index="0" layout="L R"/>
-      </OUTPUTS>
-    </LAYOUT>
-  </FILTER>
   <CONNECTION srcFilter="7" srcChannel="0" dstFilter="9" dstChannel="0"/>
   <CONNECTION srcFilter="7" srcChannel="1" dstFilter="9" dstChannel="1"/>
   <CONNECTION srcFilter="9" srcChannel="0" dstFilter="8" dstChannel="0"/>
   <CONNECTION srcFilter="9" srcChannel="1" dstFilter="8" dstChannel="1"/>
-  <CONNECTION srcFilter="9" srcChannel="1" dstFilter="11" dstChannel="0"/>
-  <CONNECTION srcFilter="11" srcChannel="0" dstFilter="9" dstChannel="2"/>
 </FILTERGRAPH>
