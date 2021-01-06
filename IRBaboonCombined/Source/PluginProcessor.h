@@ -152,7 +152,7 @@ private:
 	int totalSweepBreakSamples = 4 * tools::nextPowerOfTwo(silenceBeginningLengthSamples + silenceEndLengthSamples + 1);
 	int sweepLengthSamples = totalSweepBreakSamples - silenceBeginningLengthSamples - silenceEndLengthSamples;
 	
-	int samplesWaitBeforeInputCapture = 2048; // 8 * 256
+	int samplesWaitBeforeInputCapture = 16384; // 8 * 256
 	int buffersWaitForInputCapture = 0;
 	int buffersWaitForResumeThroughput = 0;
 	
@@ -160,7 +160,6 @@ private:
 	AudioSampleBuffer sweepBufForDeconv;
 	CircularBufferArray sweepBufArray;
 	CircularBufferArray inputCaptureArray;
-	AudioSampleBuffer inputConsolidated;
 
 	int makeupIRLengthSamples = 2048;
 	
