@@ -134,8 +134,8 @@ AutoKalibraDemoAudioProcessorEditor::AutoKalibraDemoAudioProcessorEditor (AutoKa
 	sliderZoomFiltLabel.attachToComponent(&sliderZoomFilt, true);
 
 	addAndMakeVisible(&outputVolumeSlider);
-	outputVolumeSlider.setRange(-60, -20);
-	outputVolumeSlider.setValue(-30.0);
+	outputVolumeSlider.setRange(-60, 0);
+	outputVolumeSlider.setValue(-20.0);
 	outputVolumeSlider.onValueChange = [this] { processor.setOutputVolume(outputVolumeSlider.getValue()); };
 
 	addAndMakeVisible(outputVolumeSliderLabel);
