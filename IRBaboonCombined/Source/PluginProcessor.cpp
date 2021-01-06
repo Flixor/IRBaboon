@@ -28,26 +28,25 @@ AutoKalibraDemoAudioProcessor::AutoKalibraDemoAudioProcessor()
 	boost::filesystem::remove(printDirectoryDebug + "thumbnailFilt.wav");
 	
 
-	
-	// init sweep with pre and post silences
+	/* init sweep with pre and post silences */
 	ExpSineSweep sweeper;
 	sweeper.generate( (((float) sweepLengthSamples) + 1)/ ((float) sampleRate), sampleRate, 20.0, sampleRate/2.0, sweepLeveldB );
 	sweeper.linFadeout((11.0/12.0)*sampleRate/2.0); // fade out just under nyq
-	AudioSampleBuffer sweep (sweeper.getSweepFloat());
+	
 	sweepBuf.setSize(1, totalSweepBreakSamples);
 	sweepBuf.clear();
-	sweepBuf.copyFrom(0, silenceBeginningLengthSamples, sweep, 0, 0, sweepLengthSamples);
+	sweepBuf.copyFrom(0, silenceBeginningLengthSamples, sweeper.getSweepFloat(), 0, 0, sweepLengthSamples);
 	
 	sweepBufForDeconv.setSize(1, totalSweepBreakSamples);
 	sweepBufForDeconv.clear();
-	sweepBufForDeconv.copyFrom(0, 0, sweep, 0, 0, sweepLengthSamples);
+	sweepBufForDeconv.copyFrom(0, 0, sweeper.getSweepFloat(), 0, 0, sweepLengthSamples);
 	sweepBufForDeconv.applyGain(tools::dBToLin(outputVolumedB + sweepLeveldB));
 	
 	debugPrinter.appendBuffer("sweep", sweepBuf);
 	debugPrinter.printToWav(0, debugPrinter.getMaxBufferLength(), sampleRate, printDirectoryDebug);
 	
 	
-	// init IRs
+	/* init IRs */
 	IRpulse.makeCopyOf(tools::generatePulse(makeupIRLengthSamples, 100));
 	
 	IRTargPtr = new ReferenceCountedBuffer("IRTarg", 0, 0);
@@ -71,7 +70,6 @@ AutoKalibraDemoAudioProcessor::AutoKalibraDemoAudioProcessor()
 	
 	// initialise numChannels and numSamples for audio fft array buffers
 	audioFftBufferArray.clearAndResize(0, generalInputAudioChannels, fftBlockSize);
-
 	
 	// initialise FFTs
 	BigInteger fftBitMask = (BigInteger) N;
@@ -80,14 +78,12 @@ AutoKalibraDemoAudioProcessor::AutoKalibraDemoAudioProcessor()
 	fftForward = new dsp::FFT::FFT  (fftBitMask.getHighestBit());
 	fftInverse = new dsp::FFT::FFT  (fftBitMask.getHighestBit());
 	
-	
 	// initialise auxiliary buffers
 	inplaceBuffer.setSize(generalInputAudioChannels, fftBlockSize);
 	inplaceBuffer.clear();
 	
 	overlapBuffer.setSize(generalInputAudioChannels, processBlockSize);
 	overlapBuffer.clear();
-	
 	
 	 // Thread
 	startThread();
@@ -290,14 +286,13 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 		return;
 	}
 	
+	AudioSampleBuffer micBuffer = getBusBuffer(buffer, true, 1); // second buffer block = mic input
 	
 	/*
 	 * Capture input
 	 */
 
 	if (IRCapture.state == IRCAP_CAPTURE){
-		
-		auto micBuffer = getBusBuffer(buffer, true, 1); // second buffer block = mic input
 		
 		inputCaptureArray.getWriteBufferPtr()->copyFrom(0, 0, micBuffer, 0, 0, generalHostBlockSize);
 		inputCaptureArray.incrWriteIndex();
@@ -309,20 +304,20 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 			 * it's nice if IRFilt doesn't fold back though, when sweepTarg happens before sweepBase.
 			 * a 3 buffers-to-the-right offset was used before, but actually 0 seems to work fine now too.
 			 */
-			inputConsolidated.makeCopyOf (inputCaptureArray.consolidate(0));
 			
 			if (IRCapture.type == IR_TARGET) {
-				IRTargPtr->getBuffer()->makeCopyOf(createIR(inputConsolidated, sweepBufForDeconv));
-				sweepTargPtr->getBuffer()->makeCopyOf(inputConsolidated);
-				
+				sweepTargPtr->getBuffer()->makeCopyOf(inputCaptureArray.consolidate(0));
+				IRTargPtr->getBuffer()->makeCopyOf(createIR(*sweepTargPtr->getBuffer(), sweepBufForDeconv));
+
 				saveIRCustomType = IR_TARGET;
 			}
 			else if (IRCapture.type == IR_BASE) {
-				IRBasePtr->getBuffer()->makeCopyOf(createIR(inputConsolidated, sweepBufForDeconv));
-				sweepBasePtr->getBuffer()->makeCopyOf(inputConsolidated);
-				
+				sweepBasePtr->getBuffer()->makeCopyOf(inputCaptureArray.consolidate(0));
+				IRBasePtr->getBuffer()->makeCopyOf(createIR(*sweepBasePtr->getBuffer(), sweepBufForDeconv));
+
 				saveIRCustomType = IR_BASE;
 			}
+			
 
 			IRCapture.type = IR_NONE;
 
@@ -336,7 +331,7 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 			/* run print thumbnail thread */
 			notify();
 			
-		} // when capture done
+		} // when capture is done
 		
 	} // if (IRCapture.state == IRCAP_CAPTURE)
 
@@ -398,7 +393,6 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 		if (buffersWaitForResumeThroughput > 0){
 			buffer.clear();
 		}
-		/* done: resume throughput */
 		else {
 			IRCapture.state = IRCAP_IDLE;
 			/* fade in on first buffer */
