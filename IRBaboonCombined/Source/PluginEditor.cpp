@@ -22,7 +22,7 @@ String DecibelSlider::getTextFromValue (double value){
 
 
 //==============================================================================
-AutoKalibraDemoAudioProcessorEditor::AutoKalibraDemoAudioProcessorEditor (AutoKalibraDemoAudioProcessor& p)
+IRBaboonAudioProcessorEditor::IRBaboonAudioProcessorEditor (IRBaboonAudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p),
 		thumbnailCacheTarg (1),
 		thumbnailCacheBase (1),
@@ -191,14 +191,14 @@ AutoKalibraDemoAudioProcessorEditor::AutoKalibraDemoAudioProcessorEditor (AutoKa
 	loadTargetButton.onClick = [this] { loadTargetClicked(); };
 }
 
-AutoKalibraDemoAudioProcessorEditor::~AutoKalibraDemoAudioProcessorEditor()
+IRBaboonAudioProcessorEditor::~IRBaboonAudioProcessorEditor()
 {
 }
 
 
 
-void AutoKalibraDemoAudioProcessorEditor::setStartCaptureTarget(){
-	processor.startCapture(AutoKalibraDemoAudioProcessor::IR_TARGET);
+void IRBaboonAudioProcessorEditor::setStartCaptureTarget(){
+	processor.startCapture(IRBaboonAudioProcessor::IR_TARGET);
 	captureBaseButton.setVisible(false);
 	presweepSilenceMenu.setVisible(false);
 	int ms = std::ceil( 1000 * ((float) processor.getTotalSweepBreakSamples() + (float) presweepSilence) / ((float) processor.getSamplerate()) );
@@ -208,8 +208,8 @@ void AutoKalibraDemoAudioProcessorEditor::setStartCaptureTarget(){
 	} );
 }
 
-void AutoKalibraDemoAudioProcessorEditor::setStartCaptureBase(){
-	processor.startCapture(AutoKalibraDemoAudioProcessor::IR_BASE);
+void IRBaboonAudioProcessorEditor::setStartCaptureBase(){
+	processor.startCapture(IRBaboonAudioProcessor::IR_BASE);
 	captureTargButton.setVisible(false);
 	presweepSilenceMenu.setVisible(false);
 	int ms = std::ceil( 1000 * ((float) processor.getTotalSweepBreakSamples() + (float) presweepSilence) / ((float) processor.getSamplerate()) );
@@ -221,7 +221,7 @@ void AutoKalibraDemoAudioProcessorEditor::setStartCaptureBase(){
 
 
 
-void AutoKalibraDemoAudioProcessorEditor::timerCallback(){
+void IRBaboonAudioProcessorEditor::timerCallback(){
 	// filt button
 	if (processor.filtReady()){
 		playFiltAudioButton.setVisible(true);
@@ -257,7 +257,7 @@ void AutoKalibraDemoAudioProcessorEditor::timerCallback(){
 }
 
 
-void AutoKalibraDemoAudioProcessorEditor::playUnprocessedAudioClick (bool toggleState){
+void IRBaboonAudioProcessorEditor::playUnprocessedAudioClick (bool toggleState){
 	processor.setPlayFiltered(false);
 	
 	if (toggleState) playUnprocessedAudioButton.setButtonText("PLAYING unprocessed audio");
@@ -266,7 +266,7 @@ void AutoKalibraDemoAudioProcessorEditor::playUnprocessedAudioClick (bool toggle
 
 
 
-void AutoKalibraDemoAudioProcessorEditor::playFiltAudioClick (bool toggleState){
+void IRBaboonAudioProcessorEditor::playFiltAudioClick (bool toggleState){
 	processor.setPlayFiltered(true);
 
 	if (toggleState) {
@@ -278,7 +278,7 @@ void AutoKalibraDemoAudioProcessorEditor::playFiltAudioClick (bool toggleState){
 
 
 
-void AutoKalibraDemoAudioProcessorEditor::loadTargetClicked(){
+void IRBaboonAudioProcessorEditor::loadTargetClicked(){
 	FileChooser myChooser ("Please select the sweepandir you want to load...",
 						   File("../../../../../Saved IRs"),
 						   String("*" + processor.getSavedIRExtension()));
@@ -288,7 +288,7 @@ void AutoKalibraDemoAudioProcessorEditor::loadTargetClicked(){
 }
 
 
-void AutoKalibraDemoAudioProcessorEditor::presweepSilenceMenuChanged(){
+void IRBaboonAudioProcessorEditor::presweepSilenceMenuChanged(){
 	
 	switch (presweepSilenceMenu.getSelectedId()){
 		case 1: presweepSilence = 4096;		break;
@@ -305,7 +305,7 @@ void AutoKalibraDemoAudioProcessorEditor::presweepSilenceMenuChanged(){
 }
 
 
-void AutoKalibraDemoAudioProcessorEditor::makeupSizeMenuChanged(){
+void IRBaboonAudioProcessorEditor::makeupSizeMenuChanged(){
 	
 	switch (makeupSizeMenu.getSelectedId()){
 		case 1: makeupSize = 128;	break;
@@ -325,7 +325,7 @@ void AutoKalibraDemoAudioProcessorEditor::makeupSizeMenuChanged(){
 }
 
 
-void AutoKalibraDemoAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster* source){
+void IRBaboonAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster* source){
 	repaint();
 }
 
@@ -334,7 +334,7 @@ void AutoKalibraDemoAudioProcessorEditor::changeListenerCallback(ChangeBroadcast
 
 
 //==============================================================================
-void AutoKalibraDemoAudioProcessorEditor::paint (Graphics& g)
+void IRBaboonAudioProcessorEditor::paint (Graphics& g)
 {
 	
 	/* Target thumbnail */
@@ -424,7 +424,7 @@ void AutoKalibraDemoAudioProcessorEditor::paint (Graphics& g)
 
 
 
-void AutoKalibraDemoAudioProcessorEditor::resized()
+void IRBaboonAudioProcessorEditor::resized()
 {
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..

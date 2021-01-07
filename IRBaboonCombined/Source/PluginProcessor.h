@@ -12,43 +12,41 @@
 
 
 
-class AutoKalibraDemoAudioProcessor  : public AudioProcessor, public Thread
+class IRBaboonAudioProcessor  : public AudioProcessor, public Thread
 {
 public:
 	
 	/* From Juce tutorial
 	 https://docs.juce.com/master/tutorial_looping_audio_sample_buffer_advanced.html
 	 */
-	class ReferenceCountedBuffer : public ReferenceCountedObject
-	{
-	public:
-		typedef ReferenceCountedObjectPtr<ReferenceCountedBuffer> Ptr;
-		ReferenceCountedBuffer (const String& nameToUse, AudioSampleBuffer buf)
-		: name (nameToUse), buffer (buf) {
-		}
+	class ReferenceCountedBuffer : public ReferenceCountedObject{
+		public:
+			typedef ReferenceCountedObjectPtr<ReferenceCountedBuffer> Ptr;
+			ReferenceCountedBuffer (const String& nameToUse, AudioSampleBuffer buf)
+			: name (nameToUse), buffer (buf) {
+			}
 		
-		ReferenceCountedBuffer (const String& nameToUse, int numChannels, int numSamples)
-		: name (nameToUse), buffer (numChannels, numSamples) {
-		}
+			ReferenceCountedBuffer (const String& nameToUse, int numChannels, int numSamples)
+			: name (nameToUse), buffer (numChannels, numSamples) {
+			}
 		
-		~ReferenceCountedBuffer() {
-		}
+			~ReferenceCountedBuffer() {
+			}
 		
-		AudioSampleBuffer* getBuffer() {
-			return &buffer;
-		}
+			AudioSampleBuffer* getBuffer() {
+				return &buffer;
+			}
 		
-		bool bufferNotEmpty() {
-			return buffer.getNumSamples() > 0;
-		}
+			bool bufferNotEmpty() {
+				return buffer.getNumSamples() > 0;
+			}
 		
-	private:
-		String name;
-		AudioSampleBuffer buffer;
-		JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ReferenceCountedBuffer)
+		private:
+			String name;
+			AudioSampleBuffer buffer;
+			JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ReferenceCountedBuffer)
 	};
 	
-	//==============================================================================
 	enum IRType {
 		IR_NONE,
 		IR_TARGET,
@@ -69,11 +67,9 @@ public:
 		bool 		doFadeout;
 	};
 	
-    //==============================================================================
-    AutoKalibraDemoAudioProcessor();
-    ~AutoKalibraDemoAudioProcessor();
+    IRBaboonAudioProcessor();
+    ~IRBaboonAudioProcessor();
 
-    //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
 
@@ -119,11 +115,9 @@ public:
 	void swapTargetBase();
 	void loadTarget(File file);
 
-    //==============================================================================
     AudioProcessorEditor* createEditor() override;
     bool hasEditor() const override;
 
-    //==============================================================================
     const String getName() const override;
 
     bool acceptsMidi() const override;
@@ -131,19 +125,18 @@ public:
     bool isMidiEffect() const override;
     double getTailLengthSeconds() const override;
 
-    //==============================================================================
     int getNumPrograms() override;
     int getCurrentProgram() override;
     void setCurrentProgram (int index) override;
     const String getProgramName (int index) override;
     void changeProgramName (int index, const String& newName) override;
 
-    //==============================================================================
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+	
+	
 private:
-    //==============================================================================
 	int sampleRate = 48000;
 	int generalHostBlockSize = 0;
 	
@@ -238,5 +231,5 @@ private:
 
 
 	
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AutoKalibraDemoAudioProcessor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (IRBaboonAudioProcessor)
 };

@@ -8,11 +8,7 @@
 
 
 
-//==============================================================================
-// AutoKalibraDemoAudioProcessor
-//==============================================================================
-
-AutoKalibraDemoAudioProcessor::AutoKalibraDemoAudioProcessor()
+IRBaboonAudioProcessor::IRBaboonAudioProcessor()
      : AudioProcessor (BusesProperties()
 					   .withInput  ("Input",  AudioChannelSet::stereo(), true)
 					   .withOutput ("Output", AudioChannelSet::stereo(), true)
@@ -90,7 +86,7 @@ AutoKalibraDemoAudioProcessor::AutoKalibraDemoAudioProcessor()
 	
 }
 
-AutoKalibraDemoAudioProcessor::~AutoKalibraDemoAudioProcessor()
+IRBaboonAudioProcessor::~IRBaboonAudioProcessor()
 {
 	delete fftIR;
 	delete fftForward;
@@ -100,12 +96,12 @@ AutoKalibraDemoAudioProcessor::~AutoKalibraDemoAudioProcessor()
 }
 
 //==============================================================================
-const String AutoKalibraDemoAudioProcessor::getName() const
+const String IRBaboonAudioProcessor::getName() const
 {
     return JucePlugin_Name;
 }
 
-bool AutoKalibraDemoAudioProcessor::acceptsMidi() const
+bool IRBaboonAudioProcessor::acceptsMidi() const
 {
    #if JucePlugin_WantsMidiInput
     return true;
@@ -114,7 +110,7 @@ bool AutoKalibraDemoAudioProcessor::acceptsMidi() const
    #endif
 }
 
-bool AutoKalibraDemoAudioProcessor::producesMidi() const
+bool IRBaboonAudioProcessor::producesMidi() const
 {
    #if JucePlugin_ProducesMidiOutput
     return true;
@@ -123,7 +119,7 @@ bool AutoKalibraDemoAudioProcessor::producesMidi() const
    #endif
 }
 
-bool AutoKalibraDemoAudioProcessor::isMidiEffect() const
+bool IRBaboonAudioProcessor::isMidiEffect() const
 {
    #if JucePlugin_IsMidiEffect
     return true;
@@ -132,32 +128,32 @@ bool AutoKalibraDemoAudioProcessor::isMidiEffect() const
    #endif
 }
 
-double AutoKalibraDemoAudioProcessor::getTailLengthSeconds() const
+double IRBaboonAudioProcessor::getTailLengthSeconds() const
 {
     return 0.0;
 }
 
-int AutoKalibraDemoAudioProcessor::getNumPrograms()
+int IRBaboonAudioProcessor::getNumPrograms()
 {
     return 1;   // NB: some hosts don't cope very well if you tell them there are 0 programs,
                 // so this should be at least 1, even if you're not really implementing programs.
 }
 
-int AutoKalibraDemoAudioProcessor::getCurrentProgram()
+int IRBaboonAudioProcessor::getCurrentProgram()
 {
     return 0;
 }
 
-void AutoKalibraDemoAudioProcessor::setCurrentProgram (int index)
+void IRBaboonAudioProcessor::setCurrentProgram (int index)
 {
 }
 
-const String AutoKalibraDemoAudioProcessor::getProgramName (int index)
+const String IRBaboonAudioProcessor::getProgramName (int index)
 {
     return {};
 }
 
-void AutoKalibraDemoAudioProcessor::changeProgramName (int index, const String& newName)
+void IRBaboonAudioProcessor::changeProgramName (int index, const String& newName)
 {
 }
 
@@ -165,7 +161,7 @@ void AutoKalibraDemoAudioProcessor::changeProgramName (int index, const String& 
 
 
 //==============================================================================
-void AutoKalibraDemoAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
+void IRBaboonAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
 	sampleRate = (int) sampleRate;
 	generalHostBlockSize = samplesPerBlock;
@@ -241,7 +237,7 @@ void AutoKalibraDemoAudioProcessor::prepareToPlay (double sampleRate, int sample
 
 
 
-void AutoKalibraDemoAudioProcessor::releaseResources()
+void IRBaboonAudioProcessor::releaseResources()
 {
     /* memory used by buffer arrays is freed up */
 	inputBufferArray.changeArraySize(0);
@@ -252,7 +248,7 @@ void AutoKalibraDemoAudioProcessor::releaseResources()
 }
 
 /* Boilerplate JUCE, to check whether channel layouts are supported. */
-bool AutoKalibraDemoAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
+bool IRBaboonAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
     // In this template code we only support mono or stereo.
     if (layouts.getMainOutputChannelSet() != AudioChannelSet::mono()
@@ -270,7 +266,7 @@ bool AutoKalibraDemoAudioProcessor::isBusesLayoutSupported (const BusesLayout& l
 
 
 
-void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
+void IRBaboonAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
     ScopedNoDenormals noDenormals;
     auto totalNumOutputChannels = getTotalNumOutputChannels();
@@ -585,7 +581,7 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 /* when plugin is bypassed, the latency of 1 processBlock should be maintained.
  * A CircularBufferArray is used for this.
  */
-void AutoKalibraDemoAudioProcessor::processBlockBypassed(AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
+void IRBaboonAudioProcessor::processBlockBypassed(AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
 	bypassOutputBufferArray.getWriteBufferPtr()->makeCopyOf(buffer);
 	bypassOutputBufferArray.incrWriteIndex();
@@ -596,7 +592,7 @@ void AutoKalibraDemoAudioProcessor::processBlockBypassed(AudioBuffer<float>& buf
 
 
 
-void AutoKalibraDemoAudioProcessor::startCapture(IRType type){
+void IRBaboonAudioProcessor::startCapture(IRType type){
 	if (type == IR_NONE) return;
 	
 	IRCapture.type = type;
@@ -608,13 +604,13 @@ void AutoKalibraDemoAudioProcessor::startCapture(IRType type){
 
 
 
-AudioSampleBuffer AutoKalibraDemoAudioProcessor::createIR(AudioSampleBuffer& numeratorBuf, AudioSampleBuffer& denominatorBuf){
+AudioSampleBuffer IRBaboonAudioProcessor::createIR(AudioSampleBuffer& numeratorBuf, AudioSampleBuffer& denominatorBuf){
 	return convolver::deconvolve(&numeratorBuf, &denominatorBuf, sampleRate, true, false);
 }
 
 
 
-void AutoKalibraDemoAudioProcessor::createIRFilt(){
+void IRBaboonAudioProcessor::createIRFilt(){
 	AudioSampleBuffer IR;
 	
 	IR.makeCopyOf(convolver::deconvolve(IRTargPtr->getBuffer(), IRBasePtr->getBuffer(), sampleRate, true, nullifyPhaseFilt, nullifyAmplFilt));
@@ -632,36 +628,36 @@ void AutoKalibraDemoAudioProcessor::createIRFilt(){
 }
 
 
-int AutoKalibraDemoAudioProcessor::getTotalSweepBreakSamples(){
+int IRBaboonAudioProcessor::getTotalSweepBreakSamples(){
 	return totalSweepBreakSamples;
 }
 
-int AutoKalibraDemoAudioProcessor::getMakeupIRLengthSamples(){
+int IRBaboonAudioProcessor::getMakeupIRLengthSamples(){
 	return makeupIRLengthSamples;
 }
 
-int AutoKalibraDemoAudioProcessor::getSamplerate(){
+int IRBaboonAudioProcessor::getSamplerate(){
 	return sampleRate;
 }
 
 
-bool AutoKalibraDemoAudioProcessor::filtReady(){
+bool IRBaboonAudioProcessor::filtReady(){
 	return (IRFiltPtr->bufferNotEmpty());
 }
 
 
-AudioSampleBuffer AutoKalibraDemoAudioProcessor::getIRFilt(){
+AudioSampleBuffer IRBaboonAudioProcessor::getIRFilt(){
 	return *IRFiltPtr->getBuffer();
 }
 
 
-void AutoKalibraDemoAudioProcessor::setPlayFiltered (bool filtered){
+void IRBaboonAudioProcessor::setPlayFiltered (bool filtered){
 	playFiltered = filtered;
 }
 
 
 
-void AutoKalibraDemoAudioProcessor::run() {
+void IRBaboonAudioProcessor::run() {
 	while (NOT threadShouldExit()) {
 		
 		saveCustomExt(saveIRCustomType);
@@ -678,7 +674,7 @@ void AutoKalibraDemoAudioProcessor::run() {
 
 
 
-void AutoKalibraDemoAudioProcessor::saveCustomExt(IRType type){
+void IRBaboonAudioProcessor::saveCustomExt(IRType type){
 	
 	AudioSampleBuffer savebuf (2, totalSweepBreakSamples);
 	std::string name = getDateTimeString();
@@ -714,7 +710,7 @@ void AutoKalibraDemoAudioProcessor::saveCustomExt(IRType type){
 
 
 
-std::string AutoKalibraDemoAudioProcessor::getDateTimeString(){
+std::string IRBaboonAudioProcessor::getDateTimeString(){
 	std::time_t now = std::time(NULL);
 	std::tm* ptm = std::localtime(&now);
 	char date[32];
@@ -725,7 +721,7 @@ std::string AutoKalibraDemoAudioProcessor::getDateTimeString(){
 
 
 
-void AutoKalibraDemoAudioProcessor::printDebug() {
+void IRBaboonAudioProcessor::printDebug() {
 	ParallelBufferPrinter wavPrinter;
 	ParallelBufferPrinter freqPrinter;
 
@@ -806,41 +802,41 @@ void AutoKalibraDemoAudioProcessor::printDebug() {
 }
 
 
-std::string AutoKalibraDemoAudioProcessor::getPrintDirectoryDebug(){
+std::string IRBaboonAudioProcessor::getPrintDirectoryDebug(){
 	return printDirectoryDebug;
 }
 
 
-std::string AutoKalibraDemoAudioProcessor::getSavedIRExtension(){
+std::string IRBaboonAudioProcessor::getSavedIRExtension(){
 	return savedIRExtension;
 }
 
 
-void AutoKalibraDemoAudioProcessor::setZoomTarg(float dB){
+void IRBaboonAudioProcessor::setZoomTarg(float dB){
 	zoomTargdB = dB;
 	notify();
 }
 
 
-void AutoKalibraDemoAudioProcessor::setZoomBase(float dB){
+void IRBaboonAudioProcessor::setZoomBase(float dB){
 	zoomBasedB = dB;
 	notify();
 }
 
 
-void AutoKalibraDemoAudioProcessor::setZoomFilt(float dB){
+void IRBaboonAudioProcessor::setZoomFilt(float dB){
 	zoomFiltdB = dB;
 	notify();
 }
 
 
-void AutoKalibraDemoAudioProcessor::setOutputVolume(float dB){
+void IRBaboonAudioProcessor::setOutputVolume(float dB){
 	outputVolumedB = dB;
 	tools::normalize(&sweepBufForDeconv, outputVolumedB + sweepLeveldB);
 }
 
 
-void AutoKalibraDemoAudioProcessor::setNullifyPhaseFilt(bool nullifyPhase){
+void IRBaboonAudioProcessor::setNullifyPhaseFilt(bool nullifyPhase){
 	nullifyPhaseFilt = nullifyPhase;
 	
 	if (IRTargPtr->bufferNotEmpty() && IRBasePtr->bufferNotEmpty()){
@@ -851,7 +847,7 @@ void AutoKalibraDemoAudioProcessor::setNullifyPhaseFilt(bool nullifyPhase){
 }
 
 
-void AutoKalibraDemoAudioProcessor::setNullifyAmplFilt(bool nullifyAmplitude){
+void IRBaboonAudioProcessor::setNullifyAmplFilt(bool nullifyAmplitude){
 	nullifyAmplFilt = nullifyAmplitude;
 	
 	if (IRTargPtr->bufferNotEmpty() && IRBasePtr->bufferNotEmpty()){
@@ -862,12 +858,12 @@ void AutoKalibraDemoAudioProcessor::setNullifyAmplFilt(bool nullifyAmplitude){
 }
 
 
-void AutoKalibraDemoAudioProcessor::setPresweepSilence(int presweepSilence){
+void IRBaboonAudioProcessor::setPresweepSilence(int presweepSilence){
 	samplesWaitBeforeInputCapture = presweepSilence;
 }
 
 
-void AutoKalibraDemoAudioProcessor::setMakeupSize(int makeupSize){
+void IRBaboonAudioProcessor::setMakeupSize(int makeupSize){
 	makeupIRLengthSamples = makeupSize;
 	
 	if (IRTargPtr->bufferNotEmpty() && IRBasePtr->bufferNotEmpty()){
@@ -878,7 +874,7 @@ void AutoKalibraDemoAudioProcessor::setMakeupSize(int makeupSize){
 }
 
 
-void AutoKalibraDemoAudioProcessor::swapTargetBase(){
+void IRBaboonAudioProcessor::swapTargetBase(){
 	
 	AudioSampleBuffer savedSweep (*(sweepTargPtr->getBuffer()));
 	AudioSampleBuffer savedIR (*(IRTargPtr->getBuffer()));
@@ -897,7 +893,7 @@ void AutoKalibraDemoAudioProcessor::swapTargetBase(){
 }
 
 
-void AutoKalibraDemoAudioProcessor::loadTarget(File file){
+void IRBaboonAudioProcessor::loadTarget(File file){
 	
 	/* rename custom extension to .wav */
 	std::string pathCustomExtension = file.getFullPathName().toStdString();
@@ -933,25 +929,25 @@ void AutoKalibraDemoAudioProcessor::loadTarget(File file){
 
 
 //==============================================================================
-bool AutoKalibraDemoAudioProcessor::hasEditor() const
+bool IRBaboonAudioProcessor::hasEditor() const
 {
     return true; // (change this to false if you choose to not supply an editor)
 }
 
-AudioProcessorEditor* AutoKalibraDemoAudioProcessor::createEditor()
+AudioProcessorEditor* IRBaboonAudioProcessor::createEditor()
 {
-    return new AutoKalibraDemoAudioProcessorEditor (*this);
+    return new IRBaboonAudioProcessorEditor (*this);
 }
 
 //==============================================================================
-void AutoKalibraDemoAudioProcessor::getStateInformation (MemoryBlock& destData)
+void IRBaboonAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
 }
 
-void AutoKalibraDemoAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
+void IRBaboonAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
@@ -961,5 +957,5 @@ void AutoKalibraDemoAudioProcessor::setStateInformation (const void* data, int s
 // This creates new instances of the plugin..
 AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
-    return new AutoKalibraDemoAudioProcessor();
+    return new IRBaboonAudioProcessor();
 }
