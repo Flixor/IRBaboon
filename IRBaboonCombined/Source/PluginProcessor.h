@@ -91,14 +91,8 @@ public:
 	AudioSampleBuffer getIRFilt();
 	
 	void setPlayFiltered(bool filtered);
-	
-	/* Print and thumbnail thread */
-	void run() override;
-	void saveIRTarg();
-	void saveIRBase();
-	void saveCustomExt(IRType type);
+
 	std::string getDateTimeString();
-	void printDebug();
 	std::string getPrintDirectoryDebug();
 	std::string getSavedIRExtension();
 	
@@ -223,7 +217,15 @@ private:
 	int savedIndex = 0;
 	
 	
+	/* Print and thumbnail thread */
+	void run() override;
+	void saveIRTarg();
+	void saveIRBase();
+	void saveCustomExt(IRType type);
+	void printDebug();
+	void printThumbnails();
 
+	
 	// ====== debug ==========
 	ParallelBufferPrinter debugPrinter;
 	

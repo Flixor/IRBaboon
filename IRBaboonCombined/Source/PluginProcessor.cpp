@@ -650,6 +650,8 @@ void IRBaboonAudioProcessor::run() {
 			saveIRCustomType = IR_NONE;
 		}
 		
+		printThumbnails();
+		
 		/* A negative timeout value means that the method will wait indefinitely (until notify() is called) */
 		wait (-1);
 	}
@@ -739,6 +741,21 @@ void IRBaboonAudioProcessor::printDebug() {
 	wavPrinter.appendBuffer(printNames[3], IRPrintBase);
 	wavPrinter.appendBuffer(printNames[4], IRPrintFilt);
 	
+	// print everything
+	wavPrinter.printToWav(0, wavPrinter.getMaxBufferLength(), sampleRate, printDirectoryDebug);
+}
+
+
+void IRBaboonAudioProcessor::printThumbnails() {
+	ParallelBufferPrinter wavPrinter;
+
+	/* dereference the buffers */
+	AudioSampleBuffer sweepPrintTarg (*(sweepTargPtr->getBuffer()));
+	AudioSampleBuffer IRPrintTarg (*(IRTargPtr->getBuffer()));
+	AudioSampleBuffer sweepPrintBase (*(sweepBasePtr->getBuffer()));
+	AudioSampleBuffer IRPrintBase (*(IRBasePtr->getBuffer()));
+	AudioSampleBuffer IRPrintFilt (*(IRFiltPtr->getBuffer()));
+	
 	// create target sweep & IR file for thumbnail
 	AudioSampleBuffer thumbnailTarg (2, std::max(sweepPrintTarg.getNumSamples(), IRPrintTarg.getNumSamples()));
 	thumbnailTarg.clear();
@@ -749,13 +766,13 @@ void IRBaboonAudioProcessor::printDebug() {
 	thumbnailTarg.applyGain(tools::dBToLin(zoomTargdB));
 	wavPrinter.appendBuffer("thumbnailTarg", thumbnailTarg);
 	
-	// delete thumbnail file again if it has been swaped with empty current
+	// delete thumbnail file again if it has been swapped with empty current
 	String nameTarg (printDirectoryDebug + "thumbnailTarg.wav");
 	File fileTarg (nameTarg);
 	if (thumbnailTarg.getNumSamples() == 0 && fileTarg.existsAsFile()){
 		fileTarg.deleteFile();
 	}
-
+	
 	// create current sweep & IR file for thumbnail
 	AudioSampleBuffer currentForThumbnail (2, std::max(sweepPrintBase.getNumSamples(), IRPrintBase.getNumSamples()));
 	currentForThumbnail.clear();
@@ -765,14 +782,14 @@ void IRBaboonAudioProcessor::printDebug() {
 		currentForThumbnail.copyFrom(1, 0, IRPrintBase, 0, 0, IRPrintBase.getNumSamples());
 	currentForThumbnail.applyGain(tools::dBToLin(zoomBasedB));
 	wavPrinter.appendBuffer("thumbnailBase", currentForThumbnail);
-
-	// delete thumbnail file again if it has been swaped with empty reference
+	
+	// delete thumbnail file again if it has been swapped with empty reference
 	String nameCurrent (printDirectoryDebug + "thumbnailBase.wav");
 	File fileCurrent (nameCurrent);
 	if (currentForThumbnail.getNumSamples() == 0 && fileCurrent.existsAsFile()){
 		fileCurrent.deleteFile();
 	}
-
+	
 	// create makeup IR file for thumbnail
 	AudioSampleBuffer InvfiltForThumbnail (1, IRPrintFilt.getNumSamples());
 	if (IRPrintFilt.getNumSamples() > 0)
