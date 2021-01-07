@@ -3,8 +3,8 @@
 //
 
 
-#ifndef FP_CONVOLVER_HPP
-#define FP_CONVOLVER_HPP
+#pragma once
+
 
 #include <fp_include_all.hpp>
 #include <JuceHeader.h>
@@ -76,5 +76,3 @@ namespace convolver {
 } // convolver
 	
 } // fp
-
-#endif /* FP_CONVOLVER_HPP */

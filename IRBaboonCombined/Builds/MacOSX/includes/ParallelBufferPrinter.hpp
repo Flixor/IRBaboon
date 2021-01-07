@@ -3,8 +3,8 @@
 //
 
 
-#ifndef FP_PARALLELBUFFERPRINTER_HPP
-#define FP_PARALLELBUFFERPRINTER_HPP
+#pragma once
+
 
 #include <fp_include_all.hpp>
 #include <JuceHeader.h>
@@ -62,8 +62,3 @@ private:
 };
 	
 } // fp
-
-
-#endif /* FP_PARALLELBUFFERPRINTER_HPP */
-
-
