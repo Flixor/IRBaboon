@@ -573,7 +573,8 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 	
 	/* makeshift limiter lol */
 	if (tools::linTodB(buffer.getMagnitude(0, 0, generalHostBlockSize)) > 0.0){
-		tools::normalize(&buffer, 0.0, true);
+		tools::normalize(&buffer, 0.0, false);
+		DBG("processBlock limiter engaged\n");
 	}
 	
 }
