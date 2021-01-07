@@ -303,13 +303,13 @@ void IRBaboonAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
 			
 			if (IRCapture.type == IR_TARGET) {
 				sweepTargPtr->getBuffer()->makeCopyOf(inputCaptureArray.consolidate(0));
-				IRTargPtr->getBuffer()->makeCopyOf(createIR(*sweepTargPtr->getBuffer(), sweepBufForDeconv));
+				IRTargPtr->getBuffer()->makeCopyOf(convolver::deconvolve(sweepTargPtr->getBuffer(), &sweepBufForDeconv, sampleRate));
 
 				saveIRCustomType = IR_TARGET;
 			}
 			else if (IRCapture.type == IR_BASE) {
 				sweepBasePtr->getBuffer()->makeCopyOf(inputCaptureArray.consolidate(0));
-				IRBasePtr->getBuffer()->makeCopyOf(createIR(*sweepBasePtr->getBuffer(), sweepBufForDeconv));
+				IRBasePtr->getBuffer()->makeCopyOf(convolver::deconvolve(sweepBasePtr->getBuffer(), &sweepBufForDeconv, sampleRate));
 
 				saveIRCustomType = IR_BASE;
 			}
@@ -591,7 +591,6 @@ void IRBaboonAudioProcessor::processBlockBypassed(AudioBuffer<float>& buffer, Mi
 
 
 
-
 void IRBaboonAudioProcessor::startCapture(IRType type){
 	if (type == IR_NONE) return;
 	
@@ -600,12 +599,6 @@ void IRBaboonAudioProcessor::startCapture(IRType type){
 	IRCapture.doFadeout = true;
 
 	buffersWaitForInputCapture = samplesWaitBeforeInputCapture / processBlockSize;
-}
-
-
-
-AudioSampleBuffer IRBaboonAudioProcessor::createIR(AudioSampleBuffer& numeratorBuf, AudioSampleBuffer& denominatorBuf){
-	return convolver::deconvolve(&numeratorBuf, &denominatorBuf, sampleRate);
 }
 
 

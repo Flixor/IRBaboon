@@ -135,7 +135,7 @@ IRBaboonAudioProcessorEditor::IRBaboonAudioProcessorEditor (IRBaboonAudioProcess
 
 	addAndMakeVisible(&outputVolumeSlider);
 	outputVolumeSlider.setRange(-60, 0);
-	outputVolumeSlider.setValue(-20.0);
+	outputVolumeSlider.setValue(0.0);
 	outputVolumeSlider.onValueChange = [this] { processor.setOutputVolume(outputVolumeSlider.getValue()); };
 
 	addAndMakeVisible(outputVolumeSliderLabel);

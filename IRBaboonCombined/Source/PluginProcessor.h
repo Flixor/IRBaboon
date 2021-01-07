@@ -82,7 +82,6 @@ public:
 
 	void startCapture(IRType type);
 
-	AudioSampleBuffer createIR(AudioSampleBuffer& numeratorBuf, AudioSampleBuffer& denominatorBuf);
 	void createIRFilt();
 	
 	int getTotalSweepBreakSamples();
