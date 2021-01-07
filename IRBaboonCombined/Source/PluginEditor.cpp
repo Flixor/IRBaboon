@@ -1,5 +1,5 @@
 //
-//  Copyright © 2020 Felix Postma. All rights reserved.
+//  Copyright © 2020 Felix Postma. 
 //
 
 
@@ -22,7 +22,7 @@ String DecibelSlider::getTextFromValue (double value){
 
 
 //==============================================================================
-AutoKalibraDemoAudioProcessorEditor::AutoKalibraDemoAudioProcessorEditor (AutoKalibraDemoAudioProcessor& p)
+IRBaboonAudioProcessorEditor::IRBaboonAudioProcessorEditor (IRBaboonAudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p),
 		thumbnailCacheTarg (1),
 		thumbnailCacheBase (1),
@@ -109,7 +109,9 @@ AutoKalibraDemoAudioProcessorEditor::AutoKalibraDemoAudioProcessorEditor (AutoKa
 	addAndMakeVisible(&sliderZoomTarg);
 	sliderZoomTarg.setRange(-6, 60);
 	sliderZoomTarg.setValue(0.0);
-	sliderZoomTarg.onValueChange = [this] { processor.setZoomTarg(sliderZoomTarg.getValue()); };
+	sliderZoomTarg.onValueChange = [this] {
+		processor.setZoomTarg(sliderZoomTarg.getValue());
+	};
 
 	addAndMakeVisible(sliderZoomTargLabel);
 	sliderZoomTargLabel.setText("Target zoom [dB]", dontSendNotification);
@@ -118,7 +120,9 @@ AutoKalibraDemoAudioProcessorEditor::AutoKalibraDemoAudioProcessorEditor (AutoKa
 	addAndMakeVisible(&sliderZoomBase);
 	sliderZoomBase.setRange(-6, 60);
 	sliderZoomBase.setValue(0.0);
-	sliderZoomBase.onValueChange = [this] { processor.setZoomBase(sliderZoomBase.getValue()); };
+	sliderZoomBase.onValueChange = [this] {
+		processor.setZoomBase(sliderZoomBase.getValue());
+	};
 	
 	addAndMakeVisible(sliderZoomBaseLabel);
 	sliderZoomBaseLabel.setText("Base zoom [dB]", dontSendNotification);
@@ -127,7 +131,9 @@ AutoKalibraDemoAudioProcessorEditor::AutoKalibraDemoAudioProcessorEditor (AutoKa
 	addAndMakeVisible(&sliderZoomFilt);
 	sliderZoomFilt.setRange(-60, 36);
 	sliderZoomFilt.setValue(0.0);
-	sliderZoomFilt.onValueChange = [this] { processor.setZoomFilt(sliderZoomFilt.getValue()); };
+	sliderZoomFilt.onValueChange = [this] {
+		processor.setZoomFilt(sliderZoomFilt.getValue());
+	};
 	
 	addAndMakeVisible(sliderZoomFiltLabel);
 	sliderZoomFiltLabel.setText("Filter zoom [dB]", dontSendNotification);
@@ -135,8 +141,11 @@ AutoKalibraDemoAudioProcessorEditor::AutoKalibraDemoAudioProcessorEditor (AutoKa
 
 	addAndMakeVisible(&outputVolumeSlider);
 	outputVolumeSlider.setRange(-60, 0);
-	outputVolumeSlider.setValue(-20.0);
-	outputVolumeSlider.onValueChange = [this] { processor.setOutputVolume(outputVolumeSlider.getValue()); };
+	outputVolumeSlider.setValue(0.0);
+	outputVolumeSlider.onValueChange = [this] {
+		processor.setOutputVolume(outputVolumeSlider.getValue());
+	};
+	processor.setOutputVolume(outputVolumeSlider.getValue()); // set starting value immediately
 
 	addAndMakeVisible(outputVolumeSliderLabel);
 	outputVolumeSliderLabel.setText("Output volume [dB]", dontSendNotification);
@@ -146,15 +155,19 @@ AutoKalibraDemoAudioProcessorEditor::AutoKalibraDemoAudioProcessorEditor (AutoKa
 	/* bottom buttons */
 	addAndMakeVisible(&toggleButtonLabel);
 	toggleButtonLabel.setText("Filter:", dontSendNotification);
-	toggleButtonLabel.attachToComponent(&nullifyAmplitudeButton, true);
+	toggleButtonLabel.attachToComponent(&amplButton, true);
 	
-	addAndMakeVisible (&nullifyPhaseButton);
-	nullifyPhaseButton.setToggleState(true, dontSendNotification);
-	nullifyPhaseButton.onClick = [this] { processor.setNullifyPhaseFilt(!nullifyPhaseButton.getToggleState()); }; // NEGATIVE because GUI implies activation, but functions are implemented as 'nullify'... code needs to be more clear
+	addAndMakeVisible (&phaseButton);
+	phaseButton.setToggleState(true, dontSendNotification);
+	phaseButton.onClick = [this] {
+		processor.setPhaseFilt(phaseButton.getToggleState());
+	};
 	
-	addAndMakeVisible(&nullifyAmplitudeButton);
-	nullifyAmplitudeButton.setToggleState(true, dontSendNotification);
-	nullifyAmplitudeButton.onClick = [this] { processor.setNullifyAmplFilt(!nullifyAmplitudeButton.getToggleState()); }; // NEGATIVE because GUI implies activation, but functions are implemented as 'nullify'... code needs to be more clear
+	addAndMakeVisible(&amplButton);
+	amplButton.setToggleState(true, dontSendNotification);
+	amplButton.onClick = [this] {
+		processor.setAmplFilt(amplButton.getToggleState());
+	};
 
 	
 	addAndMakeVisible(&presweepSilenceMenu);
@@ -191,14 +204,14 @@ AutoKalibraDemoAudioProcessorEditor::AutoKalibraDemoAudioProcessorEditor (AutoKa
 	loadTargetButton.onClick = [this] { loadTargetClicked(); };
 }
 
-AutoKalibraDemoAudioProcessorEditor::~AutoKalibraDemoAudioProcessorEditor()
+IRBaboonAudioProcessorEditor::~IRBaboonAudioProcessorEditor()
 {
 }
 
 
 
-void AutoKalibraDemoAudioProcessorEditor::setStartCaptureTarget(){
-	processor.startCapture(AutoKalibraDemoAudioProcessor::IR_TARGET);
+void IRBaboonAudioProcessorEditor::setStartCaptureTarget(){
+	processor.startCapture(IRBaboonAudioProcessor::IR_TARGET);
 	captureBaseButton.setVisible(false);
 	presweepSilenceMenu.setVisible(false);
 	int ms = std::ceil( 1000 * ((float) processor.getTotalSweepBreakSamples() + (float) presweepSilence) / ((float) processor.getSamplerate()) );
@@ -208,8 +221,8 @@ void AutoKalibraDemoAudioProcessorEditor::setStartCaptureTarget(){
 	} );
 }
 
-void AutoKalibraDemoAudioProcessorEditor::setStartCaptureBase(){
-	processor.startCapture(AutoKalibraDemoAudioProcessor::IR_BASE);
+void IRBaboonAudioProcessorEditor::setStartCaptureBase(){
+	processor.startCapture(IRBaboonAudioProcessor::IR_BASE);
 	captureTargButton.setVisible(false);
 	presweepSilenceMenu.setVisible(false);
 	int ms = std::ceil( 1000 * ((float) processor.getTotalSweepBreakSamples() + (float) presweepSilence) / ((float) processor.getSamplerate()) );
@@ -221,14 +234,13 @@ void AutoKalibraDemoAudioProcessorEditor::setStartCaptureBase(){
 
 
 
-void AutoKalibraDemoAudioProcessorEditor::timerCallback(){
+void IRBaboonAudioProcessorEditor::timerCallback(){
 	// filt button
 	if (processor.filtReady()){
 		playFiltAudioButton.setVisible(true);
 		makeupSizeMenu.setVisible(true);
 	}
 
-	
 	// thumbnails
 	String nameTarg (processor.getPrintDirectoryDebug() + "thumbnailTarg.wav");
 	File fileTarg (nameTarg);
@@ -257,7 +269,7 @@ void AutoKalibraDemoAudioProcessorEditor::timerCallback(){
 }
 
 
-void AutoKalibraDemoAudioProcessorEditor::playUnprocessedAudioClick (bool toggleState){
+void IRBaboonAudioProcessorEditor::playUnprocessedAudioClick (bool toggleState){
 	processor.setPlayFiltered(false);
 	
 	if (toggleState) playUnprocessedAudioButton.setButtonText("PLAYING unprocessed audio");
@@ -266,7 +278,7 @@ void AutoKalibraDemoAudioProcessorEditor::playUnprocessedAudioClick (bool toggle
 
 
 
-void AutoKalibraDemoAudioProcessorEditor::playFiltAudioClick (bool toggleState){
+void IRBaboonAudioProcessorEditor::playFiltAudioClick (bool toggleState){
 	processor.setPlayFiltered(true);
 
 	if (toggleState) {
@@ -278,7 +290,7 @@ void AutoKalibraDemoAudioProcessorEditor::playFiltAudioClick (bool toggleState){
 
 
 
-void AutoKalibraDemoAudioProcessorEditor::loadTargetClicked(){
+void IRBaboonAudioProcessorEditor::loadTargetClicked(){
 	FileChooser myChooser ("Please select the sweepandir you want to load...",
 						   File("../../../../../Saved IRs"),
 						   String("*" + processor.getSavedIRExtension()));
@@ -288,7 +300,7 @@ void AutoKalibraDemoAudioProcessorEditor::loadTargetClicked(){
 }
 
 
-void AutoKalibraDemoAudioProcessorEditor::presweepSilenceMenuChanged(){
+void IRBaboonAudioProcessorEditor::presweepSilenceMenuChanged(){
 	
 	switch (presweepSilenceMenu.getSelectedId()){
 		case 1: presweepSilence = 4096;		break;
@@ -305,7 +317,7 @@ void AutoKalibraDemoAudioProcessorEditor::presweepSilenceMenuChanged(){
 }
 
 
-void AutoKalibraDemoAudioProcessorEditor::makeupSizeMenuChanged(){
+void IRBaboonAudioProcessorEditor::makeupSizeMenuChanged(){
 	
 	switch (makeupSizeMenu.getSelectedId()){
 		case 1: makeupSize = 128;	break;
@@ -325,7 +337,7 @@ void AutoKalibraDemoAudioProcessorEditor::makeupSizeMenuChanged(){
 }
 
 
-void AutoKalibraDemoAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster* source){
+void IRBaboonAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster* source){
 	repaint();
 }
 
@@ -334,7 +346,7 @@ void AutoKalibraDemoAudioProcessorEditor::changeListenerCallback(ChangeBroadcast
 
 
 //==============================================================================
-void AutoKalibraDemoAudioProcessorEditor::paint (Graphics& g)
+void IRBaboonAudioProcessorEditor::paint (Graphics& g)
 {
 	
 	/* Target thumbnail */
@@ -424,7 +436,7 @@ void AutoKalibraDemoAudioProcessorEditor::paint (Graphics& g)
 
 
 
-void AutoKalibraDemoAudioProcessorEditor::resized()
+void IRBaboonAudioProcessorEditor::resized()
 {
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
@@ -477,11 +489,11 @@ void AutoKalibraDemoAudioProcessorEditor::resized()
 
 
 	// bottom buttons
-	nullifyAmplitudeButton.setBounds(getLocalBounds().getWidth() * 1/12,
+	amplButton.setBounds(getLocalBounds().getWidth() * 1/12,
 								 getLocalBounds().getHeight() - buttonHeight,
 								 getLocalBounds().getWidth() * 1/12,
 								 buttonHeight);
-	nullifyPhaseButton.setBounds(getLocalBounds().getWidth() * 2/12 ,
+	phaseButton.setBounds(getLocalBounds().getWidth() * 2/12 ,
 								 getLocalBounds().getHeight() - buttonHeight,
 								 getLocalBounds().getWidth() * 1/12,
 								 buttonHeight);

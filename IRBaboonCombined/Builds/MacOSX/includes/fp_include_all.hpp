@@ -1,5 +1,5 @@
 /* 
- * Copyright © 2020 Flixor. All rights reserved.
+ * Copyright © 2020 Flixor. 
  *
  * The fp namespace is to encompass all custom functions and classes,
  * as a sort of library-in-development.
@@ -7,8 +7,8 @@
  * and also houses several useful general definitions.
  */
 
-#ifndef FP_INCLUDE_ALL_HPP
-#define FP_INCLUDE_ALL_HPP
+#pragma once
+
 
 #include <stdio.h>
 #include <iostream>
@@ -31,5 +31,3 @@ using namespace fp;
 
 #define BREAK JUCE_BREAK_IN_DEBUGGER
 
-
-#endif /* FP_INCLUDE_ALL_HPP */

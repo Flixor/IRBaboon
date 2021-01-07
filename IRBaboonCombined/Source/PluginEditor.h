@@ -1,5 +1,5 @@
 //
-//  Copyright © 2020 Felix Postma. All rights reserved.
+//  Copyright © 2020 Felix Postma. 
 //
 
 
@@ -11,7 +11,7 @@
 
 
 /*
- * Coped straight from Juce decibel slider tutorial
+ * Copied straight from Juce decibel slider tutorial
  */
 class DecibelSlider : public Slider
 {
@@ -26,17 +26,13 @@ private:
 
 
 
-//==============================================================================
-/**
-*/
-class AutoKalibraDemoAudioProcessorEditor  : public AudioProcessorEditor,
+class IRBaboonAudioProcessorEditor  : public AudioProcessorEditor,
 											public Timer,
 											public ChangeListener
 {
 public:
-    AutoKalibraDemoAudioProcessorEditor (AutoKalibraDemoAudioProcessor&);
-    ~AutoKalibraDemoAudioProcessorEditor();
-	//==============================================================================
+    IRBaboonAudioProcessorEditor (IRBaboonAudioProcessor&);
+    ~IRBaboonAudioProcessorEditor();
 
 	void setStartCaptureTarget();
 	void setStartCaptureBase();
@@ -52,16 +48,14 @@ public:
 	/* thumbnails */
 	void changeListenerCallback(ChangeBroadcaster* source) override;
 	
-    //==============================================================================
     void paint (Graphics&) override;
-	
     void resized() override;
 	
 	
 private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
-    AutoKalibraDemoAudioProcessor& processor;
+    IRBaboonAudioProcessor& processor;
 
 	TextButton captureTargButton  { "Capture target IR" };
 	TextButton captureBaseButton  { "Capture base IR" };
@@ -109,8 +103,8 @@ private:
 	int sliderHeightMargin = 10;
 	
 	Label toggleButtonLabel;
-	ToggleButton nullifyPhaseButton { "Phase" };
-	ToggleButton nullifyAmplitudeButton { "EQ" };
+	ToggleButton phaseButton { "Phase" };
+	ToggleButton amplButton { "EQ" };
 	ComboBox presweepSilenceMenu;
 	int presweepSilence = 16384;
 	ComboBox makeupSizeMenu;
@@ -122,5 +116,5 @@ private:
 	float refZoomLin = 1.0f;
 	
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AutoKalibraDemoAudioProcessorEditor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (IRBaboonAudioProcessorEditor)
 };

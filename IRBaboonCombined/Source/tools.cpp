@@ -1,5 +1,5 @@
 //
-//  Copyright © 2020 Felix Postma. All rights reserved.
+//  Copyright © 2020 Felix Postma. 
 //
 
 #include <stdio.h>

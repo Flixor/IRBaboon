@@ -1,10 +1,10 @@
 //
-//  Copyright © 2020 Felix Postma. All rights reserved.
+//  Copyright © 2020 Felix Postma. 
 //
 
 
-#ifndef FP_CIRCULARBUFFERARRAY_HPP
-#define FP_CIRCULARBUFFERARRAY_HPP
+#pragma once
+
 
 #include <fp_include_all.hpp>
 #include <JuceHeader.h>
@@ -60,4 +60,3 @@ private:
 
 } // fp
 
-#endif /* FP_CIRCULARBUFFERARRAY_HPP */

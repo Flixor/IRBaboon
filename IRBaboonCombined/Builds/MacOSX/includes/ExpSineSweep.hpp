@@ -1,10 +1,10 @@
 //
-//  Copyright © 2020 Felix Postma. All rights reserved.
+//  Copyright © 2020 Felix Postma. 
 //
 
 
-#ifndef FP_EXPSINESWEEP_HPP
-#define FP_EXPSINESWEEP_HPP
+#pragma once
+
 
 #include <fp_include_all.hpp>
 #include <JuceHeader.h>
@@ -59,6 +59,3 @@ private:
 };
 
 } // fp
-
-#endif /* FP_EXPSINESWEEP_HPP */
-

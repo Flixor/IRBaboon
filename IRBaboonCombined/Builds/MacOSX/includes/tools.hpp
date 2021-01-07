@@ -1,10 +1,10 @@
 //
-//  Copyright © 2020 Felix Postma. All rights reserved.
+//  Copyright © 2020 Felix Postma. 
 //
 
 
-#ifndef FP_TOOLS_HPP
-#define FP_TOOLS_HPP
+#pragma once
+
 
 #include <fp_include_all.hpp>
 #include <JuceHeader.h>
@@ -81,4 +81,4 @@ namespace tools {
 } // tools
 } // fp
 
-#endif /* FP_TOOLS_HPP */
+

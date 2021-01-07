@@ -1,5 +1,5 @@
 //
-//  Copyright © 2020 Felix Postma. All rights reserved.
+//  Copyright © 2020 Felix Postma. 
 //
 
 
@@ -12,43 +12,41 @@
 
 
 
-class AutoKalibraDemoAudioProcessor  : public AudioProcessor, public Thread
+class IRBaboonAudioProcessor  : public AudioProcessor, public Thread
 {
 public:
 	
 	/* From Juce tutorial
 	 https://docs.juce.com/master/tutorial_looping_audio_sample_buffer_advanced.html
 	 */
-	class ReferenceCountedBuffer : public ReferenceCountedObject
-	{
-	public:
-		typedef ReferenceCountedObjectPtr<ReferenceCountedBuffer> Ptr;
-		ReferenceCountedBuffer (const String& nameToUse, AudioSampleBuffer buf)
-		: name (nameToUse), buffer (buf) {
-		}
+	class ReferenceCountedBuffer : public ReferenceCountedObject{
+		public:
+			typedef ReferenceCountedObjectPtr<ReferenceCountedBuffer> Ptr;
+			ReferenceCountedBuffer (const String& nameToUse, AudioSampleBuffer buf)
+			: name (nameToUse), buffer (buf) {
+			}
 		
-		ReferenceCountedBuffer (const String& nameToUse, int numChannels, int numSamples)
-		: name (nameToUse), buffer (numChannels, numSamples) {
-		}
+			ReferenceCountedBuffer (const String& nameToUse, int numChannels, int numSamples)
+			: name (nameToUse), buffer (numChannels, numSamples) {
+			}
 		
-		~ReferenceCountedBuffer() {
-		}
+			~ReferenceCountedBuffer() {
+			}
 		
-		AudioSampleBuffer* getBuffer() {
-			return &buffer;
-		}
+			AudioSampleBuffer* getBuffer() {
+				return &buffer;
+			}
 		
-		bool bufferNotEmpty() {
-			return buffer.getNumSamples() > 0;
-		}
+			bool bufferNotEmpty() {
+				return buffer.getNumSamples() > 0;
+			}
 		
-	private:
-		String name;
-		AudioSampleBuffer buffer;
-		JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ReferenceCountedBuffer)
+		private:
+			String name;
+			AudioSampleBuffer buffer;
+			JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ReferenceCountedBuffer)
 	};
 	
-	//==============================================================================
 	enum IRType {
 		IR_NONE,
 		IR_TARGET,
@@ -69,11 +67,9 @@ public:
 		bool 		doFadeout;
 	};
 	
-    //==============================================================================
-    AutoKalibraDemoAudioProcessor();
-    ~AutoKalibraDemoAudioProcessor();
+    IRBaboonAudioProcessor();
+    ~IRBaboonAudioProcessor();
 
-    //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
 
@@ -86,7 +82,6 @@ public:
 
 	void startCapture(IRType type);
 
-	AudioSampleBuffer createIR(AudioSampleBuffer& numeratorBuf, AudioSampleBuffer& denominatorBuf);
 	void createIRFilt();
 	
 	int getTotalSweepBreakSamples();
@@ -96,14 +91,8 @@ public:
 	AudioSampleBuffer getIRFilt();
 	
 	void setPlayFiltered(bool filtered);
-	
-	/* Print and thumbnail thread */
-	void run() override;
-	void saveIRTarg();
-	void saveIRBase();
-	void saveCustomExt(IRType type);
+
 	std::string getDateTimeString();
-	void printDebug();
 	std::string getPrintDirectoryDebug();
 	std::string getSavedIRExtension();
 	
@@ -112,18 +101,16 @@ public:
 	void setZoomFilt(float dB);
 	void setOutputVolume(float dB);
 	
-	void setNullifyPhaseFilt(bool nullifyPhase);
-	void setNullifyAmplFilt(bool nullifyAmplitude);
+	void setPhaseFilt(bool includePhase);
+	void setAmplFilt(bool includeAmplitude);
 	void setPresweepSilence(int presweepSilence);
 	void setMakeupSize(int makeupSize);
 	void swapTargetBase();
 	void loadTarget(File file);
 
-    //==============================================================================
     AudioProcessorEditor* createEditor() override;
     bool hasEditor() const override;
 
-    //==============================================================================
     const String getName() const override;
 
     bool acceptsMidi() const override;
@@ -131,19 +118,18 @@ public:
     bool isMidiEffect() const override;
     double getTailLengthSeconds() const override;
 
-    //==============================================================================
     int getNumPrograms() override;
     int getCurrentProgram() override;
     void setCurrentProgram (int index) override;
     const String getProgramName (int index) override;
     void changeProgramName (int index, const String& newName) override;
 
-    //==============================================================================
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+	
+	
 private:
-    //==============================================================================
 	int sampleRate = 48000;
 	int generalHostBlockSize = 0;
 	
@@ -200,8 +186,8 @@ private:
 	float zoomBasedB = 0.0;
 	float zoomFiltdB = 0.0;
 	
-	bool nullifyPhaseFilt = false;
-	bool nullifyAmplFilt = false;
+	bool includePhaseFilt = true;
+	bool includeAmplFilt = true;
 
 	
 	
@@ -231,12 +217,20 @@ private:
 	int savedIndex = 0;
 	
 	
+	/* Print and thumbnail thread */
+	void run() override;
+	void saveIRTarg();
+	void saveIRBase();
+	void saveCustomExt(IRType type);
+	void printDebug();
+	void printThumbnails();
 
+	
 	// ====== debug ==========
 	ParallelBufferPrinter debugPrinter;
 	
 
 
 	
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AutoKalibraDemoAudioProcessor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (IRBaboonAudioProcessor)
 };
