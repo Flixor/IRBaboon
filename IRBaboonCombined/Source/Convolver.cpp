@@ -360,18 +360,18 @@ AudioBuffer<float> deconvolve(AudioBuffer<float>* numeratorBuffer, AudioBuffer<f
 	AudioSampleBuffer denomBuf (*denominatorBuffer);
 	denomBuf.setSize(1, denomBuf.getNumSamples(), true);
 
-	// match buffer lengths
+	/* match buffer lengths */
 	if (numBuf.getNumSamples() > denomBuf.getNumSamples())
 		denomBuf.setSize(denomBuf.getNumChannels(), numBuf.getNumSamples(), true);
 	else if (numBuf.getNumSamples() < denomBuf.getNumSamples())
 		numBuf.setSize(numBuf.getNumChannels(), denomBuf.getNumSamples(), true);
 
-	// FFT
+	/* FFT */
 	AudioSampleBuffer numBufFft (fftTransform(numBuf));
 	AudioSampleBuffer denomBufFft (fftTransform(denomBuf));
 
 
-	// DSP loop
+	/* DSP loop */
 	int N = numBufFft.getNumSamples() / 2;
 	float* numBufFftPtr = numBufFft.getWritePointer(0, 0);
 	const float* denomBufFftPtr = denomBufFft.getReadPointer(0, 0);
