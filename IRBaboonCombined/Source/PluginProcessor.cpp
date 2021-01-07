@@ -35,7 +35,7 @@ AutoKalibraDemoAudioProcessor::AutoKalibraDemoAudioProcessor()
 	
 	sweepBuf.setSize(1, totalSweepBreakSamples);
 	sweepBuf.clear();
-	sweepBuf.copyFrom(0, silenceBeginningLengthSamples, sweeper.getSweepFloat(), 0, 0, sweepLengthSamples);
+	sweepBuf.copyFrom(0, 0, sweeper.getSweepFloat(), 0, 0, sweepLengthSamples);
 	
 	sweepBufForDeconv.setSize(1, totalSweepBreakSamples);
 	sweepBufForDeconv.clear();
@@ -353,7 +353,7 @@ void AutoKalibraDemoAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 		}
 		
 		/* when done: play sweep now, start input capture next block */
-		if (buffersWaitForInputCapture == 0){
+		if (buffersWaitForInputCapture <= 0){
 			IRCapture.state = IRCAP_CAPTURE;
 			IRCapture.playSweep = true;
 		}
