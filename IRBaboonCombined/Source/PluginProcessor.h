@@ -108,8 +108,8 @@ public:
 	void setZoomFilt(float dB);
 	void setOutputVolume(float dB);
 	
-	void setNullifyPhaseFilt(bool nullifyPhase);
-	void setNullifyAmplFilt(bool nullifyAmplitude);
+	void setPhaseFilt(bool includePhase);
+	void setAmplFilt(bool includeAmplitude);
 	void setPresweepSilence(int presweepSilence);
 	void setMakeupSize(int makeupSize);
 	void swapTargetBase();
@@ -193,8 +193,8 @@ private:
 	float zoomBasedB = 0.0;
 	float zoomFiltdB = 0.0;
 	
-	bool nullifyPhaseFilt = false;
-	bool nullifyAmplFilt = false;
+	bool includePhaseFilt = true;
+	bool includeAmplFilt = true;
 
 	
 	

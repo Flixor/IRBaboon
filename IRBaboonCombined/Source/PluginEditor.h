@@ -11,7 +11,7 @@
 
 
 /*
- * Coped straight from Juce decibel slider tutorial
+ * Copied straight from Juce decibel slider tutorial
  */
 class DecibelSlider : public Slider
 {
@@ -103,8 +103,8 @@ private:
 	int sliderHeightMargin = 10;
 	
 	Label toggleButtonLabel;
-	ToggleButton nullifyPhaseButton { "Phase" };
-	ToggleButton nullifyAmplitudeButton { "EQ" };
+	ToggleButton phaseButton { "Phase" };
+	ToggleButton amplButton { "EQ" };
 	ComboBox presweepSilenceMenu;
 	int presweepSilence = 16384;
 	ComboBox makeupSizeMenu;

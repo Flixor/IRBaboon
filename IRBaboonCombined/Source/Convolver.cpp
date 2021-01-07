@@ -353,7 +353,7 @@ AudioBuffer<float> convolveNonPeriodic(AudioSampleBuffer& buffer1, AudioSampleBu
 
 
 
-AudioBuffer<float> deconvolve(AudioBuffer<float>* numeratorBuffer, AudioBuffer<float>* denominatorBuffer, double sampleRate, bool smoothing, bool nullifyPhase, bool nullifyAmplitude){
+AudioBuffer<float> deconvolve(AudioBuffer<float>* numeratorBuffer, AudioBuffer<float>* denominatorBuffer, double sampleRate, bool smoothing, bool includePhase, bool includeAmplitude){
 	
 	AudioSampleBuffer numBuf (*numeratorBuffer);
 	numBuf.setSize(1, numBuf.getNumSamples(), true);
@@ -393,13 +393,11 @@ AudioBuffer<float> deconvolve(AudioBuffer<float>* numeratorBuffer, AudioBuffer<f
 	 */
 	if (smoothing){
 		float smoothPerAvg = 1.0/13.0;
-		
-		averagingFilter(&numBufFft, smoothPerAvg, sampleRate, true, nullifyPhase, nullifyAmplitude);
-		averagingFilter(&numBufFft, smoothPerAvg, sampleRate, true, nullifyPhase, nullifyAmplitude);
-		averagingFilter(&numBufFft, smoothPerAvg, sampleRate, true, nullifyPhase, nullifyAmplitude);
+		for (int i = 0; i < 3; i++) {
+			averagingFilter(&numBufFft, smoothPerAvg, sampleRate, true, includePhase, includeAmplitude);
+		}
 	}
 
-	
 	/* IFFT */
 	numBuf = fftInvTransform(numBufFft);
 	
@@ -410,7 +408,7 @@ AudioBuffer<float> deconvolve(AudioBuffer<float>* numeratorBuffer, AudioBuffer<f
 													   
 													   
 
-void averagingFilter (AudioSampleBuffer* buffer, double octaveFraction, double sampleRate, bool logAvg, bool nullifyPhase, bool nullifyAmplitude){
+void averagingFilter (AudioSampleBuffer* buffer, double octaveFraction, double sampleRate, bool logAvg, bool includePhase, bool includeAmplitude){
 	
 	
 	int fftSize = buffer->getNumSamples();
@@ -541,8 +539,8 @@ void averagingFilter (AudioSampleBuffer* buffer, double octaveFraction, double s
 			tools::roundToZero(bufPtr + bin, 1e-11);	// rounding only seems necessary for determining phase per bin
 			tools::roundToZero(bufPtr + bin + 1, 1e-11);
 			float phase = tools::binPhase(bufPtr + bin);
-			if (nullifyAmplitude) ampl = 1.0;
-			if (nullifyPhase) phase = 0.0;
+			if (not includeAmplitude) ampl = 1.0;
+			if (not includePhase) phase = 0.0;
 			float re = ampl * cos(phase);
 			float im = ampl * sin(phase);
 			*(bufPtr + bin) = re;

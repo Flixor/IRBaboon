@@ -613,13 +613,9 @@ AudioSampleBuffer IRBaboonAudioProcessor::createIR(AudioSampleBuffer& numeratorB
 void IRBaboonAudioProcessor::createIRFilt(){
 	AudioSampleBuffer IR;
 	
-	IR.makeCopyOf(convolver::deconvolve(IRTargPtr->getBuffer(), IRBasePtr->getBuffer(), sampleRate, true, nullifyPhaseFilt, nullifyAmplFilt));
+	IR.makeCopyOf(convolver::deconvolve(IRTargPtr->getBuffer(), IRBasePtr->getBuffer(), sampleRate, true, includePhaseFilt, includeAmplFilt));
 
-	if (nullifyPhaseFilt) convolver::shifteroo(&IR);
-	
-	ParallelBufferPrinter printer;
-	printer.appendBuffer("IRFilt unchopped", IR);
-	printer.printToWav(0, printer.getMaxBufferLength(), sampleRate, printDirectoryDebug);
+	if (not includePhaseFilt) convolver::shifteroo(&IR);
 	
 	IRFiltPtr->getBuffer()->makeCopyOf(IR);
 	
@@ -836,8 +832,8 @@ void IRBaboonAudioProcessor::setOutputVolume(float dB){
 }
 
 
-void IRBaboonAudioProcessor::setNullifyPhaseFilt(bool nullifyPhase){
-	nullifyPhaseFilt = nullifyPhase;
+void IRBaboonAudioProcessor::setPhaseFilt(bool includePhase){
+	includePhaseFilt = includePhase;
 	
 	if (IRTargPtr->bufferNotEmpty() && IRBasePtr->bufferNotEmpty()){
 		createIRFilt();
@@ -847,8 +843,8 @@ void IRBaboonAudioProcessor::setNullifyPhaseFilt(bool nullifyPhase){
 }
 
 
-void IRBaboonAudioProcessor::setNullifyAmplFilt(bool nullifyAmplitude){
-	nullifyAmplFilt = nullifyAmplitude;
+void IRBaboonAudioProcessor::setAmplFilt(bool includeAmplitude){
+	includeAmplFilt = includeAmplitude;
 	
 	if (IRTargPtr->bufferNotEmpty() && IRBasePtr->bufferNotEmpty()){
 		createIRFilt();

@@ -146,15 +146,15 @@ IRBaboonAudioProcessorEditor::IRBaboonAudioProcessorEditor (IRBaboonAudioProcess
 	/* bottom buttons */
 	addAndMakeVisible(&toggleButtonLabel);
 	toggleButtonLabel.setText("Filter:", dontSendNotification);
-	toggleButtonLabel.attachToComponent(&nullifyAmplitudeButton, true);
+	toggleButtonLabel.attachToComponent(&amplButton, true);
 	
-	addAndMakeVisible (&nullifyPhaseButton);
-	nullifyPhaseButton.setToggleState(true, dontSendNotification);
-	nullifyPhaseButton.onClick = [this] { processor.setNullifyPhaseFilt(!nullifyPhaseButton.getToggleState()); }; // NEGATIVE because GUI implies activation, but functions are implemented as 'nullify'... code needs to be more clear
+	addAndMakeVisible (&phaseButton);
+	phaseButton.setToggleState(true, dontSendNotification);
+	phaseButton.onClick = [this] { processor.setPhaseFilt(phaseButton.getToggleState()); };
 	
-	addAndMakeVisible(&nullifyAmplitudeButton);
-	nullifyAmplitudeButton.setToggleState(true, dontSendNotification);
-	nullifyAmplitudeButton.onClick = [this] { processor.setNullifyAmplFilt(!nullifyAmplitudeButton.getToggleState()); }; // NEGATIVE because GUI implies activation, but functions are implemented as 'nullify'... code needs to be more clear
+	addAndMakeVisible(&amplButton);
+	amplButton.setToggleState(true, dontSendNotification);
+	amplButton.onClick = [this] { processor.setAmplFilt(amplButton.getToggleState()); };
 
 	
 	addAndMakeVisible(&presweepSilenceMenu);
@@ -477,11 +477,11 @@ void IRBaboonAudioProcessorEditor::resized()
 
 
 	// bottom buttons
-	nullifyAmplitudeButton.setBounds(getLocalBounds().getWidth() * 1/12,
+	amplButton.setBounds(getLocalBounds().getWidth() * 1/12,
 								 getLocalBounds().getHeight() - buttonHeight,
 								 getLocalBounds().getWidth() * 1/12,
 								 buttonHeight);
-	nullifyPhaseButton.setBounds(getLocalBounds().getWidth() * 2/12 ,
+	phaseButton.setBounds(getLocalBounds().getWidth() * 2/12 ,
 								 getLocalBounds().getHeight() - buttonHeight,
 								 getLocalBounds().getWidth() * 1/12,
 								 buttonHeight);
