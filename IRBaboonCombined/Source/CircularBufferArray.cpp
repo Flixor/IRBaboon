@@ -38,12 +38,11 @@ void CircularBufferArray::changeArraySize(int amountOfBuffers){
 	
 	if(amountOfBuffers == arraySize) return;
 	
-	if(amountOfBuffers == 0){
+	else if(amountOfBuffers == 0){
 		bufferArray.clear();
 		readIndex = 0;
 		writeIndex = 0;
 		arraySize = 0;
-		return;
 	}
 	
 	else if(amountOfBuffers > arraySize){

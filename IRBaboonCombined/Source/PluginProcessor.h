@@ -114,6 +114,7 @@ public:
 	
 	void setNullifyPhaseFilt(bool nullifyPhase);
 	void setNullifyAmplFilt(bool nullifyAmplitude);
+	void setPresweepSilence(int presweepSilence);
 	void setMakeupSize(int makeupSize);
 	void swapTargetBase();
 	void loadTarget(File file);
@@ -146,13 +147,12 @@ private:
 	int sampleRate = 48000;
 	int generalHostBlockSize = 0;
 	
-	int silenceBeginningLengthSamples = 4096;
+
 	int silenceEndLengthSamples = 16384;
-	/* total samples = 4 * 32786 = 131072 */
-	int totalSweepBreakSamples = 4 * tools::nextPowerOfTwo(silenceBeginningLengthSamples + silenceEndLengthSamples + 1);
-	int sweepLengthSamples = totalSweepBreakSamples - silenceBeginningLengthSamples - silenceEndLengthSamples;
+	int totalSweepBreakSamples = 4 * silenceEndLengthSamples;
+	int sweepLengthSamples = totalSweepBreakSamples - silenceEndLengthSamples;
 	
-	int samplesWaitBeforeInputCapture = 2048; // 8 * 256
+	int samplesWaitBeforeInputCapture = 16384;
 	int buffersWaitForInputCapture = 0;
 	int buffersWaitForResumeThroughput = 0;
 	
@@ -160,7 +160,6 @@ private:
 	AudioSampleBuffer sweepBufForDeconv;
 	CircularBufferArray sweepBufArray;
 	CircularBufferArray inputCaptureArray;
-	AudioSampleBuffer inputConsolidated;
 
 	int makeupIRLengthSamples = 2048;
 	

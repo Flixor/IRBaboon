@@ -47,6 +47,7 @@ public:
 	void playFiltAudioClick (bool toggleState);
 	void loadTargetClicked();
 	void makeupSizeMenuChanged();
+	void presweepSilenceMenuChanged();
 
 	/* thumbnails */
 	void changeListenerCallback(ChangeBroadcaster* source) override;
@@ -110,6 +111,8 @@ private:
 	Label toggleButtonLabel;
 	ToggleButton nullifyPhaseButton { "Phase" };
 	ToggleButton nullifyAmplitudeButton { "EQ" };
+	ComboBox presweepSilenceMenu;
+	int presweepSilence = 16384;
 	ComboBox makeupSizeMenu;
 	int makeupSize = 2048;
 	TextButton swapButton { "Swap target <-> base" };
