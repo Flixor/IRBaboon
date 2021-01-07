@@ -604,13 +604,10 @@ void IRBaboonAudioProcessor::startCapture(IRType type){
 
 
 void IRBaboonAudioProcessor::createIRFilt(){
-	AudioSampleBuffer IR;
 	
-	IR.makeCopyOf(convolver::deconvolve(IRTargPtr->getBuffer(), IRBasePtr->getBuffer(), sampleRate, true, includePhaseFilt, includeAmplFilt));
+	IRFiltPtr->getBuffer()->makeCopyOf(convolver::deconvolve(IRTargPtr->getBuffer(), IRBasePtr->getBuffer(), sampleRate, true, includePhaseFilt, includeAmplFilt));
 
-	if (not includePhaseFilt) convolver::shifteroo(&IR);
-	
-	IRFiltPtr->getBuffer()->makeCopyOf(IR);
+	if (not includePhaseFilt) convolver::shifteroo(IRFiltPtr->getBuffer());
 }
 
 

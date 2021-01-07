@@ -109,7 +109,9 @@ IRBaboonAudioProcessorEditor::IRBaboonAudioProcessorEditor (IRBaboonAudioProcess
 	addAndMakeVisible(&sliderZoomTarg);
 	sliderZoomTarg.setRange(-6, 60);
 	sliderZoomTarg.setValue(0.0);
-	sliderZoomTarg.onValueChange = [this] { processor.setZoomTarg(sliderZoomTarg.getValue()); };
+	sliderZoomTarg.onValueChange = [this] {
+		processor.setZoomTarg(sliderZoomTarg.getValue());
+	};
 
 	addAndMakeVisible(sliderZoomTargLabel);
 	sliderZoomTargLabel.setText("Target zoom [dB]", dontSendNotification);
@@ -118,7 +120,9 @@ IRBaboonAudioProcessorEditor::IRBaboonAudioProcessorEditor (IRBaboonAudioProcess
 	addAndMakeVisible(&sliderZoomBase);
 	sliderZoomBase.setRange(-6, 60);
 	sliderZoomBase.setValue(0.0);
-	sliderZoomBase.onValueChange = [this] { processor.setZoomBase(sliderZoomBase.getValue()); };
+	sliderZoomBase.onValueChange = [this] {
+		processor.setZoomBase(sliderZoomBase.getValue());
+	};
 	
 	addAndMakeVisible(sliderZoomBaseLabel);
 	sliderZoomBaseLabel.setText("Base zoom [dB]", dontSendNotification);
@@ -127,7 +131,9 @@ IRBaboonAudioProcessorEditor::IRBaboonAudioProcessorEditor (IRBaboonAudioProcess
 	addAndMakeVisible(&sliderZoomFilt);
 	sliderZoomFilt.setRange(-60, 36);
 	sliderZoomFilt.setValue(0.0);
-	sliderZoomFilt.onValueChange = [this] { processor.setZoomFilt(sliderZoomFilt.getValue()); };
+	sliderZoomFilt.onValueChange = [this] {
+		processor.setZoomFilt(sliderZoomFilt.getValue());
+	};
 	
 	addAndMakeVisible(sliderZoomFiltLabel);
 	sliderZoomFiltLabel.setText("Filter zoom [dB]", dontSendNotification);
@@ -136,7 +142,10 @@ IRBaboonAudioProcessorEditor::IRBaboonAudioProcessorEditor (IRBaboonAudioProcess
 	addAndMakeVisible(&outputVolumeSlider);
 	outputVolumeSlider.setRange(-60, 0);
 	outputVolumeSlider.setValue(0.0);
-	outputVolumeSlider.onValueChange = [this] { processor.setOutputVolume(outputVolumeSlider.getValue()); };
+	outputVolumeSlider.onValueChange = [this] {
+		processor.setOutputVolume(outputVolumeSlider.getValue());
+	};
+	processor.setOutputVolume(outputVolumeSlider.getValue()); // set starting value immediately
 
 	addAndMakeVisible(outputVolumeSliderLabel);
 	outputVolumeSliderLabel.setText("Output volume [dB]", dontSendNotification);
@@ -150,11 +159,15 @@ IRBaboonAudioProcessorEditor::IRBaboonAudioProcessorEditor (IRBaboonAudioProcess
 	
 	addAndMakeVisible (&phaseButton);
 	phaseButton.setToggleState(true, dontSendNotification);
-	phaseButton.onClick = [this] { processor.setPhaseFilt(phaseButton.getToggleState()); };
+	phaseButton.onClick = [this] {
+		processor.setPhaseFilt(phaseButton.getToggleState());
+	};
 	
 	addAndMakeVisible(&amplButton);
 	amplButton.setToggleState(true, dontSendNotification);
-	amplButton.onClick = [this] { processor.setAmplFilt(amplButton.getToggleState()); };
+	amplButton.onClick = [this] {
+		processor.setAmplFilt(amplButton.getToggleState());
+	};
 
 	
 	addAndMakeVisible(&presweepSilenceMenu);
@@ -228,7 +241,6 @@ void IRBaboonAudioProcessorEditor::timerCallback(){
 		makeupSizeMenu.setVisible(true);
 	}
 
-	
 	// thumbnails
 	String nameTarg (processor.getPrintDirectoryDebug() + "thumbnailTarg.wav");
 	File fileTarg (nameTarg);
