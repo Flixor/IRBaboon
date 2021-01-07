@@ -861,6 +861,11 @@ void AutoKalibraDemoAudioProcessor::setNullifyAmplFilt(bool nullifyAmplitude){
 }
 
 
+void AutoKalibraDemoAudioProcessor::setPresweepSilence(int presweepSilence){
+	samplesWaitBeforeInputCapture = presweepSilence;
+}
+
+
 void AutoKalibraDemoAudioProcessor::setMakeupSize(int makeupSize){
 	makeupIRLengthSamples = makeupSize;
 	

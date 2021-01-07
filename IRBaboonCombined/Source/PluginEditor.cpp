@@ -155,6 +155,19 @@ AutoKalibraDemoAudioProcessorEditor::AutoKalibraDemoAudioProcessorEditor (AutoKa
 	addAndMakeVisible(&nullifyAmplitudeButton);
 	nullifyAmplitudeButton.setToggleState(true, dontSendNotification);
 	nullifyAmplitudeButton.onClick = [this] { processor.setNullifyAmplFilt(!nullifyAmplitudeButton.getToggleState()); }; // NEGATIVE because GUI implies activation, but functions are implemented as 'nullify'... code needs to be more clear
+
+	
+	addAndMakeVisible(&presweepSilenceMenu);
+	/* for init these times are based on 48k samplerate */
+	presweepSilenceMenu.addItem("0.085s", 1); // 4096
+	presweepSilenceMenu.addItem("0.17s", 2); // 8192
+	presweepSilenceMenu.addItem("0.34s", 3); // 16384
+	presweepSilenceMenu.addItem("0.68s", 4); // 32768
+	presweepSilenceMenu.addItem("1.37s", 5); // 65536
+	presweepSilenceMenu.addItem("2.73s", 6); // 131072
+	presweepSilenceMenu.setText("0.34s");
+	presweepSilenceMenu.onChange = [this] { presweepSilenceMenuChanged(); };
+
 	
 	addAndMakeVisible(&makeupSizeMenu);
 	makeupSizeMenu.addItem("128", 1);
@@ -185,19 +198,25 @@ AutoKalibraDemoAudioProcessorEditor::~AutoKalibraDemoAudioProcessorEditor()
 
 
 void AutoKalibraDemoAudioProcessorEditor::setStartCaptureTarget(){
-//	processor.startCaptureTarg();
 	processor.startCapture(AutoKalibraDemoAudioProcessor::IR_TARGET);
 	captureBaseButton.setVisible(false);
-	int ms = std::ceil( 1000 * ((float) processor.getTotalSweepBreakSamples()) / ((float) processor.getSamplerate()) );
-	Timer::callAfterDelay(ms, [this] { captureBaseButton.setVisible(true); } );
+	presweepSilenceMenu.setVisible(false);
+	int ms = std::ceil( 1000 * ((float) processor.getTotalSweepBreakSamples() + (float) presweepSilence) / ((float) processor.getSamplerate()) );
+	Timer::callAfterDelay(ms, [this] {
+		captureBaseButton.setVisible(true);
+		presweepSilenceMenu.setVisible(true);
+	} );
 }
 
 void AutoKalibraDemoAudioProcessorEditor::setStartCaptureBase(){
-//	processor.startCaptureBase();
 	processor.startCapture(AutoKalibraDemoAudioProcessor::IR_BASE);
 	captureTargButton.setVisible(false);
-	int ms = std::ceil( 1000 * ((float) processor.getTotalSweepBreakSamples()) / ((float) processor.getSamplerate()) );
-	Timer::callAfterDelay(ms, [this] { captureTargButton.setVisible(true); } );
+	presweepSilenceMenu.setVisible(false);
+	int ms = std::ceil( 1000 * ((float) processor.getTotalSweepBreakSamples() + (float) presweepSilence) / ((float) processor.getSamplerate()) );
+	Timer::callAfterDelay(ms, [this] {
+		captureTargButton.setVisible(true);
+		presweepSilenceMenu.setVisible(true);
+	} );
 }
 
 
@@ -269,6 +288,23 @@ void AutoKalibraDemoAudioProcessorEditor::loadTargetClicked(){
 }
 
 
+void AutoKalibraDemoAudioProcessorEditor::presweepSilenceMenuChanged(){
+	
+	switch (presweepSilenceMenu.getSelectedId()){
+		case 1: presweepSilence = 4096;		break;
+		case 2: presweepSilence = 8192;		break;
+		case 3: presweepSilence = 16384;	break;
+		case 4: presweepSilence = 32768;	break;
+		case 5: presweepSilence = 65536;	break;
+		case 6: presweepSilence = 131072;	break;
+	}
+	
+	processor.setPresweepSilence(presweepSilence);
+	
+	thumbnailFilt.reset(1, processor.getSamplerate(), makeupSize);
+}
+
+
 void AutoKalibraDemoAudioProcessorEditor::makeupSizeMenuChanged(){
 	
 	switch (makeupSizeMenu.getSelectedId()){
@@ -286,7 +322,6 @@ void AutoKalibraDemoAudioProcessorEditor::makeupSizeMenuChanged(){
 	processor.setMakeupSize(makeupSize);
 	
 	thumbnailFilt.reset(1, processor.getSamplerate(), makeupSize);
-	
 }
 
 
@@ -442,25 +477,29 @@ void AutoKalibraDemoAudioProcessorEditor::resized()
 
 
 	// bottom buttons
-	nullifyAmplitudeButton.setBounds(getLocalBounds().getWidth() * 2/12,
+	nullifyAmplitudeButton.setBounds(getLocalBounds().getWidth() * 1/12,
 								 getLocalBounds().getHeight() - buttonHeight,
 								 getLocalBounds().getWidth() * 1/12,
 								 buttonHeight);
-	nullifyPhaseButton.setBounds(getLocalBounds().getWidth() * 3/12 ,
+	nullifyPhaseButton.setBounds(getLocalBounds().getWidth() * 2/12 ,
 								 getLocalBounds().getHeight() - buttonHeight,
-								 getLocalBounds().getWidth() * 1/12 + 10,
+								 getLocalBounds().getWidth() * 1/12,
 								 buttonHeight);
-	makeupSizeMenu.setBounds(getLocalBounds().getWidth() * 4/12 + 10,
+	presweepSilenceMenu.setBounds(getLocalBounds().getWidth() * 3/12 ,
 							 getLocalBounds().getHeight() - buttonHeight,
 							 getLocalBounds().getWidth() * 1/8,
 							 buttonHeight);
-	swapButton.setBounds(getLocalBounds().getWidth()*2/4,
+	makeupSizeMenu.setBounds(getLocalBounds().getWidth() * 5/12,
+							 getLocalBounds().getHeight() - buttonHeight,
+							 getLocalBounds().getWidth() * 1/8,
+							 buttonHeight);
+	swapButton.setBounds(getLocalBounds().getWidth()*7/12,
 						 getLocalBounds().getHeight() - buttonHeight,
 						 getLocalBounds().getWidth()/4,
 						 buttonHeight);
-	loadTargetButton.setBounds(getLocalBounds().getWidth()*3/4,
+	loadTargetButton.setBounds(getLocalBounds().getWidth()*10/12,
 						 getLocalBounds().getHeight() - buttonHeight,
-						 getLocalBounds().getWidth()/4,
+						 getLocalBounds().getWidth()/6,
 						 buttonHeight);
 }
 

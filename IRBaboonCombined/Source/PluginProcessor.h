@@ -114,6 +114,7 @@ public:
 	
 	void setNullifyPhaseFilt(bool nullifyPhase);
 	void setNullifyAmplFilt(bool nullifyAmplitude);
+	void setPresweepSilence(int presweepSilence);
 	void setMakeupSize(int makeupSize);
 	void swapTargetBase();
 	void loadTarget(File file);
