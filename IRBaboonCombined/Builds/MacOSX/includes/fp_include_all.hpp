@@ -23,6 +23,7 @@
 #include "ParallelBufferPrinter.hpp"
 #include "convolution.hpp"
 #include "ExpSineSweep.hpp"
+#include "ir.hpp"
 
 using namespace fp;
 

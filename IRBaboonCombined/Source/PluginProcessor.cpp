@@ -607,7 +607,7 @@ void IRBaboonAudioProcessor::createIRFilt(){
 	
 	IRFiltPtr->getBuffer()->makeCopyOf(convolution::deconvolve(IRTargPtr->getBuffer(), IRBasePtr->getBuffer(), sampleRate, true, includePhaseFilt, includeAmplFilt));
 
-	if (not includePhaseFilt) convolution::shifteroo(IRFiltPtr->getBuffer());
+	if (not includePhaseFilt) ir::shifteroo(IRFiltPtr->getBuffer());
 }
 
 
@@ -716,15 +716,15 @@ void IRBaboonAudioProcessor::printDebug() {
 
 	/* print freq */
 	if (IRPrintTarg.getNumSamples() > 0) {
-		AudioSampleBuffer IRrefprint_fft (convolution::fftTransform(IRPrintTarg));
+		AudioSampleBuffer IRrefprint_fft (tools::fftTransform(IRPrintTarg));
 		freqPrinter.appendBuffer("fft IR target", IRrefprint_fft);
 	}
 	if (IRPrintBase.getNumSamples() > 0) {
-		AudioSampleBuffer IRcurrprint_fft (convolution::fftTransform(IRPrintBase));
+		AudioSampleBuffer IRcurrprint_fft (tools::fftTransform(IRPrintBase));
 		freqPrinter.appendBuffer("fft IR base", IRcurrprint_fft);
 	}
 	if (IRPrintFilt.getNumSamples() > 0) {
-		AudioSampleBuffer IRinvfiltprint_fft (convolution::fftTransform(IRPrintFilt));
+		AudioSampleBuffer IRinvfiltprint_fft (tools::fftTransform(IRPrintFilt));
 		freqPrinter.appendBuffer("fft IR filter", IRinvfiltprint_fft);
 	}
 	if (freqPrinter.getMaxBufferLength() > 0){
