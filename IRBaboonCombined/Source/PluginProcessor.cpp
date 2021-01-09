@@ -303,13 +303,13 @@ void IRBaboonAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
 			
 			if (IRCapture.type == IR_TARGET) {
 				sweepTargPtr->getBuffer()->makeCopyOf(inputCaptureArray.consolidate(0));
-				IRTargPtr->getBuffer()->makeCopyOf(convolver::deconvolve(sweepTargPtr->getBuffer(), &sweepBufForDeconv, sampleRate));
+				IRTargPtr->getBuffer()->makeCopyOf(convolution::deconvolve(sweepTargPtr->getBuffer(), &sweepBufForDeconv, sampleRate));
 
 				saveIRCustomType = IR_TARGET;
 			}
 			else if (IRCapture.type == IR_BASE) {
 				sweepBasePtr->getBuffer()->makeCopyOf(inputCaptureArray.consolidate(0));
-				IRBasePtr->getBuffer()->makeCopyOf(convolver::deconvolve(sweepBasePtr->getBuffer(), &sweepBufForDeconv, sampleRate));
+				IRBasePtr->getBuffer()->makeCopyOf(convolution::deconvolve(sweepBasePtr->getBuffer(), &sweepBufForDeconv, sampleRate));
 
 				saveIRCustomType = IR_BASE;
 			}
@@ -605,9 +605,9 @@ void IRBaboonAudioProcessor::startCapture(IRType type){
 
 void IRBaboonAudioProcessor::createIRFilt(){
 	
-	IRFiltPtr->getBuffer()->makeCopyOf(convolver::deconvolve(IRTargPtr->getBuffer(), IRBasePtr->getBuffer(), sampleRate, true, includePhaseFilt, includeAmplFilt));
+	IRFiltPtr->getBuffer()->makeCopyOf(convolution::deconvolve(IRTargPtr->getBuffer(), IRBasePtr->getBuffer(), sampleRate, true, includePhaseFilt, includeAmplFilt));
 
-	if (not includePhaseFilt) convolver::shifteroo(IRFiltPtr->getBuffer());
+	if (not includePhaseFilt) convolution::shifteroo(IRFiltPtr->getBuffer());
 }
 
 
@@ -716,29 +716,29 @@ void IRBaboonAudioProcessor::printDebug() {
 
 	/* print freq */
 	if (IRPrintTarg.getNumSamples() > 0) {
-		AudioSampleBuffer IRrefprint_fft (convolver::fftTransform(IRPrintTarg));
+		AudioSampleBuffer IRrefprint_fft (convolution::fftTransform(IRPrintTarg));
 		freqPrinter.appendBuffer("fft IR target", IRrefprint_fft);
 	}
 	if (IRPrintBase.getNumSamples() > 0) {
-		AudioSampleBuffer IRcurrprint_fft (convolver::fftTransform(IRPrintBase));
+		AudioSampleBuffer IRcurrprint_fft (convolution::fftTransform(IRPrintBase));
 		freqPrinter.appendBuffer("fft IR base", IRcurrprint_fft);
 	}
 	if (IRPrintFilt.getNumSamples() > 0) {
-		AudioSampleBuffer IRinvfiltprint_fft (convolver::fftTransform(IRPrintFilt));
+		AudioSampleBuffer IRinvfiltprint_fft (convolution::fftTransform(IRPrintFilt));
 		freqPrinter.appendBuffer("fft IR filter", IRinvfiltprint_fft);
 	}
 	if (freqPrinter.getMaxBufferLength() > 0){
 		freqPrinter.printFreqToCsv(sampleRate, printDirectoryDebug);
 	}
 	
-	// include separate buffers in printer
+	/* include separate buffers in printer */
 	wavPrinter.appendBuffer(printNames[0], sweepPrintTarg);
 	wavPrinter.appendBuffer(printNames[1], sweepPrintBase);
 	wavPrinter.appendBuffer(printNames[2], IRPrintTarg);
 	wavPrinter.appendBuffer(printNames[3], IRPrintBase);
 	wavPrinter.appendBuffer(printNames[4], IRPrintFilt);
 	
-	// print everything
+	/* print everything */
 	wavPrinter.printToWav(0, wavPrinter.getMaxBufferLength(), sampleRate, printDirectoryDebug);
 }
 

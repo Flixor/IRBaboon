@@ -20,7 +20,7 @@ namespace fp {
 		IRStereoAudioStereo
 	};
 	
-namespace convolver {
+namespace convolution {
 	
 	
 	/*
@@ -73,6 +73,6 @@ namespace convolver {
 
 
 
-} // convolver
+} // convolution
 	
 } // fp

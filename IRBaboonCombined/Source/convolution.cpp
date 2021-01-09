@@ -8,9 +8,9 @@
 
 namespace fp {
 
-namespace convolver {
+namespace convolution {
 
-// ================================================================
+
 AudioBuffer<float> convolvePeriodic(AudioSampleBuffer& buffer1, AudioSampleBuffer& buffer2, int processBlockSize){
 	
 	/*
@@ -747,8 +747,7 @@ AudioSampleBuffer IRtoRealFFTRaw (AudioSampleBuffer& buffer, int irPartSize){
 	return cons;
 }
 	
-} // convolver
-
+} // convolution
 } // fp
 
 
