@@ -645,11 +645,8 @@ void IRBaboonAudioProcessor::run() {
 		
 		saveCustomExt(saveIRCustomType);
 		
-		if (saveIRCustomType != IR_NONE){
-			printDebug();
-			saveIRCustomType = IR_NONE;
-		}
-		
+		/* always print debug tsv and wav and thumbnails */
+		printDebug();
 		printThumbnails();
 		
 		/* A negative timeout value means that the method will wait indefinitely (until notify() is called) */
@@ -658,7 +655,7 @@ void IRBaboonAudioProcessor::run() {
 }
 
 
-
+/* saves with .sweepir extension */
 void IRBaboonAudioProcessor::saveCustomExt(IRType type){
 	
 	AudioSampleBuffer savebuf (2, totalSweepBreakSamples);
@@ -914,15 +911,15 @@ void IRBaboonAudioProcessor::loadTarget(File file){
 	IRTargPtr->getBuffer()->clear();
 	IRTargPtr->getBuffer()->copyFrom(0, 0, sweepAndIR, 1, 0, totalSweepBreakSamples);
 	
-	// generate new makeup
+	/* generate new makeup */
 	if (IRTargPtr->bufferNotEmpty() && IRBasePtr->bufferNotEmpty()){
 		createIRFilt();
 	}
 	
-	// rerename wav
+	/* rerename wav */
 	boost::filesystem::rename(pathWav, pathCustomExtension);
 	
-	// reprint
+	/* reprint */
 	notify();
 }
 
