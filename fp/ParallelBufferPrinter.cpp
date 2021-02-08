@@ -10,34 +10,31 @@ namespace fp {
 
 namespace fs = boost::filesystem;
 
-//=============================================================
+
+
 /*
  * PrintBuffer
  */
 
-PrintBuffer::PrintBuffer(){
+ParallelBufferPrinter::PrintBuffer::PrintBuffer(){
     header = "";
     buffer = AudioSampleBuffer(0,0);
     empty = true;
 };
 
 
-PrintBuffer::PrintBuffer(std::string h, AudioSampleBuffer& b){
+ParallelBufferPrinter::PrintBuffer::PrintBuffer(std::string h, AudioSampleBuffer& b){
 	header = h;
 	buffer = b;
+	// TODO: check samples whether empty should be true or false
 	empty = true;
 };
 
-
-
-PrintBuffer::~PrintBuffer(){
+ParallelBufferPrinter::PrintBuffer::~PrintBuffer(){
     // niks?
 };
 
 
-
-
-//=============================================================
 /*
  * ParallelBufferPrinter
  */
@@ -59,6 +56,7 @@ void ParallelBufferPrinter::appendBuffer(std::string name, AudioSampleBuffer& bu
     if (bufferArray.back().buffer.getNumSamples() > maxBufferLength)
         maxBufferLength = bufferArray.back().buffer.getNumSamples();
 	
+	// TODO: move this to PrintBuffer::PrintBuffer(std::string h, AudioSampleBuffer& b)
 	int samps = bufferArray.back().buffer.getNumSamples();
 	if (samps > 0)
     	bufferArray.back().empty = false;
@@ -92,7 +90,8 @@ void ParallelBufferPrinter::insertBuffer(std::string name, AudioSampleBuffer& bu
 
     if (bufferArray[insertIndex].buffer.getNumSamples() > maxBufferLength)
         maxBufferLength = bufferArray.back().buffer.getNumSamples();
-    
+   
+	// TODO: move this to PrintBuffer::PrintBuffer(std::string h, AudioSampleBuffer& b)
     bufferArray[insertIndex].empty = false;
 };
 
@@ -129,7 +128,7 @@ void ParallelBufferPrinter::printToConsole(int startSample, int numSamples, bool
 	// count buffers to print
 	int printableBufs = 0;
 	for (int buf = 0; buf < bufferArray.size(); buf++){
-		if(!bufferArray[buf].empty){
+		if(not bufferArray[buf].empty){
 			printableBufs++;
 		}
 	}
@@ -166,7 +165,7 @@ void ParallelBufferPrinter::printToConsole(int startSample, int numSamples, bool
 	// samples
 	for (int sample = startSample; sample < (startSample + numSamples); sample++){
 		for (int buf = 0; buf < bufferArray.size(); buf++){
-			if(!bufferArray[buf].empty){
+			if(not bufferArray[buf].empty){
 				if (onlyCh0) chPrintLimit = 1;
 				else		 chPrintLimit = bufferArray[buf].buffer.getNumChannels();
 				for (int channel = 0; channel < chPrintLimit; channel++){
@@ -221,7 +220,7 @@ void ParallelBufferPrinter::printToWav(int startSample, int numSamples, int samp
 		wavDirectory.createDirectory();
 	
 	for(int buf = 0; buf < bufferArray.size(); buf++){
-		if(!bufferArray[buf].empty){
+		if(not bufferArray[buf].empty){
 			
 			String wavName = directoryNameFullPath+"/"+bufferArray[buf].header.c_str()+".wav";
 			File wavFile (wavName);
