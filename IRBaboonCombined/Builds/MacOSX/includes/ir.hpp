@@ -25,7 +25,8 @@ namespace ir {
 	AudioBuffer<float> IRchop (AudioBuffer<float>& buffer, int IRlength, float thresholdLeveldB, int consecutiveSamplesBelowThreshold);
 	
 	/* puts the second half of the buffer in front of the first half
-	 * if uneven: 2nd half has 1 sample less than 1st half */
+	 * if uneven: 1st half has 1 sample more than 2nd half
+	 * This is used for making IRs of which the phase information is ignored useful */
 	void shifteroo (AudioBuffer<float>* buffer);
 	
 	// For ARM convolution

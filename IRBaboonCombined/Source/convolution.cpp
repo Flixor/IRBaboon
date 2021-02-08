@@ -396,6 +396,9 @@ namespace convolution {
 		/* IFFT */
 		numBuf = tools::fftInvTransform(numBufFft);
 		
+		/* If phase is ignored, the peak will be in the middle of the buffer, so it needs to be shifted to the start */
+		if (not includePhase) ir::shifteroo(&numBuf);
+		
 		return numBuf;
 	}
 
