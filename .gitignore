@@ -1,6 +1,10 @@
 
-IRBaboonCombined/Builds/MacOSX/build/Debug/
+IRBaboonCombined/Builds
 
 *.tsv
 
 *.sweepandir
+
+*.sublime-project
+
+*.sublime-workspace
