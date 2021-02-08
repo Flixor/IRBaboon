@@ -1,17 +1,19 @@
-//
-//  Copyright © 2020 Felix Postma. 
-//
-
+/*
+ *  Copyright © 2021 Felix Postma. 
+ */
 
 #pragma once
-
 
 #include <fp_include_all.hpp>
 #include <JuceHeader.h>
 
 
 namespace fp {
-	
+
+
+/* The CircularBufferArray class manages an array of AudioSampleBuffers,
+ * with read/write indexes that fold back, along with a few other useful methods.
+ */	
 
 class CircularBufferArray {
 	
@@ -23,8 +25,11 @@ public:
 	void clearAndResize(int amountOfBuffers, int bufferChannelSize, int bufferSampleSize);
 	
 	/*
-	Will retain all current data if new size is larger, or will retain the most recently written to buffers (the buffers most recently called by getWriteBufferPtr) if new is smaller. In the latter case, the most recently written to buffers will be organised in ascending order. Related to this, you are encouraged to always write to buffers in incremental (rather than decremental) order.
-	 This method can also be used to remove all buffers (0), but retain channels and samples info.
+	 * Will retain all current data if new size is larger, 
+	 * or will retain the most recently written to buffers (the buffers most recently called by getWriteBufferPtr) if new is smaller. 
+	 * In the latter case, the most recently written to buffers will be organised in ascending order. 
+	 * Related to this, you are encouraged to always write to buffers in incremental (rather than decremental) order.
+	 * This method can also be used to remove all buffers (0), but retain channels and samples info.
 	 */
 	void changeArraySize(int amountOfBuffers);
 

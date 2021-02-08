@@ -1,16 +1,21 @@
-//
-//  Copyright © 2020 Felix Postma. 
-//
-
+/*
+ *  Copyright © 2021 Felix Postma. 
+ */
 
 #pragma once
-
 
 #include <fp_include_all.hpp>
 #include <JuceHeader.h>
 
 
 namespace fp {
+
+
+/* The ExpSineSweep class creates and holds an exponential sine sweep,
+ * used for capturing impulse responses. This is an implementation of:
+ * Angelo Farina, "Simultaneous measurement of impulse response and distortion with a swept-sine technique", 2000.
+ * There are also several helper methods that are useful during experimentation.
+ */	
 
 class ExpSineSweep {
 
