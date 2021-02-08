@@ -77,6 +77,13 @@ namespace tools {
 	 */
 	std::string DescribeIosFailure(const std::ios& stream);
 	
+	/* these transforms use the RealOnly transforms in the Juce library.
+	 * This means that all the negative freq bins have contents 0.
+	 * fftSize = length of result, N = fftSize / 2
+	 * Beware: RealOnly also means N/2+1 bins have data in them! (last one is nyquist) */
+	AudioBuffer<float> fftTransform (AudioBuffer<float>& buffer, bool formatAmplPhase = false);
+	AudioBuffer<float> fftInvTransform (AudioBuffer<float>& buffer);
+	
 	
 } // tools
 } // fp

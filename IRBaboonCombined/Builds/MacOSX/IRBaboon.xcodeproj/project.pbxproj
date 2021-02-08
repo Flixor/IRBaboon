@@ -57,10 +57,11 @@
 		0D427DF6254085BB00D4E878 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E1013464472BE96521B8AF8 /* QuartzCore.framework */; };
 		0D427DF7254085BB00D4E878 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F87CB96B1C001E93DCD7B65D /* WebKit.framework */; };
 		0D427E04254085F000D4E878 /* CircularBufferArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0D427E03254085EC00D4E878 /* CircularBufferArray.cpp */; };
-		0D427E05254085F200D4E878 /* convolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0D427E00254085EC00D4E878 /* convolver.cpp */; };
 		0D427E06254085F500D4E878 /* ExpSineSweep.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0D427E01254085EC00D4E878 /* ExpSineSweep.cpp */; };
 		0D427E07254085F700D4E878 /* ParallelBufferPrinter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0D427E02254085EC00D4E878 /* ParallelBufferPrinter.cpp */; };
 		0DA011442541C8D90088D515 /* tools.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0DA011432541C8D90088D515 /* tools.cpp */; };
+		0DE6D72825AA687F007AC73C /* convolution.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0DE6D72625AA05B2007AC73C /* convolution.cpp */; };
+		0DE6D72B25AA69FA007AC73C /* ir.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0DE6D72A25AA69F6007AC73C /* ir.cpp */; };
 		0E3313D09952CBCFAEB14491 /* include_juce_audio_plugin_client_AU_1.mm in Sources */ = {isa = PBXBuildFile; fileRef = F126DF1BA4664045B3553963 /* include_juce_audio_plugin_client_AU_1.mm */; };
 		197BDC60554050B207212B80 /* include_juce_graphics.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8D606B6D507BFB736364E208 /* include_juce_graphics.mm */; };
 		1E0972C291BB4FB60985BC3F /* include_juce_audio_processors.mm in Sources */ = {isa = PBXBuildFile; fileRef = FF874E44CC229E117BBD3136 /* include_juce_audio_processors.mm */; };
@@ -151,7 +152,6 @@
 		00829C0F871A6CBDFCCD226F /* include_juce_audio_formats.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = include_juce_audio_formats.mm; path = ../../JuceLibraryCode/include_juce_audio_formats.mm; sourceTree = SOURCE_ROOT; };
 		0D3C737B2540864D00E4BE47 /* ParallelBufferPrinter.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ParallelBufferPrinter.hpp; path = includes/ParallelBufferPrinter.hpp; sourceTree = SOURCE_ROOT; };
 		0D3C737C2540864D00E4BE47 /* CircularBufferArray.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = CircularBufferArray.hpp; path = includes/CircularBufferArray.hpp; sourceTree = SOURCE_ROOT; };
-		0D3C737D2540864D00E4BE47 /* convolver.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = convolver.hpp; path = includes/convolver.hpp; sourceTree = SOURCE_ROOT; };
 		0D3C737E2540864D00E4BE47 /* ExpSineSweep.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ExpSineSweep.hpp; path = includes/ExpSineSweep.hpp; sourceTree = SOURCE_ROOT; };
 		0D3C7380254088A600E4BE47 /* libboost_filesystem.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libboost_filesystem.dylib; path = ../../../../../../../../usr/local/Cellar/boost/1.69.0_2/lib/libboost_filesystem.dylib; sourceTree = "<group>"; };
 		0D3C7384254093D000E4BE47 /* fpconvolver_graveyard.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = fpconvolver_graveyard.cpp; sourceTree = "<group>"; };
@@ -159,11 +159,14 @@
 		0D3C73862540962400E4BE47 /* fp_include_all.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = fp_include_all.hpp; sourceTree = "<group>"; };
 		0D3C73872540A58400E4BE47 /* tools.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = tools.hpp; sourceTree = "<group>"; };
 		0D3C73882540B02A00E4BE47 /* string.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = string.hpp; path = ../../../../../../../../usr/local/Cellar/boost/1.69.0_2/include/boost/algorithm/string.hpp; sourceTree = "<group>"; };
-		0D427E00254085EC00D4E878 /* convolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = convolver.cpp; path = ../../Source/convolver.cpp; sourceTree = "<group>"; };
 		0D427E01254085EC00D4E878 /* ExpSineSweep.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ExpSineSweep.cpp; path = ../../Source/ExpSineSweep.cpp; sourceTree = "<group>"; };
 		0D427E02254085EC00D4E878 /* ParallelBufferPrinter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ParallelBufferPrinter.cpp; path = ../../Source/ParallelBufferPrinter.cpp; sourceTree = "<group>"; };
 		0D427E03254085EC00D4E878 /* CircularBufferArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CircularBufferArray.cpp; path = ../../Source/CircularBufferArray.cpp; sourceTree = "<group>"; };
 		0DA011432541C8D90088D515 /* tools.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = tools.cpp; path = ../../Source/tools.cpp; sourceTree = "<group>"; };
+		0DE6D72625AA05B2007AC73C /* convolution.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = convolution.cpp; path = ../../Source/convolution.cpp; sourceTree = "<group>"; };
+		0DE6D72725AA05BB007AC73C /* convolution.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = convolution.hpp; sourceTree = "<group>"; };
+		0DE6D72925AA6964007AC73C /* ir.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ir.hpp; sourceTree = "<group>"; };
+		0DE6D72A25AA69F6007AC73C /* ir.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ir.cpp; path = ../../Source/ir.cpp; sourceTree = "<group>"; };
 		11DCB288699186219329099A /* DiscRecording.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiscRecording.framework; path = System/Library/Frameworks/DiscRecording.framework; sourceTree = SDKROOT; };
 		11F19FDCD8B77A64DEC64BA3 /* include_juce_gui_extra.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = include_juce_gui_extra.mm; path = ../../JuceLibraryCode/include_juce_gui_extra.mm; sourceTree = SOURCE_ROOT; };
 		17E554315E077F9DA862E8D0 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
@@ -313,8 +316,9 @@
 			isa = PBXGroup;
 			children = (
 				0D3C73862540962400E4BE47 /* fp_include_all.hpp */,
+				0DE6D72925AA6964007AC73C /* ir.hpp */,
+				0DE6D72725AA05BB007AC73C /* convolution.hpp */,
 				0D3C73872540A58400E4BE47 /* tools.hpp */,
-				0D3C737D2540864D00E4BE47 /* convolver.hpp */,
 				0D3C737C2540864D00E4BE47 /* CircularBufferArray.hpp */,
 				0D3C737E2540864D00E4BE47 /* ExpSineSweep.hpp */,
 				0D3C737B2540864D00E4BE47 /* ParallelBufferPrinter.hpp */,
@@ -325,8 +329,9 @@
 		0DA011462541E3B10088D515 /* fp */ = {
 			isa = PBXGroup;
 			children = (
+				0DE6D72A25AA69F6007AC73C /* ir.cpp */,
+				0DE6D72625AA05B2007AC73C /* convolution.cpp */,
 				0DA011432541C8D90088D515 /* tools.cpp */,
-				0D427E00254085EC00D4E878 /* convolver.cpp */,
 				0D427E03254085EC00D4E878 /* CircularBufferArray.cpp */,
 				0D427E01254085EC00D4E878 /* ExpSineSweep.cpp */,
 				0D427E02254085EC00D4E878 /* ParallelBufferPrinter.cpp */,
@@ -731,7 +736,7 @@
 				0D427E06254085F500D4E878 /* ExpSineSweep.cpp in Sources */,
 				BCF4CD122CE34685160881DA /* PluginEditor.cpp in Sources */,
 				82B913906AE929FED853EC08 /* include_juce_audio_basics.mm in Sources */,
-				0D427E05254085F200D4E878 /* convolver.cpp in Sources */,
+				0DE6D72825AA687F007AC73C /* convolution.cpp in Sources */,
 				8ACF7DD5F6A03F917F20712A /* include_juce_audio_devices.mm in Sources */,
 				040BA8F14D6BF684E3429EDD /* include_juce_audio_formats.mm in Sources */,
 				A7E1E74D774B95DA7E74FDFE /* include_juce_audio_plugin_client_utils.cpp in Sources */,
@@ -745,6 +750,7 @@
 				DA2792293DB5D5221D57BC7E /* include_juce_events.mm in Sources */,
 				197BDC60554050B207212B80 /* include_juce_graphics.mm in Sources */,
 				0D427E04254085F000D4E878 /* CircularBufferArray.cpp in Sources */,
+				0DE6D72B25AA69FA007AC73C /* ir.cpp in Sources */,
 				6B6F2FE7ADA32460DF9042AC /* include_juce_gui_basics.mm in Sources */,
 				BFE0CC7678C821A0DC36B230 /* include_juce_gui_extra.mm in Sources */,
 				0D427E07254085F700D4E878 /* ParallelBufferPrinter.cpp in Sources */,
