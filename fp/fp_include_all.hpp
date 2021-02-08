@@ -1,6 +1,8 @@
 /* 
  * Copyright © 2020 Flixor. 
- *
+ */
+
+/*
  * The fp namespace is to encompass all custom functions and classes,
  * as a sort of library-in-development.
  * This header is to include everything in the namespace easily,

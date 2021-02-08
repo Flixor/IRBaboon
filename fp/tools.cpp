@@ -1,14 +1,13 @@
-//
-//  Copyright © 2020 Felix Postma. 
-//
+/*
+ *  Copyright © 2021 Felix Postma. 
+ */
 
-#include <stdio.h>
 
 #include <fp_include_all.hpp>
-#include <JuceHeader.h>
 
 
 namespace fp {
+
 namespace tools {
 	
 	

@@ -1,16 +1,18 @@
-//
-//  Copyright © 2021 Felix Postma. 
-//
-
+/*
+ *  Copyright © 2021 Felix Postma. 
+ */
 
 #pragma once
-
 
 #include <fp_include_all.hpp>
 #include <JuceHeader.h>
 
 
 namespace fp {
+
+
+/* The ir namespace contains impulse response manipulation functions.
+ */	
 
 namespace ir {
 

@@ -1,16 +1,20 @@
-//
-//  Copyright © 2020 Felix Postma. 
-//
-
+/*
+ *  Copyright © 2021 Felix Postma. 
+ */
 
 #pragma once
-
 
 #include <fp_include_all.hpp>
 #include <JuceHeader.h>
 
 
 namespace fp {
+
+
+/* 
+ * 
+ */	
+	
 namespace tools {
 
 	/* in-place stereo sum to mono, into ch0 of buffer */
