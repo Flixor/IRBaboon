@@ -317,6 +317,60 @@ namespace tools {
 		return result;
 	}
 	
+
+	
+	AudioBuffer<float> fftTransform(AudioBuffer<float> &buffer, bool formatAmplPhase) {
+		
+		int N = tools::nextPowerOfTwo(buffer.getNumSamples());
+		int fftBlockSize = N * 2;
+		
+		AudioSampleBuffer fftBuffer (buffer.getNumChannels(), fftBlockSize);
+		fftBuffer.clear();
+		fftBuffer.copyFrom(0, 0, buffer.getReadPointer(0), buffer.getNumSamples());
+		
+		BigInteger fftBitMask = (BigInteger) N;
+		dsp::FFT::FFT fftForward    (fftBitMask.getHighestBit());
+		
+		for (int channel = 0; channel < fftBuffer.getNumChannels(); channel++){
+			float* fftBufferPtr = fftBuffer.getWritePointer(channel);
+			fftForward.performRealOnlyForwardTransform(fftBufferPtr, true);
+			
+			if(formatAmplPhase){
+				for (int bin = 0; bin <= N; bin += 2){
+					*(fftBufferPtr + bin) = tools::binAmpl(fftBufferPtr + bin);
+					*(fftBufferPtr + bin + 1) = tools::binPhase(fftBufferPtr + bin);
+				}
+			}
+		}
+		
+		return fftBuffer;
+	}
+	
+	
+	
+	
+	AudioBuffer<float> fftInvTransform(AudioBuffer<float> &buffer) {
+		
+		int fftSize = buffer.getNumSamples();
+		int N  = fftSize / 2;
+		
+		AudioSampleBuffer fftBuffer (buffer);
+		
+		BigInteger fftBitMask = (BigInteger) N;
+		dsp::FFT::FFT fftInverse   (fftBitMask.getHighestBit());
+		
+		for (int channel = 0; channel < fftBuffer.getNumChannels(); channel++){
+			float* fftBufferPtr = fftBuffer.getWritePointer(channel);
+			fftInverse.performRealOnlyInverseTransform(fftBufferPtr);
+		}
+		
+		fftBuffer.setSize(fftBuffer.getNumChannels(), N, true); // performRealOnlyInverseTransform() returns the result in the first half of the buffer
+		
+		return fftBuffer;
+	}
+
+
+	
 } // tools
 } // fp
 
