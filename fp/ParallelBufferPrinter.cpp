@@ -1,11 +1,9 @@
-//
-//  Copyright © 2020 Felix Postma. 
-//
-
+/*
+ *  Copyright © 2021 Felix Postma. 
+ */
 
 
 #include <fp_include_all.hpp>
-
 
 
 namespace fp {
