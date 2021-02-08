@@ -1,0 +1,1 @@
+This directory holds all the code in the `fp` namespace, which comprises all my DSP and helper tool modules.
