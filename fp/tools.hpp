@@ -87,11 +87,7 @@ namespace tools {
 	 * Beware: RealOnly also means N/2+1 bins have data in them! (last one is nyquist) */
 	AudioBuffer<float> fftTransform (AudioBuffer<float>& buffer, bool formatAmplPhase = false);
 	AudioBuffer<float> fftInvTransform (AudioBuffer<float>& buffer);
-
-	/* Fastest mod method (when using clang on x86)
-	 * https://stackoverflow.com/a/33333636/7918261 */
-	int fast_mod(const int input, const int ceil); 
-
+	
 	
 } // tools
 } // fp
