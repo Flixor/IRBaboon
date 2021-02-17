@@ -211,7 +211,7 @@ IRBaboonAudioProcessorEditor::~IRBaboonAudioProcessorEditor()
 
 
 void IRBaboonAudioProcessorEditor::setStartCaptureTarget(){
-	processor.startCapture(IRBaboonAudioProcessor::IR_TARGET);
+	processor.startCapture(IRBaboonAudioProcessor::IRType::Target);
 	captureBaseButton.setVisible(false);
 	presweepSilenceMenu.setVisible(false);
 	int ms = std::ceil( 1000 * ((float) processor.getTotalSweepBreakSamples() + (float) presweepSilence) / ((float) processor.getSamplerate()) );
@@ -222,7 +222,7 @@ void IRBaboonAudioProcessorEditor::setStartCaptureTarget(){
 }
 
 void IRBaboonAudioProcessorEditor::setStartCaptureBase(){
-	processor.startCapture(IRBaboonAudioProcessor::IR_BASE);
+	processor.startCapture(IRBaboonAudioProcessor::IRType::Base);
 	captureTargButton.setVisible(false);
 	presweepSilenceMenu.setVisible(false);
 	int ms = std::ceil( 1000 * ((float) processor.getTotalSweepBreakSamples() + (float) presweepSilence) / ((float) processor.getSamplerate()) );

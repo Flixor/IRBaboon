@@ -47,21 +47,25 @@ public:
 			JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ReferenceCountedBuffer)
 	};
 	
-	enum IRType {
-		IR_NONE,
-		IR_TARGET,
-		IR_BASE
+	enum class IRType {
+		None,
+		Target,
+		Base
 	};
 	
-	enum IRCapState {
-		IRCAP_IDLE,
-		IRCAP_PREP,
-		IRCAP_CAPTURE,
-		IRCAP_END,
+	enum class IRCapState {
+		// IRCAP_IDLE,
+		// IRCAP_PREP,
+		// IRCAP_CAPTURE,
+		// IRCAP_END,		
+		Idle,
+		Prep,
+		Capture,
+		End,
 	};
 	
 	struct IRCapStruct {
-		IRType 	type;
+		IRType 		type;
 		IRCapState	state;
 		bool		playSweep;
 		bool 		doFadeout;
@@ -180,7 +184,7 @@ private:
 	std::string printDirectorySavedIRs = "/Users/flixor/Projects/IRBaboon/IRBaboonCombined/Debug/sweepir/";
 	std::string savedIRExtension = ".sweepandir";
 
-	IRType saveIRCustomType = IR_NONE;
+	IRType saveIRCustomType = IRType::None;
 
 	float zoomTargdB = 0.0;
 	float zoomBasedB = 0.0;

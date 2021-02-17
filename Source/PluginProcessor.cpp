@@ -288,7 +288,7 @@ void IRBaboonAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
 	 * Capture input
 	 */
 
-	if (IRCapture.state == IRCAP_CAPTURE){
+	if (IRCapture.state == IRCapState::Capture){
 		
 		inputCaptureArray.getWriteBufferPtr()->copyFrom(0, 0, micBuffer, 0, 0, generalHostBlockSize);
 		inputCaptureArray.incrWriteIndex();
@@ -301,42 +301,42 @@ void IRBaboonAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
 			 * a 3 buffers-to-the-right offset was used before, but actually 0 seems to work fine now too.
 			 */
 			
-			if (IRCapture.type == IR_TARGET) {
+			if (IRCapture.type == IRType::Target) {
 				sweepTargPtr->getBuffer()->makeCopyOf(inputCaptureArray.consolidate(0));
 				IRTargPtr->getBuffer()->makeCopyOf(convolution::deconvolve(sweepTargPtr->getBuffer(), &sweepBufForDeconv, sampleRate));
 
-				saveIRCustomType = IR_TARGET;
+				saveIRCustomType = IRType::Target;
 			}
-			else if (IRCapture.type == IR_BASE) {
+			else if (IRCapture.type == IRType::Base) {
 				sweepBasePtr->getBuffer()->makeCopyOf(inputCaptureArray.consolidate(0));
 				IRBasePtr->getBuffer()->makeCopyOf(convolution::deconvolve(sweepBasePtr->getBuffer(), &sweepBufForDeconv, sampleRate));
 
-				saveIRCustomType = IR_BASE;
+				saveIRCustomType = IRType::Base;
 			}
 			
 
-			IRCapture.type = IR_NONE;
+			IRCapture.type = IRType::None;
 
 			/* create filter if both target and base have been captured */
 			if (IRTargPtr->bufferNotEmpty() && IRBasePtr->bufferNotEmpty()){
 				createIRFilt();
 			}
 			
-			IRCapture.state = IRCAP_END;
+			IRCapture.state = IRCapState::End;
 			
 			/* run print thumbnail thread */
 			notify();
 			
 		} // when capture is done
 		
-	} // if (IRCapture.state == IRCAP_CAPTURE)
+	} // if (IRCapture.state == IRCapState::Capture)
 
 	
 	/*
 	 * Play empty buffers before starting sweep / capture
 	 */
 	
-	if (IRCapture.state == IRCAP_PREP) {
+	if (IRCapture.state == IRCapState::Prep) {
 	
 		/* first, fade out last buffer of throughput */
 		if (IRCapture.doFadeout) {
@@ -350,7 +350,7 @@ void IRBaboonAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
 		
 		/* when done: play sweep now, start input capture next block */
 		if (buffersWaitForInputCapture <= 0){
-			IRCapture.state = IRCAP_CAPTURE;
+			IRCapture.state = IRCapState::Capture;
 			IRCapture.playSweep = true;
 		}
 	}
@@ -383,14 +383,14 @@ void IRBaboonAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
 	 * Capture / sweep done: empty buffers before resuming throughput
 	 */
 	
-	if (IRCapture.state == IRCAP_END) {
+	if (IRCapture.state == IRCapState::End) {
 		buffersWaitForResumeThroughput--;
 
 		if (buffersWaitForResumeThroughput > 0){
 			buffer.clear();
 		}
 		else {
-			IRCapture.state = IRCAP_IDLE;
+			IRCapture.state = IRCapState::Idle;
 			/* fade in on first buffer */
 			tools::linearFade (&buffer, true, 0, buffer.getNumSamples());
 		}
@@ -405,7 +405,7 @@ void IRBaboonAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
 	// ===============================
 	
 	
-	if (IRCapture.state == IRCAP_IDLE) {
+	if (IRCapture.state == IRCapState::Idle) {
 
 		/* set IR to convolve with */
 		if (playFiltered)
@@ -559,7 +559,7 @@ void IRBaboonAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
 			}
 		}
 	
-	} // if (IRCapture.state == IRCAP_IDLE)  [aka not playing sweep / capturing]
+	} // if (IRCapture.state == IRCapState::Idle)  [aka not playing sweep / capturing]
 	
 		
 		
@@ -592,10 +592,10 @@ void IRBaboonAudioProcessor::processBlockBypassed(AudioBuffer<float>& buffer, Mi
 
 
 void IRBaboonAudioProcessor::startCapture(IRType type){
-	if (type == IR_NONE) return;
+	if (type == IRType::None) return;
 	
 	IRCapture.type = type;
-	IRCapture.state = IRCAP_PREP;
+	IRCapture.state = IRCapState::Prep;
 	IRCapture.doFadeout = true;
 
 	buffersWaitForInputCapture = samplesWaitBeforeInputCapture / processBlockSize;
@@ -666,13 +666,13 @@ void IRBaboonAudioProcessor::saveCustomExt(IRType type){
 	std::string name = getDateTimeString();
 
 	switch (type) {
-		case IR_BASE:
+		case IRType::Base:
 			name += " IR Base";
 			savebuf.copyFrom(0, 0, *(sweepBasePtr->getBuffer()), 0, 0, totalSweepBreakSamples);
 			savebuf.copyFrom(1, 0, *(IRBasePtr->getBuffer()), 0, 0, totalSweepBreakSamples);
 			break;
 
-		case IR_TARGET:
+		case IRType::Target:
 			name += " IR Target";
 			savebuf.copyFrom(0, 0, *(sweepTargPtr->getBuffer()), 0, 0, totalSweepBreakSamples);
 			savebuf.copyFrom(1, 0, *(IRTargPtr->getBuffer()), 0, 0, totalSweepBreakSamples);
