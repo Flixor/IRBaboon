@@ -41,7 +41,7 @@ namespace convolution {
 	 * because the upper bin range will eventually go into negative freq bin territory, where the contents of the bins are 0,
 	 * but these bins still count towards the average. 
 	 * negative logAvg = linear average instead. */
-	void averagingFilter (AudioBuffer<float>& buffer, double octaveFraction, double sampleRate, bool logAvg, bool nullifyPhase = false, bool nullifyAmplitude = false);
+	void averagingFilter (AudioBuffer<float>* buffer, double octaveFraction, double sampleRate, bool logAvg, bool nullifyPhase = false, bool nullifyAmplitude = false);
 
 } // convolution
 	
