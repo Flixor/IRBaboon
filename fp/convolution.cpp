@@ -25,18 +25,18 @@ AudioBuffer<float> convolvePeriodic(AudioSampleBuffer& buffer1, AudioSampleBuffe
 	int numChannelsAudio = buffer1.getNumChannels();
 	int numChannelsIR = buffer2.getNumChannels();
 	
-	ChannelLayout chLayout = unknown;
+	ChannelLayout chLayout = ChannelLayout::unknown;
 	
 	if (numChannelsIR == 1 && numChannelsAudio == 1)
-		chLayout = IRMonoAudioMono;
+		chLayout = ChannelLayout::IRMonoAudioMono;
 	else if (numChannelsIR == 1 && numChannelsAudio == 2)
-		chLayout = IRMonoAudioStereo;
+		chLayout = ChannelLayout::IRMonoAudioStereo;
 	else if (numChannelsIR == 2 && numChannelsAudio == 1)
-		chLayout = IRStereoAudioMono;
+		chLayout = ChannelLayout::IRStereoAudioMono;
 	else if (numChannelsIR == 2 && numChannelsAudio == 2)
-		chLayout = IRStereoAudioStereo;
+		chLayout = ChannelLayout::IRStereoAudioStereo;
 	
-	if (chLayout == unknown){
+	if (chLayout == ChannelLayout::unknown){
 		DBG("Either buffer1 or buffer2 is not mono nor stereo. Abort abort \n");
 		return outputBuffer;
 	}
@@ -93,10 +93,10 @@ AudioBuffer<float> convolvePeriodic(AudioSampleBuffer& buffer1, AudioSampleBuffe
 	
 	int irFftFwdChMax = 0;
 	switch (chLayout) {
-		case IRMonoAudioMono: 		irFftFwdChMax = 1; break;
-		case IRMonoAudioStereo:		irFftFwdChMax = 1; break;
-		case IRStereoAudioStereo:	irFftFwdChMax = 2; break;
-		case IRStereoAudioMono:		irFftFwdChMax = 1; break;
+		case ChannelLayout::IRMonoAudioMono:		irFftFwdChMax = 1; break;
+		case ChannelLayout::IRMonoAudioStereo:		irFftFwdChMax = 1; break;
+		case ChannelLayout::IRStereoAudioStereo:	irFftFwdChMax = 2; break;
+		case ChannelLayout::IRStereoAudioMono:		irFftFwdChMax = 1; break;
 		default: break;
 	}
 	
@@ -117,7 +117,7 @@ AudioBuffer<float> convolvePeriodic(AudioSampleBuffer& buffer1, AudioSampleBuffe
 															  // copyFrom() doesn't 'see' the end of the buffer; with this conditional copyFrom() doesn't go out of bounds of the buffer
 															  )	;
 			}
-			if (chLayout == IRStereoAudioMono)
+			if (chLayout == ChannelLayout::IRStereoAudioMono)
 				tools::sumToMono(&irFftBufferArray[processIncrementor]);
 			for (int channel = 0; channel < irFftFwdChMax; channel++)
 				fftIR.performRealOnlyForwardTransform(irFftBufferArray[processIncrementor].getWritePointer(channel, 0), true);
@@ -174,7 +174,7 @@ AudioBuffer<float> convolvePeriodic(AudioSampleBuffer& buffer1, AudioSampleBuffe
 				float* inplaceBufferPtr = inplaceBuffer.getWritePointer(channel, 0);
 				
 				int irCh = 0;
-				if (chLayout == IRMonoAudioMono || chLayout == IRStereoAudioStereo)
+				if (chLayout == ChannelLayout::IRMonoAudioMono || chLayout == ChannelLayout::IRStereoAudioStereo)
 					irCh = channel;
 				else // if IRStereoAudioMono: ir has been summed into channel 0
 					irCh = 0;
@@ -257,18 +257,18 @@ AudioBuffer<float> convolveNonPeriodic(AudioSampleBuffer& buffer1, AudioSampleBu
 	int numChannelsAudio = inputBuffer.getNumChannels();
 	int numChannelsIR = irBuffer.getNumChannels();
 	
-	ChannelLayout chLayout = unknown;
+	ChannelLayout chLayout = ChannelLayout::unknown;
 	
 	if (numChannelsIR == 1 && numChannelsAudio == 1)
-		chLayout = IRMonoAudioMono;
+		chLayout = ChannelLayout::IRMonoAudioMono;
 	else if (numChannelsIR == 1 && numChannelsAudio == 2)
-		chLayout = IRMonoAudioStereo;
+		chLayout = ChannelLayout::IRMonoAudioStereo;
 	else if (numChannelsIR == 2 && numChannelsAudio == 1)
-		chLayout = IRStereoAudioMono;
+		chLayout = ChannelLayout::IRStereoAudioMono;
 	else if (numChannelsIR == 2 && numChannelsAudio == 2)
-		chLayout = IRStereoAudioStereo;
+		chLayout = ChannelLayout::IRStereoAudioStereo;
 	
-	if (chLayout == unknown){
+	if (chLayout == ChannelLayout::unknown){
 		printf("Either buffer1 or buffer2 is not mono nor stereo. Abort abort \n");
 		inputBuffer.clear();
 		return inputBuffer;
@@ -295,10 +295,10 @@ AudioBuffer<float> convolveNonPeriodic(AudioSampleBuffer& buffer1, AudioSampleBu
 	
 	int irFftFwdChMax = 0;
 	switch (chLayout) {
-		case IRMonoAudioMono: 		irFftFwdChMax = 1; break;
-		case IRMonoAudioStereo:		irFftFwdChMax = 1; break;
-		case IRStereoAudioStereo:	irFftFwdChMax = 2; break;
-		case IRStereoAudioMono:		tools::sumToMono(&irBuffer);
+		case ChannelLayout::IRMonoAudioMono: 		irFftFwdChMax = 1; break;
+		case ChannelLayout::IRMonoAudioStereo:		irFftFwdChMax = 1; break;
+		case ChannelLayout::IRStereoAudioStereo:	irFftFwdChMax = 2; break;
+		case ChannelLayout::IRStereoAudioMono:		tools::sumToMono(&irBuffer);
 			irFftFwdChMax = 1; break;
 		default: break;
 	}
@@ -316,7 +316,7 @@ AudioBuffer<float> convolveNonPeriodic(AudioSampleBuffer& buffer1, AudioSampleBu
 		
 		
 		int irCh = 0;
-		if (chLayout == IRMonoAudioMono || chLayout == IRStereoAudioStereo)
+		if (chLayout == ChannelLayout::IRMonoAudioMono || chLayout == ChannelLayout::IRStereoAudioStereo)
 			irCh = channel;
 		else 	// if IRStereoAudioMono: ir has been summed into channel 0
 			irCh = 0;

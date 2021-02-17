@@ -15,7 +15,7 @@ namespace fp {
  * and helpers only used by convolution.
  */	
 
-enum ChannelLayout{
+enum class ChannelLayout {
 	unknown,
 	IRMonoAudioMono,
 	IRMonoAudioStereo,
