@@ -25,6 +25,22 @@ enum class ChannelLayout {
 
 namespace convolution {
 	
+class Convolver : public Thread {
+
+#ifdef JUCE_UNIT_TESTS
+    friend class FpConvolutionTest;
+#endif
+
+public:
+	Convolver();
+	~Convolver();
+
+private:
+
+};
+
+
+
 	
 /* convolve() uses complex multiplication
  * buffer1 is seen as "input audio" and buffer2 as the "IR" to convolve with */
@@ -45,16 +61,19 @@ void averagingFilter (AudioBuffer<float>* buffer, double octaveFraction, double 
 
 
 
-
+/*
+ * Unit tests
+ */
 #ifdef JUCE_UNIT_TESTS
-class FpConvolutionTest : public UnitTest
-{
+class FpConvolutionTest : public UnitTest{
+
 public:
-    FpConvolutionTest() : UnitTest("FpConvolutionTest", "FpConvolution") {};
+    FpConvolutionTest() : UnitTest("FpConvolutionTest", "fp convolution") {};
     
     void runTest() override;
     
 private:
+
 };
 
 static FpConvolutionTest fpConvolutionTester;

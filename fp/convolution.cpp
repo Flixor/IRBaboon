@@ -11,6 +11,15 @@ namespace fp {
 namespace convolution {
 
 
+Convolver::Convolver() :
+	Thread("Convolver loading"){
+
+}
+
+
+
+
+
 AudioBuffer<float> convolvePeriodic(AudioSampleBuffer& buffer1, AudioSampleBuffer& buffer2, int processBlockSize){
 	
 	/*
