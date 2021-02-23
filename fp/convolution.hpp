@@ -1,5 +1,5 @@
 /*
- *  Copyright © 2021 Felix Postma. 
+ *  Felix Postma 2021
  */
 
 #pragma once
@@ -42,6 +42,24 @@ AudioBuffer<float> deconvolve(AudioBuffer<float>* numeratorBuffer, AudioBuffer<f
  * but these bins still count towards the average. 
  * negative logAvg = linear average instead. */
 void averagingFilter (AudioBuffer<float>* buffer, double octaveFraction, double sampleRate, bool logAvg, bool nullifyPhase = false, bool nullifyAmplitude = false);
+
+
+
+
+#ifdef JUCE_UNIT_TESTS
+class FpConvolutionTest : public UnitTest
+{
+public:
+    FpConvolutionTest() : UnitTest("FpConvolutionTest", "FpConvolution") {};
+    
+    void runTest() override;
+    
+private:
+};
+
+static FpConvolutionTest fpConvolutionTester;
+
+#endif
 
 } // convolution
 	
