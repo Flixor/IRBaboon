@@ -8,3 +8,5 @@ Builds/MacOSX/build/
 *.sublime-project
 
 *.sublime-workspace
+
+fp/fpUnitTester/Builds/

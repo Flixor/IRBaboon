@@ -546,6 +546,18 @@ void averagingFilter (AudioSampleBuffer* buffer, double octaveFraction, double s
 }
 
 
+#ifdef JUCE_UNIT_TESTS
+
+void FpConvolutionTest::runTest() {
+
+	beginTest("Empty test");
+	size_t success = 1;
+	expect(success);
+
+}
+
+#endif
+
 	
 } // convolution
 } // fp
