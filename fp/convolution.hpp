@@ -72,7 +72,7 @@ private:
 	CircularBufferArray inputFftBufArray;
 	CircularBufferArray irFftBufArray;
 	
-	dsp::FFT *fftIR, *fftForward, *fftInverse;
+	std::unique_ptr<juce::dsp::FFT> fftIR, fftForward, fftInverse;
 	AudioBuffer<float> inplaceBuf;
 	AudioBuffer<float> overlapBuf;
 	

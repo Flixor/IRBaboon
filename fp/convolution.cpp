@@ -24,10 +24,6 @@ Convolver::Convolver(ProcessBlockSize size) :
 
 Convolver::~Convolver(){
 
-	delete fftIR;
-	delete fftForward;
-	delete fftInverse;
-
 	stopThread(5000); 
 }
 
@@ -49,9 +45,9 @@ bool Convolver::prepare(double sampleRate, int samplesPerBlock){
 	
 	// initialise FFTs
 	BigInteger fftBitMask = (BigInteger) N;
-	fftIR = new dsp::FFT::FFT (fftBitMask.getHighestBit());
-	fftForward = new dsp::FFT::FFT  (fftBitMask.getHighestBit());
-	fftInverse = new dsp::FFT::FFT  (fftBitMask.getHighestBit());
+	fftIR.reset 	 (new dsp::FFT(fftBitMask.getHighestBit()));
+	fftForward.reset (new dsp::FFT(fftBitMask.getHighestBit()));
+	fftInverse.reset (new dsp::FFT(fftBitMask.getHighestBit()));
 	
 	// initialise auxiliary buffers
 	inplaceBuf.setSize(generalInputAudioChannels, fftBlockSize);
