@@ -10,12 +10,16 @@
 
 #include <ctime>
 
+using namespace fp::convolution;
 
 
 class IRBaboonAudioProcessor  : public AudioProcessor, public Thread
 {
 public:
 	
+    IRBaboonAudioProcessor();
+    ~IRBaboonAudioProcessor();
+
 	/* From Juce tutorial
 	 https://docs.juce.com/master/tutorial_looping_audio_sample_buffer_advanced.html
 	 */
@@ -53,11 +57,7 @@ public:
 		Base
 	};
 	
-	enum class IRCapState {
-		// IRCAP_IDLE,
-		// IRCAP_PREP,
-		// IRCAP_CAPTURE,
-		// IRCAP_END,		
+	enum class IRCapState {	
 		Idle,
 		Prep,
 		Capture,
@@ -70,9 +70,6 @@ public:
 		bool		playSweep;
 		bool 		doFadeout;
 	};
-	
-    IRBaboonAudioProcessor();
-    ~IRBaboonAudioProcessor();
 
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
@@ -134,8 +131,9 @@ public:
 	
 	
 private:
+
 	int sampleRate = 48000;
-	int generalHostBlockSize = 0;
+	int hostBlockSize = 0;
 	
 
 	int silenceEndLengthSamples = 16384;
@@ -161,7 +159,7 @@ private:
 	ReferenceCountedBuffer::Ptr IRBasePtr;
 	ReferenceCountedBuffer::Ptr IRFiltPtr;
 	AudioSampleBuffer IRpulse;
-	AudioSampleBuffer* IRtoConvolve;
+	// AudioSampleBuffer* IRtoConvolve;
 	
 	bool playFiltered = false;
 	
@@ -173,14 +171,6 @@ private:
 	float outputVolumedB = -30.0;
 	
 	
-	std::string printNames[5] = {
-		"sweep target",
-		"sweep base",
-		"IR target",
-		"IR base",
-		"IR filter"
-	};
-	std::string printDirectoryDebug = "/Users/flixor/Projects/IRBaboon/IRBaboonCombined/Debug/";
 	std::string printDirectorySavedIRs = "/Users/flixor/Projects/IRBaboon/IRBaboonCombined/Debug/sweepir/";
 	std::string savedIRExtension = ".sweepandir";
 
@@ -196,29 +186,32 @@ private:
 	
 	
 	// ====== convolution ==========
-	int irPartitions;
+	// int irPartitions;
 	
-	const int processBlockSize = 256;
-	int N, fftBlockSize;
+	// const int processBlockSize = 256;
+	// int N, fftBlockSize;
 
-	CircularBufferArray inputBufferArray;
-	CircularBufferArray audioFftBufferArray;
-	CircularBufferArray irFftBufferArray;
+	// CircularBufferArray inputBufArray;
+	// CircularBufferArray inputFftBufArray;
+	// CircularBufferArray irFftBufArray;
 	
-	dsp::FFT *fftIR, *fftForward, *fftInverse;
-	AudioSampleBuffer inplaceBuffer;
-	AudioSampleBuffer overlapBuffer;
+	// dsp::FFT *fftIR, *fftForward, *fftInverse;
+	// AudioSampleBuffer inplaceBuf;
+	// AudioSampleBuffer overlapBuf;
 	
-	CircularBufferArray convResultBufferArray;
-	CircularBufferArray outputBufferArray;
-	CircularBufferArray bypassOutputBufferArray;
+	// CircularBufferArray convResultBufArray;
+	// CircularBufferArray outputBufArray;
+	CircularBufferArray bypassOutputBufArray;
 	
-	int inputBufferSampleIndex = 0;
-	int outputBufferSampleIndex = 0;
-	int outputSampleIndex = 0;
-	int blocksToProcess = 0;
-	int blocksToOutputBuffer = 0;
-	int savedIndex = 0;
+	// int inputBufferSampleIndex = 0;
+	// int outputBufferSampleIndex = 0;
+	// int outputSampleIndex = 0;
+	// int blocksToProcess = 0;
+	// int blocksToOutputBuffer = 0;
+	// int savedIndex = 0;
+
+	Convolver convolver;
+
 	
 	
 	/* Print and thumbnail thread */
@@ -232,6 +225,15 @@ private:
 	
 	// ====== debug ==========
 	ParallelBufferPrinter debugPrinter;
+
+	std::string printNames[5] = {
+		"sweep target",
+		"sweep base",
+		"IR target",
+		"IR base",
+		"IR filter"
+	};
+	std::string printDirectoryDebug = "/Users/flixor/Projects/IRBaboon/IRBaboonCombined/Debug/";
 	
 
 

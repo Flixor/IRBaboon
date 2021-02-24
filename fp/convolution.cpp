@@ -11,13 +11,297 @@ namespace fp {
 namespace convolution {
 
 
-Convolver::Convolver() :
-	Thread("Convolver loading"){
+/******************************
+ * Convolver class
+ *******************************/
 
+Convolver::Convolver(ProcessBlockSize size) :
+	Thread("Convolver loading"),
+	processBlockSize (static_cast<int>(size)) {
+
+	startThread();
+}
+
+Convolver::~Convolver(){
+
+	delete fftIR;
+	delete fftForward;
+	delete fftInverse;
+
+	stopThread(5000); 
+}
+
+
+bool Convolver::prepare(double sampleRate, int samplesPerBlock){
+
+	hostBlockSize = samplesPerBlock;
+
+	/* 
+	 * constructor
+	 */
+
+	/* N needs to officially be bigger than (processBlockSize * 2 - 1) */
+	N = processBlockSize * 2;
+	fftBlockSize = N * 2;
+	
+	// initialise numChannels and numSamples for input fft array buffers
+	inputFftBufArray.clearAndResize(0, generalInputAudioChannels, fftBlockSize);
+	
+	// initialise FFTs
+	BigInteger fftBitMask = (BigInteger) N;
+	fftIR = new dsp::FFT::FFT (fftBitMask.getHighestBit());
+	fftForward = new dsp::FFT::FFT  (fftBitMask.getHighestBit());
+	fftInverse = new dsp::FFT::FFT  (fftBitMask.getHighestBit());
+	
+	// initialise auxiliary buffers
+	inplaceBuf.setSize(generalInputAudioChannels, fftBlockSize);
+	inplaceBuf.clear();
+	
+	overlapBuf.setSize(generalInputAudioChannels, processBlockSize);
+	overlapBuf.clear();
+
+
+
+	/* 
+	 * prepareToPlay
+	 */
+
+	/* init circ buf arrays for convolution */
+	int inputArraySize = (int) std::ceil((float) hostBlockSize / (float) processBlockSize);
+	/* outputArraySize needs to be rounded up to the closest power of 2 */
+	int outputArraySize = tools::nextPowerOfTwo(std::ceil((float) processBlockSize / (float) hostBlockSize) + 1);
+
+	/* apply array sizes */
+	inputBufArray.		 clearAndResize(inputArraySize, generalInputAudioChannels, fftBlockSize);
+	convResultBufArray.	 clearAndResize(inputArraySize, generalInputAudioChannels, fftBlockSize);
+	outputBufArray.		 clearAndResize(outputArraySize, generalInputAudioChannels, hostBlockSize);
+	bypassOutputBufArray.clearAndResize(outputArraySize, generalInputAudioChannels, hostBlockSize);
+	
+	if (inputBufArray.getArraySize() > inputFftBufArray.getArraySize()){
+		inputFftBufArray.clearAndResize(inputBufArray.getArraySize(), generalInputAudioChannels, fftBlockSize);
+	}
+	
+	/* size is always at least 2, and we always want it to start 1 above the first one for proper latency behaviour */
+	outputBufArray.setReadIndex(1);
+	
+	inputBufferSampleIndex = 0;
+	outputBufferSampleIndex = 0;
+	savedIndex = inputFftBufArray.getArraySize() - 1;
+	
+	/* 100 = IRPulse length */
+	irPartitions = (int) std::ceil((float) 100 / (float) processBlockSize);
+	irFftBufArray.clearAndResize(irPartitions, 1, fftBlockSize);
+	
+	/* tricky tricks */
+	int newAudioArraySize = std::max(irPartitions, inputBufArray.getArraySize());
+	inputFftBufArray.changeArraySize(newAudioArraySize);
+	inputFftBufArray.setReadIndex(inputFftBufArray.getWriteIndex());
+	inputFftBufArray.decrReadIndex();
+	savedIndex = inputFftBufArray.getReadIndex();
+
+
+	outputBuf.setSize(generalInputAudioChannels, hostBlockSize);
+	
+	return true;
 }
 
 
 
+void Convolver::setIR(AudioBuffer<float>& IR){
+
+	IRtoConvolve = IR;
+}
+
+
+
+bool Convolver::inputSamples(AudioBuffer<float>& input){
+
+	if (input.getNumSamples() == 0)
+		return false;
+
+	int currentHostBlockSize = hostBlockSize;
+
+	/*
+	 * Copy input to input buffers, and input buffers to audio fft array
+	 */
+
+	for (int sample = 0; sample < currentHostBlockSize; sample++){
+		for (int channel = 0; channel < generalInputAudioChannels; channel++){
+			inputBufArray.getWriteBufferPtr()->setSample(channel, inputBufferSampleIndex, input.getSample(channel, sample));
+		}
+		inputBufferSampleIndex++;
+		
+		/* when input buffer completed: copy to fft buffer array, perform fft, incr to next input buffers */
+		if (inputBufferSampleIndex >= processBlockSize){
+			
+			inputBufArray.setReadIndex(inputBufArray.getWriteIndex());
+			inputFftBufArray.getWriteBufferPtr()->makeCopyOf(*inputBufArray.getReadBufferPtr());
+			
+			
+			for (int channel = 0; channel < generalInputAudioChannels; channel++){
+				fftForward->performRealOnlyForwardTransform(inputFftBufArray.getWriteBufferPtr()->getWritePointer(channel, 0), true);
+			}
+			inputFftBufArray.incrWriteIndex();
+			
+			inputBufArray.incrWriteIndex();
+			inputBufArray.getWriteBufferPtr()->clear();
+			
+			inputBufferSampleIndex = 0;
+			blocksToProcess++;
+		}
+	}
+
+	
+	/*
+	 * Process blocks
+	 */
+
+	while (blocksToProcess > 0){
+		
+		/* always read an IR block */
+		irFftBufArray.getWriteBufferPtr()->clear();
+
+		irFftBufArray.getWriteBufferPtr()->copyFrom(0, 0, IRtoConvolve, 0, irFftBufArray.getWriteIndex() * processBlockSize, processBlockSize);
+		
+		fftIR->performRealOnlyForwardTransform(irFftBufArray.getWriteBufferPtr()->getWritePointer(0, 0), true);
+		
+		irFftBufArray.incrWriteIndex();
+		
+		
+		
+		/* DSP loop */
+		convResultBufArray.getWriteBufferPtr()->clear();
+		
+		inputFftBufArray.setReadIndex(savedIndex);
+		inputFftBufArray.incrReadIndex();
+		savedIndex = inputFftBufArray.getReadIndex();
+		
+		for (int channel = 0; channel < generalInputAudioChannels; channel++) {
+			
+			float* overlapBufferPtr = overlapBuf.getWritePointer(channel, 0);
+			float* convResultPtr = convResultBufArray.getWriteBufferPtr()->getWritePointer(channel, 0);
+			
+			int irFftReadIndex = 0; // IR fft index should always start at 0 and not fold back, so its readIndex is not used
+			inputFftBufArray.setReadIndex(savedIndex); // for iteration >1 of the channel
+			
+			while (irFftReadIndex < irFftBufArray.getArraySize()){
+				
+				inplaceBuf.makeCopyOf(*inputFftBufArray.getReadBufferPtr());
+				float* inplaceBufferPtr = inplaceBuf.getWritePointer(channel, 0);
+
+				const float* irFftPtr = irFftBufArray.getBufferPtrAtIndex(irFftReadIndex)->getReadPointer(0, 0);
+				
+				/* complex multiplication of 1 audio fft block and 1 IR fft block */
+				for (int i = 0; i <= N; i += 2){
+					tools::complexMul(inplaceBufferPtr + i,
+										 inplaceBufferPtr + i + 1,
+										 irFftPtr[i],
+										 irFftPtr[i + 1]);
+				}
+				
+				/* sum multiplications in convolution result buffer */
+				for (int i = 0; i < fftBlockSize; i++){
+					convResultPtr[i] += inplaceBufferPtr[i];
+				}
+				irFftReadIndex++;
+				inputFftBufArray.decrReadIndex();
+			}
+			
+			/* FDL method -> IFFT after summing */
+			fftInverse->performRealOnlyInverseTransform(convResultPtr);
+			
+			/* add existing overlap and save new overlap */
+			for (int i = 0; i < processBlockSize; i++){
+				convResultPtr[i] += overlapBufferPtr[i];
+				overlapBufferPtr[i] = convResultPtr[processBlockSize + i];
+			}
+			
+		} // end DSP loop
+		
+		convResultBufArray.incrWriteIndex();
+		blocksToOutputBuffer++;
+		blocksToProcess--;
+		
+	} // end while() Process blocks
+
+	return true;
+}
+
+
+
+AudioBuffer<float> Convolver::getOutput(){
+
+
+
+	/*
+	 * Write completed convolution result blocks to output buffers
+	 */
+
+	while (blocksToOutputBuffer > 0){
+		
+		for (int sample = 0; sample < processBlockSize; sample++){
+			if (outputBufferSampleIndex == 0)
+				outputBufArray.getWriteBufferPtr()->clear();
+			for (int channel = 0; channel < generalInputAudioChannels; channel++) {
+			
+				outputBufArray.getWriteBufferPtr()->setSample(channel, outputBufferSampleIndex,
+																 convResultBufArray.getReadBufferPtr()->getSample(channel, sample));
+			}
+			outputBufferSampleIndex++;
+			if (outputBufferSampleIndex >= hostBlockSize){
+				outputBufArray.incrWriteIndex();
+				outputBufferSampleIndex = 0;
+			}
+		}
+		convResultBufArray.incrReadIndex();
+		blocksToOutputBuffer--;
+	}
+
+
+	/*
+	 * Output buffers to real output
+	 */
+
+	for (int sample = 0; sample < hostBlockSize; sample++){
+		
+		for (int channel = 0; channel < generalInputAudioChannels; channel++)
+			outputBuf.setSample(channel, sample, outputBufArray.getReadBufferPtr()->getSample(channel, outputSampleIndex));
+		
+		outputSampleIndex++;
+		if(outputSampleIndex >= hostBlockSize){
+			outputBufArray.incrReadIndex();
+			outputSampleIndex = 0;
+		}
+	}
+
+	return outputBuf;
+}
+
+
+void Convolver::releaseResources(){
+
+	inputBufArray.changeArraySize(0);
+	inputFftBufArray.changeArraySize(0);
+	irFftBufArray.changeArraySize(0);
+	convResultBufArray.changeArraySize(0);
+	outputBufArray.changeArraySize(0);
+}
+
+
+void Convolver::run(){
+
+}
+
+int Convolver::getProcessBlockSize(){
+	return processBlockSize;
+}
+
+
+
+
+/******************************
+ * Standalone functions
+ *******************************/
 
 
 AudioBuffer<float> convolvePeriodic(AudioSampleBuffer& buffer1, AudioSampleBuffer& buffer2, int processBlockSize){
@@ -553,6 +837,7 @@ void averagingFilter (AudioSampleBuffer* buffer, double octaveFraction, double s
 
 	}
 }
+
 
 
 #ifdef JUCE_UNIT_TESTS

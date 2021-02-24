@@ -27,6 +27,8 @@
 #include "ExpSineSweep.hpp"
 #include "ir.hpp"
 
+#include <JuceHeader.h>
+
 using namespace fp;
 
 

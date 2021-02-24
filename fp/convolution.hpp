@@ -25,6 +25,7 @@ enum class ChannelLayout {
 
 namespace convolution {
 	
+
 class Convolver : public Thread {
 
 #ifdef JUCE_UNIT_TESTS
@@ -32,11 +33,63 @@ class Convolver : public Thread {
 #endif
 
 public:
-	Convolver();
+
+	enum class ProcessBlockSize { 
+		Size64 = 64, 
+		Size128 = 128, 
+		Size256 = 256, 
+		Size512 = 512 
+	};
+
+	Convolver(ProcessBlockSize size);
 	~Convolver();
 
-private:
+	bool prepare(double sampleRate, int samplesPerBlock);
+	void setIR(AudioBuffer<float>& IR);
 
+	bool inputSamples(AudioBuffer<float>& input);
+	AudioBuffer<float> getOutput();
+
+	void releaseResources();
+
+	void run() override;
+
+
+
+	int getProcessBlockSize();
+
+private:
+	int generalInputAudioChannels = 2;
+	int hostBlockSize;
+
+	const int processBlockSize;
+	
+	int N, fftBlockSize;
+
+	int irPartitions;
+
+	CircularBufferArray inputBufArray;
+	CircularBufferArray inputFftBufArray;
+	CircularBufferArray irFftBufArray;
+	
+	dsp::FFT *fftIR, *fftForward, *fftInverse;
+	AudioBuffer<float> inplaceBuf;
+	AudioBuffer<float> overlapBuf;
+	
+	CircularBufferArray convResultBufArray;
+	CircularBufferArray outputBufArray;
+	CircularBufferArray bypassOutputBufArray;
+
+	AudioBuffer<float> outputBuf;
+	
+	int inputBufferSampleIndex = 0;
+	int outputBufferSampleIndex = 0;
+	int outputSampleIndex = 0;
+	int blocksToProcess = 0;
+	int blocksToOutputBuffer = 0;
+	int savedIndex = 0;
+
+	AudioBuffer<float> IRtoConvolve;
 };
 
 

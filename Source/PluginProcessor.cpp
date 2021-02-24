@@ -1,5 +1,5 @@
 //
-//  Copyright © 2020 Felix Postma. 
+//  Felix Postma 2021
 //
 
 
@@ -14,7 +14,8 @@ IRBaboonAudioProcessor::IRBaboonAudioProcessor()
 					   .withOutput ("Output", AudioChannelSet::stereo(), true)
 					   .withInput  ("Mic",  AudioChannelSet::mono(), true)
                        ),
-		Thread ("Print and thumbnail")
+		Thread ("Print and thumbnail"),
+		convolver(Convolver::ProcessBlockSize::Size256)
 {
 	
 	/* remove previously printed files */
@@ -56,30 +57,30 @@ IRBaboonAudioProcessor::IRBaboonAudioProcessor()
 	
 	// ======= convolution prep ========
 	
-	setLatencySamples(processBlockSize);
+	setLatencySamples(convolver.getProcessBlockSize());
 	
-	N = 1;
-	while (N < (processBlockSize * 2 - 1)){
-		N *= 2;
-	}
-	fftBlockSize = N * 2;
+	// N = 1;
+	// while (N < (processBlockSize * 2 - 1)){
+	// 	N *= 2;
+	// }
+	// fftBlockSize = N * 2;
 	
-	// initialise numChannels and numSamples for audio fft array buffers
-	audioFftBufferArray.clearAndResize(0, generalInputAudioChannels, fftBlockSize);
+	// // initialise numChannels and numSamples for audio fft array buffers
+	// audioFftBufferArray.clearAndResize(0, generalInputAudioChannels, fftBlockSize);
 	
-	// initialise FFTs
-	BigInteger fftBitMask = (BigInteger) N;
+	// // initialise FFTs
+	// BigInteger fftBitMask = (BigInteger) N;
 	
-	fftIR = new dsp::FFT::FFT (fftBitMask.getHighestBit());
-	fftForward = new dsp::FFT::FFT  (fftBitMask.getHighestBit());
-	fftInverse = new dsp::FFT::FFT  (fftBitMask.getHighestBit());
+	// fftIR = new dsp::FFT::FFT (fftBitMask.getHighestBit());
+	// fftForward = new dsp::FFT::FFT  (fftBitMask.getHighestBit());
+	// fftInverse = new dsp::FFT::FFT  (fftBitMask.getHighestBit());
 	
-	// initialise auxiliary buffers
-	inplaceBuffer.setSize(generalInputAudioChannels, fftBlockSize);
-	inplaceBuffer.clear();
+	// // initialise auxiliary buffers
+	// inplaceBuffer.setSize(generalInputAudioChannels, fftBlockSize);
+	// inplaceBuffer.clear();
 	
-	overlapBuffer.setSize(generalInputAudioChannels, processBlockSize);
-	overlapBuffer.clear();
+	// overlapBuffer.setSize(generalInputAudioChannels, processBlockSize);
+	// overlapBuffer.clear();
 	
 	 // Thread
 	startThread();
@@ -88,9 +89,9 @@ IRBaboonAudioProcessor::IRBaboonAudioProcessor()
 
 IRBaboonAudioProcessor::~IRBaboonAudioProcessor()
 {
-	delete fftIR;
-	delete fftForward;
-	delete fftInverse;
+	// delete fftIR;
+	// delete fftForward;
+	// delete fftInverse;
 	
 	stopThread(-1); // A negative value in here will wait forever to time-out.
 }
@@ -164,13 +165,13 @@ void IRBaboonAudioProcessor::changeProgramName (int index, const String& newName
 void IRBaboonAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
 	sampleRate = (int) sampleRate;
-	generalHostBlockSize = samplesPerBlock;
+	hostBlockSize = samplesPerBlock;
 	
-	if (generalHostBlockSize > processBlockSize) {
-		setLatencySamples(generalHostBlockSize);
+	if (hostBlockSize > convolver.getProcessBlockSize()) {
+		setLatencySamples(hostBlockSize);
 	}
 	else {
-		setLatencySamples(processBlockSize);
+		setLatencySamples(convolver.getProcessBlockSize());
 	}
 	
 	
@@ -186,51 +187,57 @@ void IRBaboonAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlo
 		return;
 	}
 		
-	int sweepBufArraySize = sweepBuf.getNumSamples() / generalHostBlockSize;
-	sweepBufArray.clearAndResize(sweepBufArraySize, 1, generalHostBlockSize);
+	int sweepBufArraySize = sweepBuf.getNumSamples() / hostBlockSize;
+	sweepBufArray.clearAndResize(sweepBufArraySize, 1, hostBlockSize);
 	
 	for (int buf = 0; buf < sweepBufArraySize; buf++){
-		sweepBufArray.getWriteBufferPtr()->copyFrom(0, 0, sweepBuf, 0, buf * generalHostBlockSize, generalHostBlockSize);
+		sweepBufArray.getWriteBufferPtr()->copyFrom(0, 0, sweepBuf, 0, buf * hostBlockSize, hostBlockSize);
 		sweepBufArray.incrWriteIndex();
 	}
 
 	
 	/* input capture array is the same size as the sweep array */
-	inputCaptureArray.clearAndResize(sweepBufArray.getArraySize(), 1, generalHostBlockSize);
+	inputCaptureArray.clearAndResize(sweepBufArray.getArraySize(), 1, hostBlockSize);
 	
 	
-	/* init circ buf arrays for convolution */
-	int inputArraySize = (int) std::ceil((float) generalHostBlockSize / (float) processBlockSize);
-	/* outputArraySize needs to be rounded up to the closest power of 2 */
-	int outputArraySize = tools::nextPowerOfTwo(std::ceil((float) processBlockSize / (float) generalHostBlockSize) + 1);
+	// /* init circ buf arrays for convolution */
+	// int inputArraySize = (int) std::ceil((float) hostBlockSize / (float) processBlockSize);
+	// /* outputArraySize needs to be rounded up to the closest power of 2 */
+	// int outputArraySize = tools::nextPowerOfTwo(std::ceil((float) processBlockSize / (float) hostBlockSize) + 1);
 
-	/* apply array sizes */
-	inputBufferArray.		clearAndResize(inputArraySize, generalInputAudioChannels, fftBlockSize);
-	convResultBufferArray.	clearAndResize(inputArraySize, generalInputAudioChannels, fftBlockSize);
-	outputBufferArray.		clearAndResize(outputArraySize, generalInputAudioChannels, generalHostBlockSize);
-	bypassOutputBufferArray.clearAndResize(outputArraySize, generalInputAudioChannels, generalHostBlockSize);
+	// /* apply array sizes */
+	// inputBufArray.		clearAndResize(inputArraySize, generalInputAudioChannels, fftBlockSize);
+	// convResultBufArray.	clearAndResize(inputArraySize, generalInputAudioChannels, fftBlockSize);
+	// outputBufArray.		clearAndResize(outputArraySize, generalInputAudioChannels, hostBlockSize);
+	// bypassOutputBufArray.clearAndResize(outputArraySize, generalInputAudioChannels, hostBlockSize);
 	
-	if (inputBufferArray.getArraySize() > audioFftBufferArray.getArraySize()){
-		audioFftBufferArray.clearAndResize(inputBufferArray.getArraySize(), generalInputAudioChannels, fftBlockSize);
-	}
+	// if (inputBufArray.getArraySize() > inputFftBufArray.getArraySize()){
+	// 	inputFftBufArray.clearAndResize(inputBufArray.getArraySize(), generalInputAudioChannels, fftBlockSize);
+	// }
 	
-	/* size is always at least 2, and we always want it to start 1 above the first one for proper latency behaviour */
-	outputBufferArray.setReadIndex(1);
+	// /* size is always at least 2, and we always want it to start 1 above the first one for proper latency behaviour */
+	// outputBufArray.setReadIndex(1);
 	
-	inputBufferSampleIndex = 0;
-	outputBufferSampleIndex = 0;
-	savedIndex = audioFftBufferArray.getArraySize() - 1;
+	// inputBufferSampleIndex = 0;
+	// outputBufferSampleIndex = 0;
+	// savedIndex = inputFftBufArray.getArraySize() - 1;
 	
 	
-	irPartitions = (int) std::ceil((float) IRpulse.getNumSamples() / (float) processBlockSize);
-	irFftBufferArray.clearAndResize(irPartitions, 1, fftBlockSize);
+	// irPartitions = (int) std::ceil((float) IRpulse.getNumSamples() / (float) processBlockSize);
+	// irFftBufArray.clearAndResize(irPartitions, 1, fftBlockSize);
 	
-	/* tricky tricks */
-	int newAudioArraySize = std::max(irPartitions, inputBufferArray.getArraySize());
-	audioFftBufferArray.changeArraySize(newAudioArraySize);
-	audioFftBufferArray.setReadIndex(audioFftBufferArray.getWriteIndex());
-	audioFftBufferArray.decrReadIndex();
-	savedIndex = audioFftBufferArray.getReadIndex();
+	// /* tricky tricks */
+	// int newAudioArraySize = std::max(irPartitions, inputBufArray.getArraySize());
+	// inputFftBufArray.changeArraySize(newAudioArraySize);
+	// inputFftBufArray.setReadIndex(inputFftBufArray.getWriteIndex());
+	// inputFftBufArray.decrReadIndex();
+	// savedIndex = inputFftBufArray.getReadIndex();
+
+	convolver.prepare(sampleRate, samplesPerBlock);
+
+	int outputArraySize = tools::nextPowerOfTwo(std::ceil((float) convolver.getProcessBlockSize() / (float) hostBlockSize) + 1);
+	bypassOutputBufArray.clearAndResize(outputArraySize, generalInputAudioChannels, hostBlockSize);
+
 }
 
 
@@ -240,11 +247,12 @@ void IRBaboonAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlo
 void IRBaboonAudioProcessor::releaseResources()
 {
     /* memory used by buffer arrays is freed up */
-	inputBufferArray.changeArraySize(0);
-	audioFftBufferArray.changeArraySize(0);
-	irFftBufferArray.changeArraySize(0);
-	convResultBufferArray.changeArraySize(0);
-	outputBufferArray.changeArraySize(0);
+	// inputBufArray.changeArraySize(0);
+	// inputFftBufArray.changeArraySize(0);
+	// irFftBufArray.changeArraySize(0);
+	// convResultBufArray.changeArraySize(0);
+	// outputBufArray.changeArraySize(0);
+	convolver.releaseResources();
 }
 
 /* Boilerplate JUCE, to check whether channel layouts are supported. */
@@ -276,7 +284,8 @@ void IRBaboonAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
         buffer.clear (i, 0, buffer.getNumSamples());
 
 	
-	int currentHostBlockSize = buffer.getNumSamples();
+	// int currentHostBlockSize = buffer.getNumSamples();
+	int currentHostBlockSize = hostBlockSize;
 	
 	if (currentHostBlockSize == 0){
 		return;
@@ -290,7 +299,7 @@ void IRBaboonAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
 
 	if (IRCapture.state == IRCapState::Capture){
 		
-		inputCaptureArray.getWriteBufferPtr()->copyFrom(0, 0, micBuffer, 0, 0, generalHostBlockSize);
+		inputCaptureArray.getWriteBufferPtr()->copyFrom(0, 0, micBuffer, 0, 0, hostBlockSize);
 		inputCaptureArray.incrWriteIndex();
 		
 		/* when capture is done */
@@ -365,7 +374,7 @@ void IRBaboonAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
 		/* output sweep */
 		const float* readPtr = sweepBufArray.getReadBufferPtr()->getReadPointer(0, 0);
 		for (int channel = 0; channel < totalNumOutputChannels; channel++){
-			for (int sample = 0; sample < generalHostBlockSize; sample++){
+			for (int sample = 0; sample < hostBlockSize; sample++){
 				buffer.setSample(channel, sample, *(readPtr + sample));
 			}
 		}
@@ -374,7 +383,7 @@ void IRBaboonAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
 		/* when sweep is done */
 		if (sweepBufArray.getReadIndex() == 0){
 			IRCapture.playSweep = false;
-			buffersWaitForResumeThroughput = samplesWaitBeforeInputCapture / 256;
+			buffersWaitForResumeThroughput = samplesWaitBeforeInputCapture / currentHostBlockSize;
 		}
 	}
 
@@ -408,156 +417,167 @@ void IRBaboonAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
 	if (IRCapture.state == IRCapState::Idle) {
 
 		/* set IR to convolve with */
-		if (playFiltered)
-			IRtoConvolve = IRFiltPtr->getBuffer();
+		// if (playFiltered)
+		// 	IRtoConvolve = IRFiltPtr->getBuffer();
+		// else
+		// 	IRtoConvolve = &IRpulse;
+		if (playFiltered){
+			AudioBuffer<float> filtje (*IRFiltPtr->getBuffer());
+			convolver.setIR(filtje);
+		}
 		else
-			IRtoConvolve = &IRpulse;
+			convolver.setIR(IRpulse);
 		
 			
-		/*
-		 * Copy input to input buffers, and input buffers to audio fft array
-		 */
+		// /*
+		//  * Copy input to input buffers, and input buffers to audio fft array
+		//  */
 	
-		for (int sample = 0; sample < currentHostBlockSize; sample++){
-			for (int channel = 0; channel < generalInputAudioChannels; channel++){
-				inputBufferArray.getWriteBufferPtr()->setSample(channel, inputBufferSampleIndex, buffer.getSample(channel, sample));
-			}
-			inputBufferSampleIndex++;
+		// for (int sample = 0; sample < currentHostBlockSize; sample++){
+		// 	for (int channel = 0; channel < generalInputAudioChannels; channel++){
+		// 		inputBufArray.getWriteBufferPtr()->setSample(channel, inputBufferSampleIndex, buffer.getSample(channel, sample));
+		// 	}
+		// 	inputBufferSampleIndex++;
 			
-			/* when input buffer completed: copy to fft buffer array, perform fft, incr to next input buffers */
-			if (inputBufferSampleIndex >= processBlockSize){
+		// 	/* when input buffer completed: copy to fft buffer array, perform fft, incr to next input buffers */
+		// 	if (inputBufferSampleIndex >= processBlockSize){
 				
-				inputBufferArray.setReadIndex(inputBufferArray.getWriteIndex());
-				audioFftBufferArray.getWriteBufferPtr()->makeCopyOf(*inputBufferArray.getReadBufferPtr());
+		// 		inputBufArray.setReadIndex(inputBufArray.getWriteIndex());
+		// 		inputFftBufArray.getWriteBufferPtr()->makeCopyOf(*inputBufArray.getReadBufferPtr());
 				
 				
-				for (int channel = 0; channel < generalInputAudioChannels; channel++){
-					fftForward->performRealOnlyForwardTransform(audioFftBufferArray.getWriteBufferPtr()->getWritePointer(channel, 0), true);
-				}
-				audioFftBufferArray.incrWriteIndex();
+		// 		for (int channel = 0; channel < generalInputAudioChannels; channel++){
+		// 			fftForward->performRealOnlyForwardTransform(inputFftBufArray.getWriteBufferPtr()->getWritePointer(channel, 0), true);
+		// 		}
+		// 		inputFftBufArray.incrWriteIndex();
 				
-				inputBufferArray.incrWriteIndex();
-				inputBufferArray.getWriteBufferPtr()->clear();
+		// 		inputBufArray.incrWriteIndex();
+		// 		inputBufArray.getWriteBufferPtr()->clear();
 				
-				inputBufferSampleIndex = 0;
-				blocksToProcess++;
-			}
-		}
+		// 		inputBufferSampleIndex = 0;
+		// 		blocksToProcess++;
+		// 	}
+		// }
 	
 		
-		/*
-		 * Process blocks
-		 */
+		// /*
+		//  * Process blocks
+		//  */
 	
-		while (blocksToProcess > 0){
+		// while (blocksToProcess > 0){
 			
-			/* always read an IR block */
-			irFftBufferArray.getWriteBufferPtr()->clear();
+		// 	/* always read an IR block */
+		// 	irFftBufArray.getWriteBufferPtr()->clear();
 
-			irFftBufferArray.getWriteBufferPtr()->copyFrom(0, 0, *IRtoConvolve, 0, irFftBufferArray.getWriteIndex() * processBlockSize, processBlockSize);
+		// 	irFftBufArray.getWriteBufferPtr()->copyFrom(0, 0, *IRtoConvolve, 0, irFftBufArray.getWriteIndex() * processBlockSize, processBlockSize);
 			
-			fftIR->performRealOnlyForwardTransform(irFftBufferArray.getWriteBufferPtr()->getWritePointer(0, 0), true);
+		// 	fftIR->performRealOnlyForwardTransform(irFftBufArray.getWriteBufferPtr()->getWritePointer(0, 0), true);
 			
-			irFftBufferArray.incrWriteIndex();
+		// 	irFftBufArray.incrWriteIndex();
 			
 			
 			
-			/* DSP loop */
-			convResultBufferArray.getWriteBufferPtr()->clear();
+		// 	/* DSP loop */
+		// 	convResultBufArray.getWriteBufferPtr()->clear();
 			
-			audioFftBufferArray.setReadIndex(savedIndex);
-			audioFftBufferArray.incrReadIndex();
-			savedIndex = audioFftBufferArray.getReadIndex();
+		// 	inputFftBufArray.setReadIndex(savedIndex);
+		// 	inputFftBufArray.incrReadIndex();
+		// 	savedIndex = inputFftBufArray.getReadIndex();
 			
-			for (int channel = 0; channel < generalInputAudioChannels; channel++) {
+		// 	for (int channel = 0; channel < generalInputAudioChannels; channel++) {
 				
-				float* overlapBufferPtr = overlapBuffer.getWritePointer(channel, 0);
-				float* convResultPtr = convResultBufferArray.getWriteBufferPtr()->getWritePointer(channel, 0);
+		// 		float* overlapBufferPtr = overlapBuf.getWritePointer(channel, 0);
+		// 		float* convResultPtr = convResultBufArray.getWriteBufferPtr()->getWritePointer(channel, 0);
 				
-				int irFftReadIndex = 0; // IR fft index should always start at 0 and not fold back, so its readIndex is not used
-				audioFftBufferArray.setReadIndex(savedIndex); // for iteration >1 of the channel
+		// 		int irFftReadIndex = 0; // IR fft index should always start at 0 and not fold back, so its readIndex is not used
+		// 		inputFftBufArray.setReadIndex(savedIndex); // for iteration >1 of the channel
 				
-				while (irFftReadIndex < irFftBufferArray.getArraySize()){
+		// 		while (irFftReadIndex < irFftBufArray.getArraySize()){
 					
-					inplaceBuffer.makeCopyOf(*audioFftBufferArray.getReadBufferPtr());
-					float* inplaceBufferPtr = inplaceBuffer.getWritePointer(channel, 0);
+		// 			inplaceBuf.makeCopyOf(*inputFftBufArray.getReadBufferPtr());
+		// 			float* inplaceBufferPtr = inplaceBuf.getWritePointer(channel, 0);
 
-					const float* irFftPtr = irFftBufferArray.getBufferPtrAtIndex(irFftReadIndex)->getReadPointer(0, 0);
+		// 			const float* irFftPtr = irFftBufArray.getBufferPtrAtIndex(irFftReadIndex)->getReadPointer(0, 0);
 					
-					/* complex multiplication of 1 audio fft block and 1 IR fft block */
-					for (int i = 0; i <= N; i += 2){
-						tools::complexMul(inplaceBufferPtr + i,
-											 inplaceBufferPtr + i + 1,
-											 irFftPtr[i],
-											 irFftPtr[i + 1]);
-					}
+		// 			/* complex multiplication of 1 audio fft block and 1 IR fft block */
+		// 			for (int i = 0; i <= N; i += 2){
+		// 				tools::complexMul(inplaceBufferPtr + i,
+		// 									 inplaceBufferPtr + i + 1,
+		// 									 irFftPtr[i],
+		// 									 irFftPtr[i + 1]);
+		// 			}
 					
-					/* sum multiplications in convolution result buffer */
-					for (int i = 0; i < fftBlockSize; i++){
-						convResultPtr[i] += inplaceBufferPtr[i];
-					}
-					irFftReadIndex++;
-					audioFftBufferArray.decrReadIndex();
-				}
+		// 			/* sum multiplications in convolution result buffer */
+		// 			for (int i = 0; i < fftBlockSize; i++){
+		// 				convResultPtr[i] += inplaceBufferPtr[i];
+		// 			}
+		// 			irFftReadIndex++;
+		// 			inputFftBufArray.decrReadIndex();
+		// 		}
 				
-				/* FDL method -> IFFT after summing */
-				fftInverse->performRealOnlyInverseTransform(convResultPtr);
+		// 		/* FDL method -> IFFT after summing */
+		// 		fftInverse->performRealOnlyInverseTransform(convResultPtr);
 				
-				/* add existing overlap and save new overlap */
-				for (int i = 0; i < processBlockSize; i++){
-					convResultPtr[i] += overlapBufferPtr[i];
-					overlapBufferPtr[i] = convResultPtr[processBlockSize + i];
-				}
+		// 		/* add existing overlap and save new overlap */
+		// 		for (int i = 0; i < processBlockSize; i++){
+		// 			convResultPtr[i] += overlapBufferPtr[i];
+		// 			overlapBufferPtr[i] = convResultPtr[processBlockSize + i];
+		// 		}
 				
-			} // end DSP loop
+		// 	} // end DSP loop
 			
-			convResultBufferArray.incrWriteIndex();
-			blocksToOutputBuffer++;
-			blocksToProcess--;
+		// 	convResultBufArray.incrWriteIndex();
+		// 	blocksToOutputBuffer++;
+		// 	blocksToProcess--;
 			
-		} // end while() Process blocks
+		// } // end while() Process blocks
+
+		convolver.inputSamples(buffer);
+
 	
 	
-		/*
-		 * Write completed convolution result blocks to output buffers
-		 */
+		// /*
+		//  * Write completed convolution result blocks to output buffers
+		//  */
 	
-		while (blocksToOutputBuffer > 0){
+		// while (blocksToOutputBuffer > 0){
 			
-			for (int sample = 0; sample < processBlockSize; sample++){
-				if (outputBufferSampleIndex == 0)
-					outputBufferArray.getWriteBufferPtr()->clear();
-				for (int channel = 0; channel < generalInputAudioChannels; channel++) {
+		// 	for (int sample = 0; sample < processBlockSize; sample++){
+		// 		if (outputBufferSampleIndex == 0)
+		// 			outputBufArray.getWriteBufferPtr()->clear();
+		// 		for (int channel = 0; channel < generalInputAudioChannels; channel++) {
 				
-					outputBufferArray.getWriteBufferPtr()->setSample(channel, outputBufferSampleIndex,
-																	 convResultBufferArray.getReadBufferPtr()->getSample(channel, sample));
-				}
-				outputBufferSampleIndex++;
-				if (outputBufferSampleIndex >= generalHostBlockSize){
-					outputBufferArray.incrWriteIndex();
-					outputBufferSampleIndex = 0;
-				}
-			}
-			convResultBufferArray.incrReadIndex();
-			blocksToOutputBuffer--;
-		}
+		// 			outputBufArray.getWriteBufferPtr()->setSample(channel, outputBufferSampleIndex,
+		// 															 convResultBufArray.getReadBufferPtr()->getSample(channel, sample));
+		// 		}
+		// 		outputBufferSampleIndex++;
+		// 		if (outputBufferSampleIndex >= hostBlockSize){
+		// 			outputBufArray.incrWriteIndex();
+		// 			outputBufferSampleIndex = 0;
+		// 		}
+		// 	}
+		// 	convResultBufArray.incrReadIndex();
+		// 	blocksToOutputBuffer--;
+		// }
 	
 	
-		/*
-		 * Output buffers to real output
-		 */
+		// /*
+		//  * Output buffers to real output
+		//  */
 	
-		for (int sample = 0; sample < currentHostBlockSize; sample++){
+		// for (int sample = 0; sample < currentHostBlockSize; sample++){
 			
-			for (int channel = 0; channel < generalInputAudioChannels; channel++)
-				buffer.setSample(channel, sample, outputBufferArray.getReadBufferPtr()->getSample(channel, outputSampleIndex));
+		// 	for (int channel = 0; channel < generalInputAudioChannels; channel++)
+		// 		buffer.setSample(channel, sample, outputBufArray.getReadBufferPtr()->getSample(channel, outputSampleIndex));
 			
-			outputSampleIndex++;
-			if(outputSampleIndex >= generalHostBlockSize){
-				outputBufferArray.incrReadIndex();
-				outputSampleIndex = 0;
-			}
-		}
+		// 	outputSampleIndex++;
+		// 	if(outputSampleIndex >= hostBlockSize){
+		// 		outputBufArray.incrReadIndex();
+		// 		outputSampleIndex = 0;
+		// 	}
+		// }
+
+		buffer = convolver.getOutput();
 	
 	} // if (IRCapture.state == IRCapState::Idle)  [aka not playing sweep / capturing]
 	
@@ -568,7 +588,7 @@ void IRBaboonAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
 	
 	
 	/* makeshift limiter lol */
-	if (tools::linTodB(buffer.getMagnitude(0, 0, generalHostBlockSize)) > 0.0){
+	if (tools::linTodB(buffer.getMagnitude(0, 0, hostBlockSize)) > 0.0){
 		tools::normalize(&buffer, 0.0, false);
 		DBG("processBlock limiter engaged\n");
 	}
@@ -583,10 +603,10 @@ void IRBaboonAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
  */
 void IRBaboonAudioProcessor::processBlockBypassed(AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
-	bypassOutputBufferArray.getWriteBufferPtr()->makeCopyOf(buffer);
-	bypassOutputBufferArray.incrWriteIndex();
-	bypassOutputBufferArray.incrReadIndex();
-	buffer.makeCopyOf(*bypassOutputBufferArray.getReadBufferPtr());
+	bypassOutputBufArray.getWriteBufferPtr()->makeCopyOf(buffer);
+	bypassOutputBufArray.incrWriteIndex();
+	bypassOutputBufArray.incrReadIndex();
+	buffer.makeCopyOf(*bypassOutputBufArray.getReadBufferPtr());
 }
 
 
@@ -598,7 +618,7 @@ void IRBaboonAudioProcessor::startCapture(IRType type){
 	IRCapture.state = IRCapState::Prep;
 	IRCapture.doFadeout = true;
 
-	buffersWaitForInputCapture = samplesWaitBeforeInputCapture / processBlockSize;
+	buffersWaitForInputCapture = samplesWaitBeforeInputCapture / convolver.getProcessBlockSize();
 }
 
 
