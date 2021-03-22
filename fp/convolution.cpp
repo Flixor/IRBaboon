@@ -36,7 +36,7 @@ bool Convolver::prepare(double sampleRate, int samplesPerBlock){
 	 * constructor
 	 */
 
-	/* N needs to officially be bigger than (processBlockSize * 2 - 1) */
+	/* Officially: N >= (processBlockSize * 2 - 1) */
 	N = processBlockSize * 2;
 	fftBlockSize = N * 2;
 	
@@ -226,8 +226,6 @@ bool Convolver::inputSamples(AudioBuffer<float>& input){
 
 
 AudioBuffer<float> Convolver::getOutput(){
-
-
 
 	/*
 	 * Write completed convolution result blocks to output buffers

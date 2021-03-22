@@ -159,7 +159,6 @@ private:
 	ReferenceCountedBuffer::Ptr IRBasePtr;
 	ReferenceCountedBuffer::Ptr IRFiltPtr;
 	AudioSampleBuffer IRpulse;
-	// AudioSampleBuffer* IRtoConvolve;
 	
 	bool playFiltered = false;
 	
@@ -182,34 +181,9 @@ private:
 	
 	bool includePhaseFilt = true;
 	bool includeAmplFilt = true;
-
 	
-	
-	// ====== convolution ==========
-	// int irPartitions;
-	
-	// const int processBlockSize = 256;
-	// int N, fftBlockSize;
-
-	// CircularBufferArray inputBufArray;
-	// CircularBufferArray inputFftBufArray;
-	// CircularBufferArray irFftBufArray;
-	
-	// dsp::FFT *fftIR, *fftForward, *fftInverse;
-	// AudioSampleBuffer inplaceBuf;
-	// AudioSampleBuffer overlapBuf;
-	
-	// CircularBufferArray convResultBufArray;
-	// CircularBufferArray outputBufArray;
 	CircularBufferArray bypassOutputBufArray;
 	
-	// int inputBufferSampleIndex = 0;
-	// int outputBufferSampleIndex = 0;
-	// int outputSampleIndex = 0;
-	// int blocksToProcess = 0;
-	// int blocksToOutputBuffer = 0;
-	// int savedIndex = 0;
-
 	Convolver convolver;
 
 	

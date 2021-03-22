@@ -174,8 +174,8 @@ void IRBaboonAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlo
 	inputCaptureArray.clearAndResize(sweepBufArray.getArraySize(), 1, hostBlockSize);
 	
 
-
-	convolver.prepare(sampleRate, samplesPerBlock);
+	/* prepare convolution */ 
+	convolver.prepare(sampleRate, hostBlockSize);
 
 
 	int outputArraySize = tools::nextPowerOfTwo(std::ceil((float) convolver.getProcessBlockSize() / (float) hostBlockSize) + 1);
@@ -351,6 +351,7 @@ void IRBaboonAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
 	// ===============================
 	
 	
+	/* not capturing/playing sweep */
 	if (IRCapture.state == IRCapState::Idle) {
 
 		/* set IR to convolve with */
@@ -370,7 +371,7 @@ void IRBaboonAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
 
 		buffer = convolver.getOutput();
 	
-	} // if (IRCapture.state == IRCapState::Idle)  [aka not playing sweep / capturing]
+	} 
 	
 		
 		

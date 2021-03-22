@@ -11,8 +11,8 @@
 namespace fp {
 
 
-/* The convolution namespace contains convolution functions,
- * and helpers only used by convolution.
+/* The convolution namespace contains the Convolver class which can be used for uniform partitioned convolution,
+ * and also the same in the form of standalone functions.
  */	
 
 enum class ChannelLayout {

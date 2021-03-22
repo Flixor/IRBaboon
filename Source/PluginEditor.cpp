@@ -61,7 +61,7 @@ IRBaboonAudioProcessorEditor::IRBaboonAudioProcessorEditor (IRBaboonAudioProcess
 	playFiltAudioButton.setRadioGroupId(playButtons);
 	
 	
-	/* ghetto polling solution for checking whether IRFilt is ready in Processor */
+	/* simple polling solution for checking whether IRFilt is ready in Processor */
 	startTimerHz(8);
 	
 	
