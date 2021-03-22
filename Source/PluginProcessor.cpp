@@ -175,7 +175,7 @@ void IRBaboonAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlo
 	
 
 	/* prepare convolution */ 
-	convolver.prepare(sampleRate, hostBlockSize);
+	convolver.prepare(hostBlockSize);
 
 
 	int outputArraySize = tools::nextPowerOfTwo(std::ceil((float) convolver.getProcessBlockSize() / (float) hostBlockSize) + 1);

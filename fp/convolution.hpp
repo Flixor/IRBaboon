@@ -44,7 +44,7 @@ public:
 	Convolver(ProcessBlockSize size);
 	~Convolver();
 
-	bool prepare(double sampleRate, int samplesPerBlock);
+	bool prepare(int samplesPerBlock);
 	void setIR(AudioBuffer<float>& IR);
 
 	bool inputSamples(AudioBuffer<float>& input);

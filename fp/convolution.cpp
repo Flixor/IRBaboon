@@ -28,7 +28,7 @@ Convolver::~Convolver(){
 }
 
 
-bool Convolver::prepare(double sampleRate, int samplesPerBlock){
+bool Convolver::prepare(int samplesPerBlock){
 
 	hostBlockSize = samplesPerBlock;
 
