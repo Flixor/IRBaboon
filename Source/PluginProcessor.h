@@ -84,11 +84,12 @@ public:
 	void startCapture(IRType type);
 
 	void createIRFilt();
-	
-	int getTotalSweepBreakSamples();
-	int getMakeupIRLengthSamples();
-	int getSamplerate();
 	bool filtReady();
+	
+	int getNumInputChannels();
+	int getSamplerate();
+	int getTotalSweepBreakSamples();
+	int getIRFiltSize();
 	AudioSampleBuffer getIRFilt();
 	
 	void setPlayFiltered(bool filtered);
@@ -105,7 +106,7 @@ public:
 	void setPhaseFilt(bool includePhase);
 	void setAmplFilt(bool includeAmplitude);
 	void setPresweepSilence(int presweepSilence);
-	void setMakeupSize(int makeupSize);
+	void setIRFiltSize(int IRFiltSize);
 	void swapTargetBase();
 	void loadTarget(File file);
 
@@ -149,7 +150,7 @@ private:
 	CircularBufferArray sweepBufArray;
 	CircularBufferArray inputCaptureArray;
 
-	int makeupIRLengthSamples = 2048;
+	int IRFiltSize = 2048;
 	
 	IRCapStruct IRCapture;
 

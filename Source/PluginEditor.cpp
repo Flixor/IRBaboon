@@ -182,19 +182,19 @@ IRBaboonAudioProcessorEditor::IRBaboonAudioProcessorEditor (IRBaboonAudioProcess
 	presweepSilenceMenu.onChange = [this] { presweepSilenceMenuChanged(); };
 
 	
-	addAndMakeVisible(&makeupSizeMenu);
-	makeupSizeMenu.addItem("128", 1);
-	makeupSizeMenu.addItem("256", 2);
-	makeupSizeMenu.addItem("512", 3);
-	makeupSizeMenu.addItem("1024", 4);
-	makeupSizeMenu.addItem("2048", 5);
-	makeupSizeMenu.addItem("4096", 6);
-	makeupSizeMenu.addItem("8192", 7);
-	makeupSizeMenu.addItem("16384", 8);
-	makeupSizeMenu.addItem("32768", 9);
-	makeupSizeMenu.setText("2048");
-	makeupSizeMenu.onChange = [this] { makeupSizeMenuChanged(); };
-	makeupSizeMenu.setVisible(false);
+	addAndMakeVisible(&IRFiltSizeMenu);
+	IRFiltSizeMenu.addItem("128", 1);
+	IRFiltSizeMenu.addItem("256", 2);
+	IRFiltSizeMenu.addItem("512", 3);
+	IRFiltSizeMenu.addItem("1024", 4);
+	IRFiltSizeMenu.addItem("2048", 5);
+	IRFiltSizeMenu.addItem("4096", 6);
+	IRFiltSizeMenu.addItem("8192", 7);
+	IRFiltSizeMenu.addItem("16384", 8);
+	IRFiltSizeMenu.addItem("32768", 9);
+	IRFiltSizeMenu.setText("2048");
+	IRFiltSizeMenu.onChange = [this] { IRFiltSizeMenuChanged(); };
+	IRFiltSizeMenu.setVisible(false);
 
 	
 	addAndMakeVisible (&swapButton);
@@ -238,7 +238,7 @@ void IRBaboonAudioProcessorEditor::timerCallback(){
 	// filt button
 	if (processor.filtReady()){
 		playFiltAudioButton.setVisible(true);
-		makeupSizeMenu.setVisible(true);
+		IRFiltSizeMenu.setVisible(true);
 	}
 
 	// thumbnails
@@ -313,27 +313,27 @@ void IRBaboonAudioProcessorEditor::presweepSilenceMenuChanged(){
 	
 	processor.setPresweepSilence(presweepSilence);
 	
-	thumbnailFilt.reset(1, processor.getSamplerate(), makeupSize);
+	thumbnailFilt.reset(1, processor.getSamplerate(), IRFiltSize);
 }
 
 
-void IRBaboonAudioProcessorEditor::makeupSizeMenuChanged(){
+void IRBaboonAudioProcessorEditor::IRFiltSizeMenuChanged(){
 	
-	switch (makeupSizeMenu.getSelectedId()){
-		case 1: makeupSize = 128;	break;
-		case 2: makeupSize = 256;	break;
-		case 3: makeupSize = 512;	break;
-		case 4: makeupSize = 1024;	break;
-		case 5: makeupSize = 2048;	break;
-		case 6: makeupSize = 4096;	break;
-		case 7: makeupSize = 8192;	break;
-		case 8: makeupSize = 16384;	break;
-		case 9: makeupSize = 32768;	break;
+	switch (IRFiltSizeMenu.getSelectedId()){
+		case 1: IRFiltSize = 128;	break;
+		case 2: IRFiltSize = 256;	break;
+		case 3: IRFiltSize = 512;	break;
+		case 4: IRFiltSize = 1024;	break;
+		case 5: IRFiltSize = 2048;	break;
+		case 6: IRFiltSize = 4096;	break;
+		case 7: IRFiltSize = 8192;	break;
+		case 8: IRFiltSize = 16384;	break;
+		case 9: IRFiltSize = 32768;	break;
 	}
 	
-	processor.setMakeupSize(makeupSize);
+	processor.setIRFiltSize(IRFiltSize);
 	
-	thumbnailFilt.reset(1, processor.getSamplerate(), makeupSize);
+	thumbnailFilt.reset(1, processor.getSamplerate(), IRFiltSize);
 }
 
 
@@ -422,7 +422,7 @@ void IRBaboonAudioProcessorEditor::paint (Graphics& g)
 		g.setColour (Colours::black);
 		g.fillRect (thumbnailInvfiltBounds);
 		g.setColour (Colour (0xffffae0b));
-		thumbnailFilt.drawChannels (g, thumbnailInvfiltBounds, 0.0, (double) makeupSize / (double) processor.getSamplerate(), 1.0f);
+		thumbnailFilt.drawChannels (g, thumbnailInvfiltBounds, 0.0, (double) IRFiltSize / (double) processor.getSamplerate(), 1.0f);
 	}
 
 	IRFiltLabel.setBounds(0,
@@ -501,7 +501,7 @@ void IRBaboonAudioProcessorEditor::resized()
 							 getLocalBounds().getHeight() - buttonHeight,
 							 getLocalBounds().getWidth() * 1/8,
 							 buttonHeight);
-	makeupSizeMenu.setBounds(getLocalBounds().getWidth() * 5/12,
+	IRFiltSizeMenu.setBounds(getLocalBounds().getWidth() * 5/12,
 							 getLocalBounds().getHeight() - buttonHeight,
 							 getLocalBounds().getWidth() * 1/8,
 							 buttonHeight);

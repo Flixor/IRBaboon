@@ -42,7 +42,7 @@ public:
 	void playUnprocessedAudioClick (bool toggleState);
 	void playFiltAudioClick (bool toggleState);
 	void loadTargetClicked();
-	void makeupSizeMenuChanged();
+	void IRFiltSizeMenuChanged();
 	void presweepSilenceMenuChanged();
 
 	/* thumbnails */
@@ -107,8 +107,8 @@ private:
 	ToggleButton amplButton { "EQ" };
 	ComboBox presweepSilenceMenu;
 	int presweepSilence = 16384;
-	ComboBox makeupSizeMenu;
-	int makeupSize = 2048;
+	ComboBox IRFiltSizeMenu;
+	int IRFiltSize = 2048;
 	TextButton swapButton { "Swap target <-> base" };
 	TextButton loadTargetButton { "Load target..." };
 	

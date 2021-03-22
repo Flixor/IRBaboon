@@ -44,7 +44,7 @@ IRBaboonAudioProcessor::IRBaboonAudioProcessor()
 	
 	
 	/* init IRs */
-	IRpulse.makeCopyOf(tools::generatePulse(makeupIRLengthSamples, 100));
+	IRpulse.makeCopyOf(tools::generatePulse(IRFiltSize, 100));
 	
 	IRTargPtr = new ReferenceCountedBuffer("IRTarg", 0, 0);
 	IRBasePtr = new ReferenceCountedBuffer("IRBase", 0, 0);
@@ -427,17 +427,22 @@ void IRBaboonAudioProcessor::createIRFilt(){
 }
 
 
+int IRBaboonAudioProcessor::getSamplerate(){
+	return sampleRate;
+}
+
+int IRBaboonAudioProcessor::getNumInputChannels(){
+	return generalInputAudioChannels;
+}
+
 int IRBaboonAudioProcessor::getTotalSweepBreakSamples(){
 	return totalSweepBreakSamples;
 }
 
-int IRBaboonAudioProcessor::getMakeupIRLengthSamples(){
-	return makeupIRLengthSamples;
+int IRBaboonAudioProcessor::getIRFiltSize(){
+	return IRFiltSize;
 }
 
-int IRBaboonAudioProcessor::getSamplerate(){
-	return sampleRate;
-}
 
 
 bool IRBaboonAudioProcessor::filtReady(){
@@ -676,8 +681,8 @@ void IRBaboonAudioProcessor::setPresweepSilence(int presweepSilence){
 }
 
 
-void IRBaboonAudioProcessor::setMakeupSize(int makeupSize){
-	makeupIRLengthSamples = makeupSize;
+void IRBaboonAudioProcessor::setIRFiltSize(int IRFiltSize){
+	IRFiltSize = IRFiltSize;
 	
 	if (IRTargPtr->bufferNotEmpty() && IRBasePtr->bufferNotEmpty()){
 		createIRFilt();
